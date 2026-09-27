@@ -97,12 +97,19 @@ def summarize_report(report, fixture, pins):
         raise ValueError("invalid options or temperature")
     for key, value in {
         "n_ctx": 2048,
+        "n_batch": 2048,
         "n_ubatch": 1024,
         "n_seq_max": 2,
         "n_outputs_max": 16,
     }.items():
-        if report["ready"][key] != value:
+        if type(report["ready"].get(key)) is not int or report["ready"][key] != value:
             raise ValueError("unexpected ready settings")
+    if (
+        type(metadata.get("threads")) is not int
+        or metadata["threads"] != 4
+        or metadata.get("flash_attn") != "auto"
+    ):
+        raise ValueError("unexpected execution settings")
     differences = []
     for i, record in enumerate(records):
         if record["sample"] != i or record["phase"] != ("first" if i == 0 else "warm"):

@@ -39,6 +39,8 @@ class IOSReportTests(unittest.TestCase):
                 "repetitions": 2,
                 "timing_scope": TIMING_SCOPE,
                 "model_hash_verified": True,
+                "threads": 4,
+                "flash_attn": "auto",
                 "n_gpu_layers": 999,
                 "offload_kqv": True,
                 "op_offload": True,
@@ -64,6 +66,7 @@ class IOSReportTests(unittest.TestCase):
             },
             "ready": {
                 "n_ctx": 2048,
+                "n_batch": 2048,
                 "n_ubatch": 1024,
                 "n_seq_max": 2,
                 "n_outputs_max": 16,
@@ -97,6 +100,22 @@ class IOSReportTests(unittest.TestCase):
         self.assertTrue(summary["passes_gate"])
         self.assertTrue(summary["declared_physical_ios"])
         self.assertNotIn("physical_ios_measurement", summary)
+
+    def test_rejects_changed_or_missing_fixed_execution_profile(self):
+        for section, key, altered in (
+            ("ready", "n_batch", 1024),
+            ("metadata", "threads", 1),
+            ("metadata", "flash_attn", "disabled"),
+        ):
+            for variant in ("changed", "missing", "null"):
+                with self.subTest(key=key, variant=variant):
+                    report = copy.deepcopy(self.report)
+                    if variant == "missing":
+                        report[section].pop(key)
+                    else:
+                        report[section][key] = altered if variant == "changed" else None
+                    with self.assertRaisesRegex(ValueError, "settings"):
+                        summarize_report(report, self.fixture, self.pins)
 
     def test_simulator_cannot_satisfy_physical_measurement(self):
         self.report["metadata"]["device"]["simulator"] = True
@@ -265,6 +284,28 @@ class IOSReportTests(unittest.TestCase):
                 command + ["--require-device-metadata"], capture_output=True, text=True
             )
             self.assertEqual(accepted.returncode, 0, accepted.stderr)
+            for section, key, altered in (
+                ("ready", "n_batch", 1024),
+                ("metadata", "threads", 1),
+                ("metadata", "flash_attn", "disabled"),
+            ):
+                for variant in ("changed", "missing", "null"):
+                    with self.subTest(key=key, variant=variant):
+                        modified = copy.deepcopy(self.report)
+                        if variant == "missing":
+                            modified[section].pop(key)
+                        else:
+                            modified[section][key] = (
+                                altered if variant == "changed" else None
+                            )
+                        report.write_text(json.dumps(modified))
+                        rejected = subprocess.run(
+                            command + ["--require-device-metadata"],
+                            capture_output=True,
+                            text=True,
+                        )
+                        self.assertEqual(rejected.returncode, 1)
+                        self.assertIn("settings", rejected.stderr)
             for changes in (
                 {"n_gpu_layers": 0, "offload_kqv": False, "op_offload": False},
                 {"n_gpu_layers": 1},

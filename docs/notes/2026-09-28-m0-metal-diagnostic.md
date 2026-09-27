@@ -51,3 +51,8 @@ Native inference code and the failed Metal outcome are unchanged.
 The second hosted finding identified that shorter consistent reports could still pass the physical CLI gate.
 It now requires exactly 20 warm samples; 1, 2, 19 and 21 samples were observed incorrectly passing before the guard and are now rejected, while the unrestricted diagnostic reader still accepts them.
 All 55 Python tests pass, and the final refreshed SDK receipts are preserved separately under `warm_sample_gate_repair`.
+The third hosted finding and a local profile audit identified omitted `n_batch`, thread-count and flash-attention checks.
+Report validation now requires emitted `n_batch=2048`, `threads=4` and `flash_attn=auto`; nine altered, missing or null cases failed rejection tests before repair and now pass, including the physical CLI path.
+All seven historical reports already contain these values; their numerical summaries and measured failures remain unchanged.
+All 56 Python tests pass, and both refreshed SDK receipts are preserved under `fixed_profile_gate_repair` with source and main binary hashes checked against current files.
+Native inference code is unchanged; no new inference or physical-device execution is claimed by these refreshed builds.
