@@ -123,6 +123,7 @@ std::string m0_benchmark(const std::string & model_path, const std::string & fix
     cp.n_outputs_max = 16;
     cp.n_threads = cp.n_threads_batch = 4;
     cp.kv_unified = true;
+    metadata["kv_unified"] = cp.kv_unified;
     cp.no_perf = true;
     cp.flash_attn_type = LLAMA_FLASH_ATTN_TYPE_AUTO;
     cp.offload_kqv = gpu_layers != 0;

@@ -56,3 +56,13 @@ Report validation now requires emitted `n_batch=2048`, `threads=4` and `flash_at
 All seven historical reports already contain these values; their numerical summaries and measured failures remain unchanged.
 All 56 Python tests pass, and both refreshed SDK receipts are preserved under `fixed_profile_gate_repair` with source and main binary hashes checked against current files.
 Native inference code is unchanged; no new inference or physical-device execution is claimed by these refreshed builds.
+
+## Unified KV Profile Repair
+
+The fourth hosted review found that the benchmark fixed `cp.kv_unified=true` without recording it in reports.
+New native reports now emit the requested value; report validation rejects altered values, and the physical CLI rejects both altered and missing values.
+Older diagnostic reports without the field remain readable for historical comparison, but cannot satisfy the physical CLI gate.
+The seven changed or missing cases failed rejection tests before this repair; all 59 Python tests pass afterwards, including recomputation of both new native reports.
+The two refreshed unsigned arm64 SDK builds have verified current-source and main-binary hashes under `unified_kv_validation`.
+A repeated simulator CPU UI test passed one test with no failures and exported two new 20-warm-sample reports with `kv_unified=true`; both pass the numerical gate at maximum difference 0.00025757958476246845.
+These are new simulator CPU results, not changes to the seven historical measurements; simulator Metal and physical-device behavior remain unresolved.

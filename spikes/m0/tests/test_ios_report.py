@@ -41,6 +41,7 @@ class IOSReportTests(unittest.TestCase):
                 "model_hash_verified": True,
                 "threads": 4,
                 "flash_attn": "auto",
+                "kv_unified": True,
                 "n_gpu_layers": 999,
                 "offload_kqv": True,
                 "op_offload": True,
@@ -116,6 +117,20 @@ class IOSReportTests(unittest.TestCase):
                         report[section][key] = altered if variant == "changed" else None
                     with self.assertRaisesRegex(ValueError, "settings"):
                         summarize_report(report, self.fixture, self.pins)
+
+    def test_rejects_changed_unified_kv_setting(self):
+        for altered in (False, 0, None):
+            with self.subTest(altered=altered):
+                report = copy.deepcopy(self.report)
+                report["metadata"]["kv_unified"] = altered
+                with self.assertRaisesRegex(ValueError, "execution settings"):
+                    summarize_report(report, self.fixture, self.pins)
+
+    def test_legacy_report_without_unified_kv_remains_diagnostic(self):
+        self.report["metadata"].pop("kv_unified")
+        self.assertTrue(
+            summarize_report(self.report, self.fixture, self.pins)["passes_gate"]
+        )
 
     def test_simulator_cannot_satisfy_physical_measurement(self):
         self.report["metadata"]["device"]["simulator"] = True
@@ -284,6 +299,28 @@ class IOSReportTests(unittest.TestCase):
                 command + ["--require-device-metadata"], capture_output=True, text=True
             )
             self.assertEqual(accepted.returncode, 0, accepted.stderr)
+            for altered in (False, 0, None, "missing"):
+                with self.subTest(kv_unified=altered):
+                    modified = copy.deepcopy(self.report)
+                    if altered == "missing":
+                        modified["metadata"].pop("kv_unified")
+                    else:
+                        modified["metadata"]["kv_unified"] = altered
+                    report.write_text(json.dumps(modified))
+                    rejected = subprocess.run(
+                        command + ["--require-device-metadata"],
+                        capture_output=True,
+                        text=True,
+                    )
+                    self.assertEqual(rejected.returncode, 1)
+                    self.assertIn(
+                        (
+                            "unified KV metadata required"
+                            if altered == "missing"
+                            else "unexpected execution settings"
+                        ),
+                        rejected.stderr,
+                    )
             for section, key, altered in (
                 ("ready", "n_batch", 1024),
                 ("metadata", "threads", 1),
@@ -423,6 +460,25 @@ class ArchivedIOSEvidenceTests(unittest.TestCase):
                     self.assertFalse(summary["declared_physical_ios"])
                     if name != "host":
                         self.assertEqual(summary["warm_samples"], 20)
+
+    def test_new_unified_kv_simulator_reports_preserve_native_output(self):
+        root = Path(__file__).resolve().parents[3]
+        pins = json.loads((root / "spikes/m0/pins.json").read_text())
+        archive = json.loads(
+            (root / "docs/notes/2026-09-28-m0-metal-diagnostic.json").read_text()
+        )
+        entries = archive["unified_kv_validation"]["simulator_cpu_repeated_runs"]
+        self.assertEqual(len(entries), 2)
+        for entry in entries:
+            with self.subTest(finished=entry["raw"]["metadata"]["finished_utc"]):
+                self.assertIs(entry["raw"]["metadata"]["kv_unified"], True)
+                self.assertEqual(entry["raw"]["metadata"]["n_gpu_layers"], 0)
+                self.assertEqual(
+                    summarize_report(entry["raw"], archive["fixture"], pins),
+                    entry["summary"],
+                )
+                self.assertTrue(entry["summary"]["passes_gate"])
+                self.assertFalse(entry["summary"]["declared_physical_ios"])
 
     def test_direct_plaintext_logits_match_archive_and_probability_errors(self):
         root = Path(__file__).resolve().parents[3]

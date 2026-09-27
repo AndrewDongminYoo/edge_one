@@ -108,6 +108,7 @@ def summarize_report(report, fixture, pins):
         type(metadata.get("threads")) is not int
         or metadata["threads"] != 4
         or metadata.get("flash_attn") != "auto"
+        or ("kv_unified" in metadata and metadata["kv_unified"] is not True)
     ):
         raise ValueError("unexpected execution settings")
     differences = []
@@ -188,7 +189,7 @@ def main():
     parser.add_argument(
         "--require-device-metadata",
         action="store_true",
-        help="require 20 warm samples, declared iPhone/Release/arm64 and default Metal/offload metadata; does not prove execution origin",
+        help="require 20 warm samples, declared iPhone/Release/arm64 and default Metal/offload/unified-KV metadata; does not prove execution origin",
     )
     args = parser.parse_args()
     pins = json.loads((Path(__file__).resolve().parents[1] / "pins.json").read_text())
@@ -202,6 +203,8 @@ def main():
     if args.require_device_metadata and summary["warm_samples"] != 20:
         raise SystemExit("20 warm samples required for the physical-device gate")
     metadata = report["metadata"]
+    if args.require_device_metadata and metadata.get("kv_unified") is not True:
+        raise SystemExit("unified KV metadata required for the physical-device gate")
     if args.require_device_metadata and not (
         type(metadata.get("n_gpu_layers")) is int
         and metadata["n_gpu_layers"] == 999
