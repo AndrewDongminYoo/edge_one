@@ -72,6 +72,7 @@ The [direct native diagnostic](docs/notes/2026-09-28-m0-metal-diagnostic.md) rep
 Both SDK builds and source receipts were refreshed after the model-integrity repair; the wrong-model rejection test passes.
 The experimental SwiftUI app calls the pinned native Scorer in process.
 It verifies model and fixture SHA-256, loads one context, resets memory before each request, and exports the first request plus 20 warm samples.
+The physical-device run then continues in the same context for at least two minutes, recording each request and its ending thermal state; the simulator runs a two-second format probe that is not performance evidence.
 The request is rendered and tokenized on the Mac; timings cover native scoring, its internal memory resets and verdict softmax, excluding the outer reset, tokenization, hashing, loading and export.
 These timings are not the production API's end-to-end latency.
 
@@ -92,7 +93,7 @@ Change the generator or source files instead of editing generated projects.
 The build command refuses to start when the one-minute load exceeds the detected CPU count.
 An unsigned build still needs local signing before physical-device installation.
 `M0_CPU_ONLY=1` disables GPU layers and operation/KV offload for a diagnostic run; the report records these settings.
-The simulator CPU XCTest checks repeated runs, disabled controls during inference, and the export button.
+The simulator CPU XCTest checks completed run counts and the export button across repeated runs.
 Other targeted diagnostic tests check fusion, shared buffers and direct upstream decoding; select a single test with `xcodebuild -only-testing:<target>/<class>/<method>` and keep parallel testing disabled.
 The direct repro's `--invalid-model` test selects the bundled JSON fixture as a wrong model input and requires SHA-256 rejection before backend/model initialization.
 Validate the exported JSON separately: a passing UI test does not establish numerical parity.
@@ -103,10 +104,10 @@ After exporting a report to a new local filename:
 python3 spikes/m0/ios/report.py path/to/m0-ios-report.json --fixture .cache/m0/ios/fixture.json --require-device-metadata
 ```
 
-The reader recomputes distributions from native yes/no scores, checks every sample against the desktop reference with the strict `1e-3` gate, and calculates the warm median.
+The reader recomputes distributions from native yes/no scores, checks baseline and sustained samples against the desktop reference with the strict `1e-3` gate, and calculates warm and final 30-second sustained-tail medians separately.
 The reader validates the declared Release/arm64 build receipt and timing boundary; `declared_physical_ios` describes metadata, not independently verified execution origin.
-`--require-device-metadata` additionally requires exactly 20 warm samples and the default requested Metal profile: 999 GPU layers, operation/KV offload enabled, and neither diagnostic Metal switch requested.
+`--require-device-metadata` additionally requires exactly 20 warm samples, at least two minutes of continued scoring with 10 final-window samples and complete thermal readings, plus the default requested Metal profile: 999 GPU layers, operation/KV offload enabled, and neither diagnostic Metal switch requested.
 CPU-only, modified and missing backend settings are rejected by that CLI gate even when numerical parity passes; recorded settings still do not independently prove GPU execution.
-Physical-device acceptance additionally requires an observed approved run and export from the connected iPhone, comparison with its local build receipt, and 20 warm samples.
+Physical-device acceptance additionally requires an observed approved run and export from the connected iPhone, comparison with its local build receipt, and review of the first, warm and sustained conditions.
 Omit `--require-device-metadata` when validating a host or simulator smoke test.
 The [iOS spec](docs/specs/2026-09-27-m0-ios-spike.md) and [plan](docs/plans/2026-09-27-m0-ios-spike.md) define the remaining build and device checks.

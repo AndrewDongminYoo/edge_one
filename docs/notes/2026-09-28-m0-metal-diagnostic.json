@@ -4007,5 +4007,2288 @@
       }
     },
     "python_tests_passed": 59
+  },
+  "thermal_sustained_probe": {
+    "scope": "Short simulator CPU report-format probe; two-minute physical segment remains unmeasured",
+    "simulator_ui_test": {
+      "result": "passed",
+      "passed_tests": 1,
+      "failed_tests": 0,
+      "result_bundle": ".cache/m0/ios/iphonesimulator/thermal-sustained-stable-ui.xcresult"
+    },
+    "reports": [
+      {
+        "raw": {
+          "metadata": {
+            "build": {
+              "architecture": "arm64",
+              "configuration": "Release",
+              "fixture_sha256": "86d5e67b5f834ca7a31d467c47bd6b0a9bc87ec361e983161cc19f18016c7027",
+              "native_archives": {
+                "native/ggml/src/ggml-metal/Release-iphonesimulator/libggml-metal.a": "abe3bdbbf0c417411464f1e6792053cfc2e9d7405c08f600ca205c77b42061c8",
+                "native/ggml/src/Release-iphonesimulator/libggml-base.a": "15653e32056aa159eb54cbb3b8b2a745c14033fba5b98a878d731af834000201",
+                "native/ggml/src/Release-iphonesimulator/libggml-cpu.a": "8d6b404081379b3177bfcc72eb74f993e5aedde9f52c89f3857d19934c947212",
+                "native/ggml/src/Release-iphonesimulator/libggml.a": "a6fe027cffae6a46172e6560147b91c3e117d4eeae9a5cf02a1f76265165fcf7",
+                "native/src/Release-iphonesimulator/libllama.a": "89b8738daab26576ecb5947d76d7669779f0045455c4cbd58364f0fd56a88229"
+              },
+              "pins": {
+                "files": [
+                  "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+                  "LICENSE",
+                  "NOTICE",
+                  "build_jev_score.sh",
+                  "jev_score.cpp",
+                  "jev_style_decision_gguf.py",
+                  "readout_config.json",
+                  "release_config.json",
+                  "requirements.txt",
+                  "tokenizer/tokenizer.json",
+                  "tokenizer/tokenizer_config.json"
+                ],
+                "llama_archive_sha256": "d55c444401db6734c2f4bba77c4d270f0e431c9e197ce5f35da8abe19a08c91b",
+                "llama_cpp_commit": "441df11f65ea0b6d0c72965aaf70c8241070ddcb",
+                "manifest_sha256": "e370c55aa62c6b47154e72e56608bde79c691cc857c10b9adf1339306ece3473",
+                "model": "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+                "repo": "chaoliangUNSW/Jev-Style-0.8B-Decision-v3-GGUF",
+                "revision": "edf37c26a1098f83cf4264b8adbe0dca2d2ebb0c"
+              },
+              "sdk": "iphonesimulator",
+              "sources": {
+                "app/M0App.swift": "8fc9820c1b6ff153eac6b7450ad85beeb392b3f8297ea7e2ef0c69cb6a481907",
+                "app/NativeBenchmark.h": "9503e4afe3474c560a5b140ff2cf3716ed7488494feb62b7a943f530590dd97a",
+                "app/NativeBenchmark.mm": "68a1f2ad2dc751eda0beb2759ba75a348c76b25d035fd7d94d20cf953439551f",
+                "Benchmark.cpp": "99b094dff193396d61ec8be0936b0be29ee7829dc0019fda0da65c5344e3a63a",
+                "Benchmark.hpp": "a3a3384bb4dd770fe2e246051f3d2bbe357c6e5f240a00c5742b304fd9acb875",
+                "build.py": "7a7998452e8621430aeb7c4b4308f4c70ca5eeb7665af275e18acf77dabf1a51",
+                "host_main.cpp": "e189709712683027ab05c816b3da61aa0e241e381bc30b528489b0109146f441",
+                "prepare.py": "03b66f59a3d046ce142e362827a8c7883edcdd4ca9e34e1b1d3307bb41246a9c",
+                "report.py": "d58abbf14361514e64fd2434672eae08558f4a46607e2ffefc7a52da50e04cc6",
+                "repro/NativeRepro.mm": "524d3ca7177f434872ffe5a3434d1ec7a83e9cfc19cad252ce516d02a0120d34",
+                "tests/BenchmarkUITests.swift": "3a820c93c462045e20e4f6dcc8cc96287c664286d2c4f4138ea8ca3a5d0dadc3",
+                "tests/NativeReproUITests.swift": "65176e916861096192f5c730313a82b13bdae4b0c1e251d58165ca0329eabd59"
+              },
+              "xcode": "Xcode 27.0\nBuild version 27A266a",
+              "xcodegen": "Version: 2.46.0"
+            },
+            "compiler": "Apple LLVM 21.0.0 (clang-2100.3.34.2)",
+            "device": {
+              "hardware": "arm64",
+              "os": "26.5",
+              "platform": "iOS",
+              "simulator": true,
+              "thermal_state_at_end": 0,
+              "thermal_state_at_start": 0
+            },
+            "finished_utc": "2026-09-27T23:04:54Z",
+            "fixture_sha256": "86d5e67b5f834ca7a31d467c47bd6b0a9bc87ec361e983161cc19f18016c7027",
+            "flash_attn": "auto",
+            "integrity_ms": 337.504292,
+            "kv_unified": true,
+            "metal_fusion_disable_requested": false,
+            "metal_shared_buffers_disable_requested": false,
+            "model_hash_verified": true,
+            "model_sha256": "0a19bc29bacc33e0d871146c8612b24dd14c2ed2e61cedeb7a928b0852628bac",
+            "n_gpu_layers": 0,
+            "offload_kqv": false,
+            "op_offload": false,
+            "pins": {
+              "files": [
+                "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+                "LICENSE",
+                "NOTICE",
+                "build_jev_score.sh",
+                "jev_score.cpp",
+                "jev_style_decision_gguf.py",
+                "readout_config.json",
+                "release_config.json",
+                "requirements.txt",
+                "tokenizer/tokenizer.json",
+                "tokenizer/tokenizer_config.json"
+              ],
+              "llama_archive_sha256": "d55c444401db6734c2f4bba77c4d270f0e431c9e197ce5f35da8abe19a08c91b",
+              "llama_cpp_commit": "441df11f65ea0b6d0c72965aaf70c8241070ddcb",
+              "manifest_sha256": "e370c55aa62c6b47154e72e56608bde79c691cc857c10b9adf1339306ece3473",
+              "model": "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+              "repo": "chaoliangUNSW/Jev-Style-0.8B-Decision-v3-GGUF",
+              "revision": "edf37c26a1098f83cf4264b8adbe0dca2d2ebb0c"
+            },
+            "repetitions": 20,
+            "sustained_elapsed_ms": 2598.142041,
+            "sustained_target_ms": 2000,
+            "threads": 4,
+            "timing_scope": "pretokenized native scoring including internal memory resets and verdict softmax"
+          },
+          "ready": {
+            "desc": "qwen35 0.8B Q4_K - Medium",
+            "load_ms": 653.5075,
+            "n_batch": 2048,
+            "n_ctx": 2048,
+            "n_outputs_max": 16,
+            "n_seq_max": 2,
+            "n_ubatch": 1024,
+            "system_info": "MTL : EMBED_LIBRARY = 1 | CPU : NEON = 1 | ARM_FMA = 1 | FP16_VA = 1 | DOTPROD = 1 | LLAMAFILE = 1 | ACCELERATE = 1 | REPACK = 1 | "
+          },
+          "records": [
+            {
+              "duration_ms": 616.144083,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [615.303416],
+                  "total_ms": 616.133542
+                }
+              },
+              "phase": "first",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 0,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 420.757667,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [419.95875],
+                  "total_ms": 420.750042
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 1,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 399.225708,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [398.4705],
+                  "total_ms": 399.218
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 2,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 309.388166,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [308.653958],
+                  "total_ms": 309.378
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 3,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 319.056792,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [318.270791],
+                  "total_ms": 319.0485
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 4,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 315.944625,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [315.234834],
+                  "total_ms": 315.936583
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 5,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 401.667833,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [400.911667],
+                  "total_ms": 401.660167
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 6,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 365.000291,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [364.092125],
+                  "total_ms": 364.991375
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 7,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 307.869542,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [307.034958],
+                  "total_ms": 307.857
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 8,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 386.23575,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [385.440458],
+                  "total_ms": 386.225334
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 9,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 302.996,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [302.263334],
+                  "total_ms": 302.987333
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 10,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 305.927916,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [305.1545],
+                  "total_ms": 305.920167
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 11,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 328.579791,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [327.869834],
+                  "total_ms": 328.568791
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 12,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 326.006917,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [325.314292],
+                  "total_ms": 326.000292
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 13,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 275.306916,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [274.50725],
+                  "total_ms": 275.2985
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 14,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 269.478333,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [268.693875],
+                  "total_ms": 269.469792
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 15,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 273.588792,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [272.865792],
+                  "total_ms": 273.581708
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 16,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 306.708666,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [305.973583],
+                  "total_ms": 306.701625
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 17,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 264.814,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [264.02225],
+                  "total_ms": 264.806167
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 18,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 270.16525,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [269.484042],
+                  "total_ms": 270.145125
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 19,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 272.846375,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [272.204375],
+                  "total_ms": 272.839458
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 20,
+              "thermal_state": 0
+            }
+          ],
+          "schema_version": 1,
+          "sustained_records": [
+            {
+              "duration_ms": 268.107542,
+              "elapsed_ms": 268.786916,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [267.389834],
+                  "total_ms": 268.096125
+                }
+              },
+              "phase": "sustained",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 0,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 433.867292,
+              "elapsed_ms": 703.477625,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [433.15275],
+                  "total_ms": 433.859875
+                }
+              },
+              "phase": "sustained",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 1,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 679.463416,
+              "elapsed_ms": 1383.6955,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [678.570584],
+                  "total_ms": 679.455667
+                }
+              },
+              "phase": "sustained",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 2,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 484.459042,
+              "elapsed_ms": 1868.931291,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [483.629292],
+                  "total_ms": 484.447917
+                }
+              },
+              "phase": "sustained",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 3,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 728.351333,
+              "elapsed_ms": 2598.142041,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [727.522292],
+                  "total_ms": 728.335958
+                }
+              },
+              "phase": "sustained",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 4,
+              "thermal_state": 0
+            }
+          ]
+        },
+        "summary": {
+          "warm_p50_ms": 308.62885400000005,
+          "warm_samples": 20,
+          "first_request_ms": 616.144083,
+          "max_abs_difference": 0.00025757958476246845,
+          "passes_gate": true,
+          "declared_physical_ios": false,
+          "timing_scope": "pretokenized native scoring including internal memory resets and verdict softmax",
+          "sustained_samples": 5,
+          "sustained_tail_samples": 5,
+          "sustained_tail_p50_ms": 484.459042,
+          "thermal_state_at_start": 0,
+          "thermal_state_at_end": 0,
+          "thermal_state_max": 0
+        }
+      },
+      {
+        "raw": {
+          "metadata": {
+            "build": {
+              "architecture": "arm64",
+              "configuration": "Release",
+              "fixture_sha256": "86d5e67b5f834ca7a31d467c47bd6b0a9bc87ec361e983161cc19f18016c7027",
+              "native_archives": {
+                "native/ggml/src/ggml-metal/Release-iphonesimulator/libggml-metal.a": "abe3bdbbf0c417411464f1e6792053cfc2e9d7405c08f600ca205c77b42061c8",
+                "native/ggml/src/Release-iphonesimulator/libggml-base.a": "15653e32056aa159eb54cbb3b8b2a745c14033fba5b98a878d731af834000201",
+                "native/ggml/src/Release-iphonesimulator/libggml-cpu.a": "8d6b404081379b3177bfcc72eb74f993e5aedde9f52c89f3857d19934c947212",
+                "native/ggml/src/Release-iphonesimulator/libggml.a": "a6fe027cffae6a46172e6560147b91c3e117d4eeae9a5cf02a1f76265165fcf7",
+                "native/src/Release-iphonesimulator/libllama.a": "89b8738daab26576ecb5947d76d7669779f0045455c4cbd58364f0fd56a88229"
+              },
+              "pins": {
+                "files": [
+                  "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+                  "LICENSE",
+                  "NOTICE",
+                  "build_jev_score.sh",
+                  "jev_score.cpp",
+                  "jev_style_decision_gguf.py",
+                  "readout_config.json",
+                  "release_config.json",
+                  "requirements.txt",
+                  "tokenizer/tokenizer.json",
+                  "tokenizer/tokenizer_config.json"
+                ],
+                "llama_archive_sha256": "d55c444401db6734c2f4bba77c4d270f0e431c9e197ce5f35da8abe19a08c91b",
+                "llama_cpp_commit": "441df11f65ea0b6d0c72965aaf70c8241070ddcb",
+                "manifest_sha256": "e370c55aa62c6b47154e72e56608bde79c691cc857c10b9adf1339306ece3473",
+                "model": "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+                "repo": "chaoliangUNSW/Jev-Style-0.8B-Decision-v3-GGUF",
+                "revision": "edf37c26a1098f83cf4264b8adbe0dca2d2ebb0c"
+              },
+              "sdk": "iphonesimulator",
+              "sources": {
+                "app/M0App.swift": "8fc9820c1b6ff153eac6b7450ad85beeb392b3f8297ea7e2ef0c69cb6a481907",
+                "app/NativeBenchmark.h": "9503e4afe3474c560a5b140ff2cf3716ed7488494feb62b7a943f530590dd97a",
+                "app/NativeBenchmark.mm": "68a1f2ad2dc751eda0beb2759ba75a348c76b25d035fd7d94d20cf953439551f",
+                "Benchmark.cpp": "99b094dff193396d61ec8be0936b0be29ee7829dc0019fda0da65c5344e3a63a",
+                "Benchmark.hpp": "a3a3384bb4dd770fe2e246051f3d2bbe357c6e5f240a00c5742b304fd9acb875",
+                "build.py": "7a7998452e8621430aeb7c4b4308f4c70ca5eeb7665af275e18acf77dabf1a51",
+                "host_main.cpp": "e189709712683027ab05c816b3da61aa0e241e381bc30b528489b0109146f441",
+                "prepare.py": "03b66f59a3d046ce142e362827a8c7883edcdd4ca9e34e1b1d3307bb41246a9c",
+                "report.py": "d58abbf14361514e64fd2434672eae08558f4a46607e2ffefc7a52da50e04cc6",
+                "repro/NativeRepro.mm": "524d3ca7177f434872ffe5a3434d1ec7a83e9cfc19cad252ce516d02a0120d34",
+                "tests/BenchmarkUITests.swift": "3a820c93c462045e20e4f6dcc8cc96287c664286d2c4f4138ea8ca3a5d0dadc3",
+                "tests/NativeReproUITests.swift": "65176e916861096192f5c730313a82b13bdae4b0c1e251d58165ca0329eabd59"
+              },
+              "xcode": "Xcode 27.0\nBuild version 27A266a",
+              "xcodegen": "Version: 2.46.0"
+            },
+            "compiler": "Apple LLVM 21.0.0 (clang-2100.3.34.2)",
+            "device": {
+              "hardware": "arm64",
+              "os": "26.5",
+              "platform": "iOS",
+              "simulator": true,
+              "thermal_state_at_end": 0,
+              "thermal_state_at_start": 0
+            },
+            "finished_utc": "2026-09-27T23:05:05Z",
+            "fixture_sha256": "86d5e67b5f834ca7a31d467c47bd6b0a9bc87ec361e983161cc19f18016c7027",
+            "flash_attn": "auto",
+            "integrity_ms": 286.017666,
+            "kv_unified": true,
+            "metal_fusion_disable_requested": false,
+            "metal_shared_buffers_disable_requested": false,
+            "model_hash_verified": true,
+            "model_sha256": "0a19bc29bacc33e0d871146c8612b24dd14c2ed2e61cedeb7a928b0852628bac",
+            "n_gpu_layers": 0,
+            "offload_kqv": false,
+            "op_offload": false,
+            "pins": {
+              "files": [
+                "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+                "LICENSE",
+                "NOTICE",
+                "build_jev_score.sh",
+                "jev_score.cpp",
+                "jev_style_decision_gguf.py",
+                "readout_config.json",
+                "release_config.json",
+                "requirements.txt",
+                "tokenizer/tokenizer.json",
+                "tokenizer/tokenizer_config.json"
+              ],
+              "llama_archive_sha256": "d55c444401db6734c2f4bba77c4d270f0e431c9e197ce5f35da8abe19a08c91b",
+              "llama_cpp_commit": "441df11f65ea0b6d0c72965aaf70c8241070ddcb",
+              "manifest_sha256": "e370c55aa62c6b47154e72e56608bde79c691cc857c10b9adf1339306ece3473",
+              "model": "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+              "repo": "chaoliangUNSW/Jev-Style-0.8B-Decision-v3-GGUF",
+              "revision": "edf37c26a1098f83cf4264b8adbe0dca2d2ebb0c"
+            },
+            "repetitions": 20,
+            "sustained_elapsed_ms": 2146.352291,
+            "sustained_target_ms": 2000,
+            "threads": 4,
+            "timing_scope": "pretokenized native scoring including internal memory resets and verdict softmax"
+          },
+          "ready": {
+            "desc": "qwen35 0.8B Q4_K - Medium",
+            "load_ms": 554.191292,
+            "n_batch": 2048,
+            "n_ctx": 2048,
+            "n_outputs_max": 16,
+            "n_seq_max": 2,
+            "n_ubatch": 1024,
+            "system_info": "MTL : EMBED_LIBRARY = 1 | CPU : NEON = 1 | ARM_FMA = 1 | FP16_VA = 1 | DOTPROD = 1 | LLAMAFILE = 1 | ACCELERATE = 1 | REPACK = 1 | "
+          },
+          "records": [
+            {
+              "duration_ms": 299.594959,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [298.93125],
+                  "total_ms": 299.587583
+                }
+              },
+              "phase": "first",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 0,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 281.930916,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [281.148625],
+                  "total_ms": 281.921875
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 1,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 903.737625,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [902.080916],
+                  "total_ms": 903.730042
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 2,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 337.117541,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [336.473959],
+                  "total_ms": 337.110167
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 3,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 300.828584,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [300.047583],
+                  "total_ms": 300.819583
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 4,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 306.824416,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [306.114334],
+                  "total_ms": 306.817167
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 5,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 254.805042,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [254.125334],
+                  "total_ms": 254.797792
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 6,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 238.950542,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [238.106042],
+                  "total_ms": 238.934167
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 7,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 243.567958,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [242.773041],
+                  "total_ms": 243.558083
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 8,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 243.49,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [242.786166],
+                  "total_ms": 243.480917
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 9,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 227.775584,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [227.063209],
+                  "total_ms": 227.769542
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 10,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 247.736708,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [246.972791],
+                  "total_ms": 247.729416
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 11,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 265.074625,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [264.317292],
+                  "total_ms": 265.065416
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 12,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 281.465583,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [280.871917],
+                  "total_ms": 281.458083
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 13,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 241.096541,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [240.465458],
+                  "total_ms": 241.089958
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 14,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 228.48525,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [227.763],
+                  "total_ms": 228.478584
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 15,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 232.947333,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [232.264166],
+                  "total_ms": 232.940375
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 16,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 307.165292,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [306.460083],
+                  "total_ms": 307.150959
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 17,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 280.910291,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [280.235916],
+                  "total_ms": 280.90125
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 18,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 256.90575,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [256.195166],
+                  "total_ms": 256.898417
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 19,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 259.768708,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [258.98075],
+                  "total_ms": 259.759166
+                }
+              },
+              "phase": "warm",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 20,
+              "thermal_state": 0
+            }
+          ],
+          "schema_version": 1,
+          "sustained_records": [
+            {
+              "duration_ms": 377.258375,
+              "elapsed_ms": 378.002708,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [376.5655],
+                  "total_ms": 377.251375
+                }
+              },
+              "phase": "sustained",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 0,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 279.4025,
+              "elapsed_ms": 658.115791,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [278.699708],
+                  "total_ms": 279.395541
+                }
+              },
+              "phase": "sustained",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 1,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 257.222459,
+              "elapsed_ms": 916.058083,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [256.477542],
+                  "total_ms": 257.215167
+                }
+              },
+              "phase": "sustained",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 2,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 362.645167,
+              "elapsed_ms": 1279.46125,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [361.874667],
+                  "total_ms": 362.635833
+                }
+              },
+              "phase": "sustained",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 3,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 344.437791,
+              "elapsed_ms": 1624.660416,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [343.622666],
+                  "total_ms": 344.429958
+                }
+              },
+              "phase": "sustained",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 4,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 270.904125,
+              "elapsed_ms": 1896.345,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [270.2805],
+                  "total_ms": 270.897834
+                }
+              },
+              "phase": "sustained",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 5,
+              "thermal_state": 0
+            },
+            {
+              "duration_ms": 249.378291,
+              "elapsed_ms": 2146.352291,
+              "memory_reset": true,
+              "native_response": {
+                "mode": "fused",
+                "n_prefix": 47,
+                "prefix_reused": false,
+                "results": [
+                  {
+                    "finite": true,
+                    "scores": [
+                      [18.637454986572266, 15.747798919677734],
+                      [15.716014862060547, 17.71569061279297],
+                      [16.151321411132812, 17.29007911682129]
+                    ]
+                  }
+                ],
+                "timing": {
+                  "prefix_ms": 0,
+                  "question_ms": [248.787375],
+                  "total_ms": 249.371416
+                }
+              },
+              "phase": "sustained",
+              "result": {
+                "answer": "billing",
+                "probabilities": {
+                  "billing": 0.9860510250155562,
+                  "sales": 0.010137583106552767,
+                  "technical": 0.0038113918778909478
+                }
+              },
+              "sample": 6,
+              "thermal_state": 0
+            }
+          ]
+        },
+        "summary": {
+          "warm_p50_ms": 258.337229,
+          "warm_samples": 20,
+          "first_request_ms": 299.594959,
+          "max_abs_difference": 0.00025757958476246845,
+          "passes_gate": true,
+          "declared_physical_ios": false,
+          "timing_scope": "pretokenized native scoring including internal memory resets and verdict softmax",
+          "sustained_samples": 7,
+          "sustained_tail_samples": 7,
+          "sustained_tail_p50_ms": 279.4025,
+          "thermal_state_at_start": 0,
+          "thermal_state_at_end": 0,
+          "thermal_state_max": 0
+        }
+      }
+    ],
+    "build_receipts": {
+      "iphoneos": {
+        "sdk": "iphoneos",
+        "configuration": "Release",
+        "architecture": "arm64",
+        "pins": {
+          "repo": "chaoliangUNSW/Jev-Style-0.8B-Decision-v3-GGUF",
+          "revision": "edf37c26a1098f83cf4264b8adbe0dca2d2ebb0c",
+          "manifest_sha256": "e370c55aa62c6b47154e72e56608bde79c691cc857c10b9adf1339306ece3473",
+          "model": "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+          "llama_cpp_commit": "441df11f65ea0b6d0c72965aaf70c8241070ddcb",
+          "llama_archive_sha256": "d55c444401db6734c2f4bba77c4d270f0e431c9e197ce5f35da8abe19a08c91b",
+          "files": [
+            "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+            "LICENSE",
+            "NOTICE",
+            "build_jev_score.sh",
+            "jev_score.cpp",
+            "jev_style_decision_gguf.py",
+            "readout_config.json",
+            "release_config.json",
+            "requirements.txt",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json"
+          ]
+        },
+        "xcode": "Xcode 27.0\nBuild version 27A266a",
+        "xcodegen": "Version: 2.46.0",
+        "native_archives": {
+          "native/ggml/src/Release-iphoneos/libggml-base.a": "b31b6319d05312a9f05cec8ae1d0b3a4fe5b8c9721addfc13b619b29bd4ba9df",
+          "native/ggml/src/Release-iphoneos/libggml-cpu.a": "e0993c67bad717a385ab46b4e2cde9446d773da5fccf536a5a63a781c2e85ef6",
+          "native/ggml/src/Release-iphoneos/libggml.a": "5cfc0fbaf57303825abfab28a051671af8368f676d3a3d368601d848d3763584",
+          "native/ggml/src/ggml-metal/Release-iphoneos/libggml-metal.a": "ef028b39f0cec23378bd2937101ab974be6d21677f57956c997d0fd3a2a504c1",
+          "native/src/Release-iphoneos/libllama.a": "4b4db972a90e70043ada31d8b03db9e50952e7f5034e9f4538a737ed8e078589"
+        },
+        "sources": {
+          "Benchmark.cpp": "99b094dff193396d61ec8be0936b0be29ee7829dc0019fda0da65c5344e3a63a",
+          "Benchmark.hpp": "a3a3384bb4dd770fe2e246051f3d2bbe357c6e5f240a00c5742b304fd9acb875",
+          "app/M0App.swift": "8fc9820c1b6ff153eac6b7450ad85beeb392b3f8297ea7e2ef0c69cb6a481907",
+          "app/NativeBenchmark.h": "9503e4afe3474c560a5b140ff2cf3716ed7488494feb62b7a943f530590dd97a",
+          "app/NativeBenchmark.mm": "68a1f2ad2dc751eda0beb2759ba75a348c76b25d035fd7d94d20cf953439551f",
+          "build.py": "7a7998452e8621430aeb7c4b4308f4c70ca5eeb7665af275e18acf77dabf1a51",
+          "host_main.cpp": "e189709712683027ab05c816b3da61aa0e241e381bc30b528489b0109146f441",
+          "prepare.py": "03b66f59a3d046ce142e362827a8c7883edcdd4ca9e34e1b1d3307bb41246a9c",
+          "report.py": "d58abbf14361514e64fd2434672eae08558f4a46607e2ffefc7a52da50e04cc6",
+          "repro/NativeRepro.mm": "524d3ca7177f434872ffe5a3434d1ec7a83e9cfc19cad252ce516d02a0120d34",
+          "tests/BenchmarkUITests.swift": "3a820c93c462045e20e4f6dcc8cc96287c664286d2c4f4138ea8ca3a5d0dadc3",
+          "tests/NativeReproUITests.swift": "65176e916861096192f5c730313a82b13bdae4b0c1e251d58165ca0329eabd59"
+        },
+        "fixture_sha256": "86d5e67b5f834ca7a31d467c47bd6b0a9bc87ec361e983161cc19f18016c7027",
+        "app_binary_sha256": "40eaf02624320f8a9916bf4d9e15e5f12c2b4ea9bef4b123222dc0a60a9b665e"
+      },
+      "iphonesimulator": {
+        "sdk": "iphonesimulator",
+        "configuration": "Release",
+        "architecture": "arm64",
+        "pins": {
+          "repo": "chaoliangUNSW/Jev-Style-0.8B-Decision-v3-GGUF",
+          "revision": "edf37c26a1098f83cf4264b8adbe0dca2d2ebb0c",
+          "manifest_sha256": "e370c55aa62c6b47154e72e56608bde79c691cc857c10b9adf1339306ece3473",
+          "model": "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+          "llama_cpp_commit": "441df11f65ea0b6d0c72965aaf70c8241070ddcb",
+          "llama_archive_sha256": "d55c444401db6734c2f4bba77c4d270f0e431c9e197ce5f35da8abe19a08c91b",
+          "files": [
+            "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+            "LICENSE",
+            "NOTICE",
+            "build_jev_score.sh",
+            "jev_score.cpp",
+            "jev_style_decision_gguf.py",
+            "readout_config.json",
+            "release_config.json",
+            "requirements.txt",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json"
+          ]
+        },
+        "xcode": "Xcode 27.0\nBuild version 27A266a",
+        "xcodegen": "Version: 2.46.0",
+        "native_archives": {
+          "native/ggml/src/Release-iphonesimulator/libggml-base.a": "15653e32056aa159eb54cbb3b8b2a745c14033fba5b98a878d731af834000201",
+          "native/ggml/src/Release-iphonesimulator/libggml-cpu.a": "8d6b404081379b3177bfcc72eb74f993e5aedde9f52c89f3857d19934c947212",
+          "native/ggml/src/Release-iphonesimulator/libggml.a": "a6fe027cffae6a46172e6560147b91c3e117d4eeae9a5cf02a1f76265165fcf7",
+          "native/ggml/src/ggml-metal/Release-iphonesimulator/libggml-metal.a": "abe3bdbbf0c417411464f1e6792053cfc2e9d7405c08f600ca205c77b42061c8",
+          "native/src/Release-iphonesimulator/libllama.a": "89b8738daab26576ecb5947d76d7669779f0045455c4cbd58364f0fd56a88229"
+        },
+        "sources": {
+          "Benchmark.cpp": "99b094dff193396d61ec8be0936b0be29ee7829dc0019fda0da65c5344e3a63a",
+          "Benchmark.hpp": "a3a3384bb4dd770fe2e246051f3d2bbe357c6e5f240a00c5742b304fd9acb875",
+          "app/M0App.swift": "8fc9820c1b6ff153eac6b7450ad85beeb392b3f8297ea7e2ef0c69cb6a481907",
+          "app/NativeBenchmark.h": "9503e4afe3474c560a5b140ff2cf3716ed7488494feb62b7a943f530590dd97a",
+          "app/NativeBenchmark.mm": "68a1f2ad2dc751eda0beb2759ba75a348c76b25d035fd7d94d20cf953439551f",
+          "build.py": "7a7998452e8621430aeb7c4b4308f4c70ca5eeb7665af275e18acf77dabf1a51",
+          "host_main.cpp": "e189709712683027ab05c816b3da61aa0e241e381bc30b528489b0109146f441",
+          "prepare.py": "03b66f59a3d046ce142e362827a8c7883edcdd4ca9e34e1b1d3307bb41246a9c",
+          "report.py": "d58abbf14361514e64fd2434672eae08558f4a46607e2ffefc7a52da50e04cc6",
+          "repro/NativeRepro.mm": "524d3ca7177f434872ffe5a3434d1ec7a83e9cfc19cad252ce516d02a0120d34",
+          "tests/BenchmarkUITests.swift": "3a820c93c462045e20e4f6dcc8cc96287c664286d2c4f4138ea8ca3a5d0dadc3",
+          "tests/NativeReproUITests.swift": "65176e916861096192f5c730313a82b13bdae4b0c1e251d58165ca0329eabd59"
+        },
+        "fixture_sha256": "86d5e67b5f834ca7a31d467c47bd6b0a9bc87ec361e983161cc19f18016c7027",
+        "app_binary_sha256": "3da80c13983fb746fbe3b1d099a93a87e6c06b425c78db0c805c84a43fc53fac"
+      }
+    }
   }
 }

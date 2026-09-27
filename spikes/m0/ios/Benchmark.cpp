@@ -7,6 +7,7 @@
 #include <mutex>
 #include <sstream>
 #include <stdexcept>
+#include <utility>
 
 // Include the verified reference implementation without using its process/stdio CLI.
 // Source integrity is checked by build.py before compilation.
@@ -71,10 +72,12 @@ struct Backend {
 } // namespace
 
 std::string m0_benchmark(const std::string & model_path, const std::string & fixture_json,
-                         const std::string & fixture_sha256, int repetitions) {
+                         const std::string & fixture_sha256, int repetitions,
+                         int sustained_ms, int (*thermal_state)()) {
     std::lock_guard<std::mutex> lock(benchmark_mutex);
-    if (repetitions < 1 || repetitions > 100 || fixture_json.size() > 1024 * 1024)
-        throw std::runtime_error("invalid repetitions or fixture size");
+    if (repetitions < 1 || repetitions > 100 || sustained_ms < 0 || sustained_ms > 300000 ||
+        fixture_json.size() > 1024 * 1024)
+        throw std::runtime_error("invalid repetitions, sustained duration or fixture size");
     unsigned char fixture_digest[CC_SHA256_DIGEST_LENGTH];
     CC_SHA256(fixture_json.data(), static_cast<CC_LONG>(fixture_json.size()), fixture_digest);
     if (hex_digest(fixture_digest) != fixture_sha256)
@@ -149,17 +152,36 @@ std::string m0_benchmark(const std::string & model_path, const std::string & fix
                    {"system_info", llama_print_system_info()}}},
         {"records", json::array()}
     };
-    for (int sample = 0; sample <= repetitions; ++sample) {
+    const auto score_sample = [&](int sample, const char * phase) {
         scorer.clear();
         const auto start = clk::now();
         json response = scorer.handle(request);
         json result = decision(response, fixture);
         const double duration = ms_since(start);
-        report["records"].push_back({
-            {"sample", sample}, {"phase", sample == 0 ? "first" : "warm"},
+        json record = {
+            {"sample", sample}, {"phase", phase},
             {"duration_ms", duration}, {"memory_reset", true},
             {"native_response", response}, {"result", result}
-        });
+        };
+        if (thermal_state) record["thermal_state"] = thermal_state();
+        return record;
+    };
+    for (int sample = 0; sample <= repetitions; ++sample) {
+        report["records"].push_back(score_sample(sample, sample == 0 ? "first" : "warm"));
+    }
+    if (sustained_ms > 0) {
+        report["metadata"]["sustained_target_ms"] = sustained_ms;
+        report["sustained_records"] = json::array();
+        const auto sustained_start = clk::now();
+        double elapsed = 0;
+        int sample = 0;
+        do {
+            json record = score_sample(sample++, "sustained");
+            elapsed = ms_since(sustained_start);
+            record["elapsed_ms"] = elapsed;
+            report["sustained_records"].push_back(std::move(record));
+        } while (elapsed < sustained_ms);
+        report["metadata"]["sustained_elapsed_ms"] = elapsed;
     }
     return report.dump();
 }

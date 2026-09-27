@@ -18,8 +18,7 @@ final class BenchmarkUITests: XCTestCase {
         let run = app.buttons["runBenchmark"]
         XCTAssertTrue(run.waitForExistence(timeout: 10))
         run.tap()
-        let running = XCTNSPredicateExpectation(predicate: NSPredicate(format: "enabled == false"), object: run)
-        XCTAssertEqual(XCTWaiter.wait(for: [running], timeout: 10), .completed)
+        XCTAssertTrue(app.staticTexts["Completed runs: 1"].waitForExistence(timeout: 120))
         XCTAssertTrue(app.buttons["Export JSON report"].waitForExistence(timeout: 120))
         XCTAssertTrue(run.isEnabled)
         let screenshot = XCTAttachment(screenshot: app.screenshot())
@@ -36,10 +35,9 @@ final class BenchmarkUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Simulator run. Physical-device latency remains unmeasured."].waitForExistence(timeout: 10))
         let run = app.buttons["runBenchmark"]
         XCTAssertTrue(run.exists)
-        for _ in 0..<2 {
+        for completed in 1...2 {
             run.tap()
-            let running = XCTNSPredicateExpectation(predicate: NSPredicate(format: "enabled == false"), object: run)
-            XCTAssertEqual(XCTWaiter.wait(for: [running], timeout: 10), .completed)
+            XCTAssertTrue(app.staticTexts["Completed runs: \(completed)"].waitForExistence(timeout: 120))
             XCTAssertTrue(app.buttons["Export JSON report"].waitForExistence(timeout: 120))
             XCTAssertTrue(run.isEnabled)
         }

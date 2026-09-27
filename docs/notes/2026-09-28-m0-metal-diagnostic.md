@@ -66,3 +66,17 @@ The seven changed or missing cases failed rejection tests before this repair; al
 The two refreshed unsigned arm64 SDK builds have verified current-source and main-binary hashes under `unified_kv_validation`.
 A repeated simulator CPU UI test passed one test with no failures and exported two new 20-warm-sample reports with `kv_unified=true`; both pass the numerical gate at maximum difference 0.00025757958476246845.
 These are new simulator CPU results, not changes to the seven historical measurements; simulator Metal and physical-device behavior remain unresolved.
+
+## Thermal and Sustained Probe
+
+The device-validation change preserves the original first request and 20 warm samples, then continues scoring with the same loaded model and context for a separate time-bounded segment.
+The native bridge records thermal state after each request; the app adds start and end readings.
+The reader checks segment order, duration, results, telemetry and parity, then calculates the median from the last 30 seconds.
+The physical gate requires at least two minutes and 10 tail samples, so the two-second simulator probe cannot satisfy it.
+
+The first simulator UI run generated valid reports but its second automatic test repetition missed a transient button-disabled state while system load was high; the overall XCTest result failed.
+The UI test now waits for persistent completed-run counts of one and two.
+The subsequent run passed one test with no failures, and two new simulator CPU exports are preserved under `thermal_sustained_probe` in the raw artifact.
+Both have 20 warm samples, short sustained-format segments of five and seven requests, complete thermal fields, and maximum probability difference 0.00025757958476246845 across both segments.
+All recorded simulator thermal states were nominal; this does not establish how the daily iPhone behaves under sustained work.
+Both unsigned SDK builds and their current source and app-binary hashes are preserved with the probe.

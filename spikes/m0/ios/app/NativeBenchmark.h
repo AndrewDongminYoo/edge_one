@@ -6,6 +6,7 @@ NS_ASSUME_NONNULL_BEGIN
                            fixtureJSON:(NSString *)fixtureJSON
                          fixtureSHA256:(NSString *)fixtureSHA256
                            repetitions:(NSInteger)repetitions
+                 sustainedMilliseconds:(NSInteger)sustainedMilliseconds
                                  error:(NSError **)error;
 @end
 NS_ASSUME_NONNULL_END

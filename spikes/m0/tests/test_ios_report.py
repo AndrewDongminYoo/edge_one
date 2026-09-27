@@ -95,6 +95,65 @@ class IOSReportTests(unittest.TestCase):
             ],
         }
 
+    def add_sustained_samples(self):
+        metadata = self.report["metadata"]
+        metadata["sustained_target_ms"] = 120000
+        metadata["sustained_elapsed_ms"] = 120000.0
+        metadata["device"].update(thermal_state_at_start=0, thermal_state_at_end=1)
+        for record in self.report["records"]:
+            record["thermal_state"] = 0
+        first = self.report["records"][0]
+        self.report["sustained_records"] = [
+            {
+                **copy.deepcopy(first),
+                "sample": i,
+                "phase": "sustained",
+                "elapsed_ms": float((i + 1) * 3000),
+                "thermal_state": 0 if i < 20 else 1,
+            }
+            for i in range(40)
+        ]
+
+    def test_sustained_report_records_thermal_change_and_tail(self):
+        self.add_sustained_samples()
+        summary = summarize_report(self.report, self.fixture, self.pins)
+        self.assertEqual(summary["sustained_samples"], 40)
+        self.assertEqual(summary["sustained_tail_samples"], 11)
+        self.assertEqual(summary["thermal_state_at_start"], 0)
+        self.assertEqual(summary["thermal_state_at_end"], 1)
+        self.assertEqual(summary["thermal_state_max"], 1)
+
+    def test_sustained_report_rejects_missing_or_inconsistent_telemetry(self):
+        self.add_sustained_samples()
+        for section, key in (
+            ("device", "thermal_state_at_end"),
+            ("metadata", "sustained_elapsed_ms"),
+            ("baseline", "thermal_state"),
+            ("sustained", "thermal_state"),
+            ("sustained", "elapsed_ms"),
+        ):
+            with self.subTest(section=section, key=key):
+                report = copy.deepcopy(self.report)
+                target = (
+                    report["metadata"]["device"]
+                    if section == "device"
+                    else (
+                        report["metadata"]
+                        if section == "metadata"
+                        else (
+                            report["records"][0]
+                            if section == "baseline"
+                            else report["sustained_records"][0]
+                        )
+                    )
+                )
+                target.pop(key)
+                with self.assertRaisesRegex(ValueError, "sustained|thermal"):
+                    summarize_report(report, self.fixture, self.pins)
+        self.report["sustained_records"][1]["elapsed_ms"] = 1.0
+        with self.assertRaisesRegex(ValueError, "sustained"):
+            summarize_report(self.report, self.fixture, self.pins)
+
     def test_recomputes_median_and_parity(self):
         summary = summarize_report(self.report, self.fixture, self.pins)
         self.assertEqual(summary["warm_p50_ms"], 45.0)
@@ -283,6 +342,7 @@ class IOSReportTests(unittest.TestCase):
             }
             for i in range(21)
         ]
+        self.add_sustained_samples()
         with tempfile.TemporaryDirectory() as directory:
             fixture = Path(directory) / "fixture.json"
             report = Path(directory) / "report.json"
@@ -419,6 +479,7 @@ class IOSReportTests(unittest.TestCase):
                         }
                         for i in range(repetitions + 1)
                     ]
+                    self.add_sustained_samples()
                     report.write_text(json.dumps(self.report))
                     command = [
                         sys.executable,
@@ -439,6 +500,60 @@ class IOSReportTests(unittest.TestCase):
                     else:
                         self.assertEqual(checked.returncode, 1)
                         self.assertIn("20 warm samples required", checked.stderr)
+
+    def test_physical_cli_requires_sustained_segment_and_thermal_conditions(self):
+        root = Path(__file__).resolve().parents[1]
+        pins = json.loads((root / "pins.json").read_text())
+        self.fixture["pins"] = pins
+        digest = hashlib.sha256(
+            json.dumps(self.fixture, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()
+        metadata = self.report["metadata"]
+        metadata.update(pins=pins, fixture_sha256=digest, repetitions=20)
+        metadata["build"].update(pins=pins, fixture_sha256=digest)
+        first = self.report["records"][0]
+        self.report["records"] = [
+            {
+                **copy.deepcopy(first),
+                "sample": i,
+                "phase": "first" if i == 0 else "warm",
+            }
+            for i in range(21)
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            fixture = Path(directory) / "fixture.json"
+            report = Path(directory) / "report.json"
+            fixture.write_text(json.dumps(self.fixture))
+            command = [
+                sys.executable,
+                str(root / "ios/report.py"),
+                str(report),
+                "--fixture",
+                str(fixture),
+                "--require-device-metadata",
+            ]
+            report.write_text(json.dumps(self.report))
+            missing = subprocess.run(command, capture_output=True, text=True)
+            self.assertEqual(missing.returncode, 1)
+            self.assertIn("sustained", missing.stderr)
+            self.add_sustained_samples()
+            report.write_text(json.dumps(self.report))
+            accepted = subprocess.run(command, capture_output=True, text=True)
+            self.assertEqual(accepted.returncode, 0, accepted.stderr)
+            for change in ("short_target", "short_tail", "missing_end"):
+                with self.subTest(change=change):
+                    altered = copy.deepcopy(self.report)
+                    if change == "short_target":
+                        altered["metadata"]["sustained_target_ms"] = 1000
+                    elif change == "short_tail":
+                        altered["sustained_records"] = altered["sustained_records"][:20]
+                        altered["sustained_records"][-1]["elapsed_ms"] = 120000.0
+                    else:
+                        altered["metadata"]["device"].pop("thermal_state_at_end")
+                    report.write_text(json.dumps(altered))
+                    rejected = subprocess.run(command, capture_output=True, text=True)
+                    self.assertEqual(rejected.returncode, 1)
+                    self.assertRegex(rejected.stderr, "sustained|thermal")
 
 
 class ArchivedIOSEvidenceTests(unittest.TestCase):
@@ -476,6 +591,33 @@ class ArchivedIOSEvidenceTests(unittest.TestCase):
                 self.assertEqual(
                     summarize_report(entry["raw"], archive["fixture"], pins),
                     entry["summary"],
+                )
+                self.assertTrue(entry["summary"]["passes_gate"])
+                self.assertFalse(entry["summary"]["declared_physical_ios"])
+
+    def test_thermal_sustained_probe_preserves_exported_simulator_data(self):
+        root = Path(__file__).resolve().parents[3]
+        pins = json.loads((root / "spikes/m0/pins.json").read_text())
+        archive = json.loads(
+            (root / "docs/notes/2026-09-28-m0-metal-diagnostic.json").read_text()
+        )
+        entries = archive["thermal_sustained_probe"]["reports"]
+        self.assertEqual(len(entries), 2)
+        for entry in entries:
+            with self.subTest(finished=entry["raw"]["metadata"]["finished_utc"]):
+                raw = entry["raw"]
+                self.assertEqual(raw["metadata"]["sustained_target_ms"], 2000)
+                self.assertEqual(len(raw["records"]), 21)
+                self.assertTrue(
+                    all("thermal_state" in record for record in raw["records"])
+                )
+                self.assertTrue(
+                    all(
+                        "thermal_state" in record for record in raw["sustained_records"]
+                    )
+                )
+                self.assertEqual(
+                    summarize_report(raw, archive["fixture"], pins), entry["summary"]
                 )
                 self.assertTrue(entry["summary"]["passes_gate"])
                 self.assertFalse(entry["summary"]["declared_physical_ios"])

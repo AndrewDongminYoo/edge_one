@@ -13,6 +13,7 @@ struct M0App: App {
 @MainActor
 final class BenchmarkModel: ObservableObject {
     @Published var isRunning = false
+    @Published var completedRuns = 0
     @Published var status = "One pretokenized Choice request. Model hashing and loading are measured separately."
     @Published var reportURL: URL?
 
@@ -20,7 +21,11 @@ final class BenchmarkModel: ObservableObject {
         guard !isRunning else { return }
         isRunning = true
         reportURL = nil
-        status = "Verifying model, then running first + 20 warm requests…"
+        #if targetEnvironment(simulator)
+        status = "Verifying model, then running first + 20 warm requests and a short sustained-format probe…"
+        #else
+        status = "Verifying model, then running first + 20 warm requests and a two-minute sustained segment…"
+        #endif
         var size = 0
         sysctlbyname("hw.machine", nil, &size, nil, 0)
         var hardware = [CChar](repeating: 0, count: max(size, 1))
@@ -45,6 +50,7 @@ final class BenchmarkModel: ObservableObject {
                 }.value
                 status = result.0
                 reportURL = result.1
+                completedRuns += 1
             } catch {
                 status = "Benchmark failed: \(error.localizedDescription)"
             }
@@ -63,13 +69,24 @@ final class BenchmarkModel: ObservableObject {
               let fixtureHash = receipt["fixture_sha256"] as? String else {
             throw NSError(domain: "edge_one.m0", code: 5, userInfo: [NSLocalizedDescriptionKey: "Missing fixture checksum"])
         }
-        let raw = try NativeBenchmark.run(withModelPath: modelURL.path, fixtureJSON: fixture, fixtureSHA256: fixtureHash, repetitions: 20)
+        #if targetEnvironment(simulator)
+        let sustainedMilliseconds = 2000
+        #else
+        let sustainedMilliseconds = 120000
+        #endif
+        let raw = try NativeBenchmark.run(withModelPath: modelURL.path, fixtureJSON: fixture, fixtureSHA256: fixtureHash, repetitions: 20, sustainedMilliseconds: sustainedMilliseconds)
         guard var report = try JSONSerialization.jsonObject(with: Data(raw.utf8)) as? [String: Any],
               var metadata = report["metadata"] as? [String: Any],
-              let records = report["records"] as? [[String: Any]], records.count == 21 else {
+              let records = report["records"] as? [[String: Any]], records.count == 21,
+              let sustained = report["sustained_records"] as? [[String: Any]], !sustained.isEmpty,
+              let sustainedElapsed = metadata["sustained_elapsed_ms"] as? Double else {
             throw NSError(domain: "edge_one.m0", code: 3, userInfo: [NSLocalizedDescriptionKey: "Invalid native report"])
         }
-        metadata["device"] = try JSONSerialization.jsonObject(with: deviceData)
+        guard var device = try JSONSerialization.jsonObject(with: deviceData) as? [String: Any] else {
+            throw NSError(domain: "edge_one.m0", code: 3, userInfo: [NSLocalizedDescriptionKey: "Invalid device metadata"])
+        }
+        device["thermal_state_at_end"] = ProcessInfo.processInfo.thermalState.rawValue
+        metadata["device"] = device
         metadata["build"] = receipt
         metadata["finished_utc"] = ISO8601DateFormatter().string(from: Date())
         report["metadata"] = metadata
@@ -78,12 +95,23 @@ final class BenchmarkModel: ObservableObject {
             throw NSError(domain: "edge_one.m0", code: 4, userInfo: [NSLocalizedDescriptionKey: "Invalid warm samples"])
         }
         let median = (warm[9] + warm[10]) / 2
+        let tail = sustained.compactMap { record -> Double? in
+            guard let elapsed = record["elapsed_ms"] as? Double,
+                  let duration = record["duration_ms"] as? Double,
+                  elapsed >= sustainedElapsed - 30000, duration.isFinite, duration > 0 else { return nil }
+            return duration
+        }.sorted()
+        guard !tail.isEmpty else {
+            throw NSError(domain: "edge_one.m0", code: 6, userInfo: [NSLocalizedDescriptionKey: "Missing sustained samples"])
+        }
+        let tailMedian = (tail[(tail.count - 1) / 2] + tail[tail.count / 2]) / 2
         let data = try JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted, .sortedKeys])
         let directory = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         let url = directory.appendingPathComponent("m0-ios-\(UUID().uuidString).json")
         try data.write(to: url, options: .atomic)
         print("M0_REPORT_PATH=\(url.path)")
-        return (String(format: "Warm p50: %.1f ms (20 samples)\nPretokenized native scoring + softmax. Export the raw report for parity validation.", median), url)
+        let tailLabel = (device["simulator"] as? Bool == true) ? "Short sustained-format probe" : "Sustained last-30-second"
+        return (String(format: "Warm p50: %.1f ms (20 samples)\n%@: %.1f ms p50 (%d samples)\nPretokenized native scoring + softmax. Export the raw report for parity validation.", median, tailLabel, tailMedian, tail.count), url)
     }
 }
 
@@ -100,8 +128,9 @@ struct BenchmarkView: View {
                     .foregroundStyle(.secondary)
                 #endif
                 Text(model.status).textSelection(.enabled)
+                Text("Completed runs: \(model.completedRuns)")
                 if model.isRunning { ProgressView() }
-                Button("Run 20 warm samples", action: model.run)
+                Button("Run benchmark", action: model.run)
                     .buttonStyle(.borderedProminent)
                     .disabled(model.isRunning)
                     .accessibilityIdentifier("runBenchmark")

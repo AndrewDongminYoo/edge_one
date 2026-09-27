@@ -111,9 +111,50 @@ def summarize_report(report, fixture, pins):
         or ("kv_unified" in metadata and metadata["kv_unified"] is not True)
     ):
         raise ValueError("unexpected execution settings")
+    sustained = report.get("sustained_records")
+    expected = [
+        (i, "first" if i == 0 else "warm", record) for i, record in enumerate(records)
+    ]
+    if sustained is not None:
+        target = metadata.get("sustained_target_ms")
+        elapsed = metadata.get("sustained_elapsed_ms")
+        if (
+            not isinstance(sustained, list)
+            or not sustained
+            or type(target) is not int
+            or not 0 < target <= 300000
+            or type(elapsed) not in (int, float)
+            or not math.isfinite(elapsed)
+            or elapsed < target
+        ):
+            raise ValueError("invalid sustained segment")
+        previous = 0
+        for i, record in enumerate(sustained):
+            sample_elapsed = record.get("elapsed_ms")
+            if (
+                type(sample_elapsed) not in (int, float)
+                or not math.isfinite(sample_elapsed)
+                or sample_elapsed <= previous
+                or sample_elapsed > elapsed
+            ):
+                raise ValueError("invalid sustained elapsed time")
+            previous = sample_elapsed
+            expected.append((i, "sustained", record))
+        if previous != elapsed:
+            raise ValueError("sustained elapsed time mismatch")
+        device = metadata["device"]
+        thermal_states = [
+            device.get("thermal_state_at_start"),
+            device.get("thermal_state_at_end"),
+        ]
+        thermal_states.extend(record.get("thermal_state") for _, _, record in expected)
+        if any(
+            type(state) is not int or state not in range(4) for state in thermal_states
+        ):
+            raise ValueError("invalid thermal state")
     differences = []
-    for i, record in enumerate(records):
-        if record["sample"] != i or record["phase"] != ("first" if i == 0 else "warm"):
+    for i, phase, record in expected:
+        if record["sample"] != i or record["phase"] != phase:
             raise ValueError("unexpected record set")
         if record["memory_reset"] is not True:
             raise ValueError("memory reset missing")
@@ -170,7 +211,7 @@ def summarize_report(report, fixture, pins):
         and bool(device["os"])
         and metadata.get("build", {}).get("sdk") == "iphoneos"
     )
-    return {
+    summary = {
         "warm_p50_ms": statistics.median(r["duration_ms"] for r in records[1:]),
         "warm_samples": repetitions,
         "first_request_ms": records[0]["duration_ms"],
@@ -180,6 +221,21 @@ def summarize_report(report, fixture, pins):
         "declared_physical_ios": physical,
         "timing_scope": metadata["timing_scope"],
     }
+    if sustained is not None:
+        tail = [
+            record["duration_ms"]
+            for record in sustained
+            if record["elapsed_ms"] >= elapsed - 30000
+        ]
+        summary.update(
+            sustained_samples=len(sustained),
+            sustained_tail_samples=len(tail),
+            sustained_tail_p50_ms=statistics.median(tail),
+            thermal_state_at_start=device["thermal_state_at_start"],
+            thermal_state_at_end=device["thermal_state_at_end"],
+            thermal_state_max=max(thermal_states),
+        )
+    return summary
 
 
 def main():
@@ -189,7 +245,7 @@ def main():
     parser.add_argument(
         "--require-device-metadata",
         action="store_true",
-        help="require 20 warm samples, declared iPhone/Release/arm64 and default Metal/offload/unified-KV metadata; does not prove execution origin",
+        help="require 20 warm samples, a two-minute sustained thermal segment, declared iPhone/Release/arm64 and default Metal/offload/unified-KV metadata; does not prove execution origin",
     )
     args = parser.parse_args()
     pins = json.loads((Path(__file__).resolve().parents[1] / "pins.json").read_text())
@@ -202,6 +258,14 @@ def main():
         )
     if args.require_device_metadata and summary["warm_samples"] != 20:
         raise SystemExit("20 warm samples required for the physical-device gate")
+    if args.require_device_metadata and (
+        summary.get("sustained_samples") is None
+        or report["metadata"]["sustained_target_ms"] < 120000
+        or summary["sustained_tail_samples"] < 10
+    ):
+        raise SystemExit(
+            "sustained thermal segment required for the physical-device gate"
+        )
     metadata = report["metadata"]
     if args.require_device_metadata and metadata.get("kv_unified") is not True:
         raise SystemExit("unified KV metadata required for the physical-device gate")
