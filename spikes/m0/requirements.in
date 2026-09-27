@@ -1,0 +1,4 @@
+# Experimental reference runtime and local native build tool only.
+numpy>=1.26
+tokenizers>=0.21
+cmake>=3.30,<5

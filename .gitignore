@@ -1,1 +1,4 @@
-
+# M0 reference runtime, weights, native build, and virtual environment.
+/.cache/m0/
+__pycache__/
+*.pyc
