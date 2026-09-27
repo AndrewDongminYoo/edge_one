@@ -63,3 +63,48 @@ Preserve the upstream model's LICENSE and NOTICE with downloaded artifacts.
 GitHub Actions runs the unit tests and validates the archived measurements against current fixture and model pins.
 The report checker recomputes probability gates, native sharing observations, and timing summaries from the stored records.
 CI does not rerun native inference or verify performance on its runner.
+
+## M0 iOS Spike
+
+Host inference and unsigned iOS/simulator arm64 builds have passed; physical-device validation remains pending.
+Simulator CPU parity passes, while the default simulator Metal path fails parity; see the [validation record](docs/notes/2026-09-27-m0-ios-validation.md).
+The [direct native diagnostic](docs/notes/2026-09-28-m0-metal-diagnostic.md) reproduces the Metal failure without Scorer or Swift; its root cause and physical-device behavior remain unverified.
+Both SDK builds and source receipts were refreshed after the model-integrity repair; the wrong-model rejection test passes.
+The experimental SwiftUI app calls the pinned native Scorer in process.
+It verifies model and fixture SHA-256, loads one context, resets memory before each request, and exports the first request plus 20 warm samples.
+The request is rendered and tokenized on the Mac; timings cover native scoring, its internal memory resets and verdict softmax, excluding the outer reset, tokenization, hashing, loading and export.
+These timings are not the production API's end-to-end latency.
+
+Requires the desktop M0 environment, Xcode with its Metal toolchain, and an existing XcodeGen installation.
+Build one target at a time from the repository root:
+
+```bash
+.cache/m0/.venv/bin/python spikes/m0/ios/prepare.py
+.cache/m0/.venv/bin/python spikes/m0/ios/build.py --sdk host
+.cache/m0/.venv/bin/python spikes/m0/ios/build.py --sdk iphoneos --jobs 2
+# Build the simulator separately when needed.
+.cache/m0/.venv/bin/python spikes/m0/ios/build.py --sdk iphonesimulator --jobs 2
+```
+
+The host target is a smoke-test binary at `.cache/m0/ios/host/m0-host`; it accepts model and fixture filenames and prints a report with two warm samples.
+App projects, bundled model/license resources, source/library receipts and unsigned Release products are generated under `.cache/m0/ios/<sdk>/`.
+Change the generator or source files instead of editing generated projects.
+The build command refuses to start when the one-minute load exceeds the detected CPU count.
+An unsigned build still needs local signing before physical-device installation.
+`M0_CPU_ONLY=1` disables GPU layers and operation/KV offload for a diagnostic run; the report records these settings.
+The simulator CPU XCTest checks repeated runs, disabled controls during inference, and the export button.
+Other targeted diagnostic tests check fusion, shared buffers and direct upstream decoding; select a single test with `xcodebuild -only-testing:<target>/<class>/<method>` and keep parallel testing disabled.
+The direct repro's `--invalid-model` test selects the bundled JSON fixture as a wrong model input and requires SHA-256 rejection before backend/model initialization.
+Validate the exported JSON separately: a passing UI test does not establish numerical parity.
+
+After exporting a report to a new local filename:
+
+```bash
+python3 spikes/m0/ios/report.py path/to/m0-ios-report.json --fixture .cache/m0/ios/fixture.json --require-device-metadata
+```
+
+The reader recomputes distributions from native yes/no scores, checks every sample against the desktop reference with the strict `1e-3` gate, and calculates the warm median.
+The reader validates the declared Release/arm64 build receipt and timing boundary; `declared_physical_ios` describes metadata, not independently verified execution origin.
+Physical-device acceptance additionally requires an observed approved run and export from the connected iPhone, comparison with its local build receipt, and 20 warm samples.
+Omit `--require-device-metadata` when validating a host or simulator smoke test.
+The [iOS spec](docs/specs/2026-09-27-m0-ios-spike.md) and [plan](docs/plans/2026-09-27-m0-ios-spike.md) define the remaining build and device checks.
