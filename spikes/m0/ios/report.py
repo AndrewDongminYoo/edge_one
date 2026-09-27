@@ -181,17 +181,28 @@ def main():
     parser.add_argument(
         "--require-device-metadata",
         action="store_true",
-        help="require declared iPhone/Release/arm64 metadata; does not prove execution origin",
+        help="require declared iPhone/Release/arm64 and default Metal/offload metadata; does not prove execution origin",
     )
     args = parser.parse_args()
     pins = json.loads((Path(__file__).resolve().parents[1] / "pins.json").read_text())
-    summary = summarize_report(
-        json.loads(args.report.read_text()), json.loads(args.fixture.read_text()), pins
-    )
+    report = json.loads(args.report.read_text())
+    summary = summarize_report(report, json.loads(args.fixture.read_text()), pins)
     print(json.dumps(summary, indent=2))
     if args.require_device_metadata and not summary["declared_physical_ios"]:
         raise SystemExit(
             "physical iOS metadata required; host/simulator report rejected"
+        )
+    metadata = report["metadata"]
+    if args.require_device_metadata and not (
+        type(metadata.get("n_gpu_layers")) is int
+        and metadata["n_gpu_layers"] == 999
+        and metadata.get("offload_kqv") is True
+        and metadata.get("op_offload") is True
+        and metadata.get("metal_fusion_disable_requested") is False
+        and metadata.get("metal_shared_buffers_disable_requested") is False
+    ):
+        raise SystemExit(
+            "default Metal/offload metadata required; CPU-only or diagnostic report rejected"
         )
     raise SystemExit(0 if summary["passes_gate"] else 1)
 

@@ -39,3 +39,12 @@ The negative case selects the bundled JSON fixture as a wrong model input with `
 The latest native plaintext exactly matches the archived rows, and the installed model hash was independently rechecked.
 The raw artifact retains the historical header hash and records the new header hash and refreshed receipts separately under `integrity_guard_validation`.
 Python tests now recalculate all seven archived reports and the direct plaintext logits, preserving the measured CPU passes and Metal failures.
+
+## Hosted Review Repair
+
+Hosted review found that a numerically passing CPU-only iPhone report could pass the CLI's device-metadata gate.
+That gate now also requires integer 999 GPU layers, operation/KV offload enabled and both diagnostic switches explicitly unrequested.
+Default requested settings are accepted; CPU-only, modified and absent settings are rejected, with 12 regression subcases observed failing before the repair and passing afterwards.
+All 54 Python tests pass; both SDK builds and receipts were refreshed again and preserved under `physical_cli_gate_repair`.
+The inferred hardware flag and numerical gate remain separate, and declared configuration does not independently establish physical or GPU execution.
+Native inference code and the failed Metal outcome are unchanged.

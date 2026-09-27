@@ -105,6 +105,8 @@ python3 spikes/m0/ios/report.py path/to/m0-ios-report.json --fixture .cache/m0/i
 
 The reader recomputes distributions from native yes/no scores, checks every sample against the desktop reference with the strict `1e-3` gate, and calculates the warm median.
 The reader validates the declared Release/arm64 build receipt and timing boundary; `declared_physical_ios` describes metadata, not independently verified execution origin.
+`--require-device-metadata` additionally requires the default requested Metal profile: 999 GPU layers, operation/KV offload enabled, and neither diagnostic Metal switch requested.
+CPU-only, modified and missing backend settings are rejected by that CLI gate even when numerical parity passes; recorded settings still do not independently prove GPU execution.
 Physical-device acceptance additionally requires an observed approved run and export from the connected iPhone, comparison with its local build receipt, and 20 warm samples.
 Omit `--require-device-metadata` when validating a host or simulator smoke test.
 The [iOS spec](docs/specs/2026-09-27-m0-ios-spike.md) and [plan](docs/plans/2026-09-27-m0-ios-spike.md) define the remaining build and device checks.

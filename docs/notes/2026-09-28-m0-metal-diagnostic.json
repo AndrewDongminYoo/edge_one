@@ -1890,5 +1890,116 @@
         "app_binary_sha256": "6fb815266eed6c89075dfe319fb30f74a0a56f46d1323d7ec34038b93d0d0185"
       }
     }
+  },
+  "physical_cli_gate_repair": {
+    "finding_id": 4115979161,
+    "scope": "require-device-metadata additionally rejects CPU-only, modified and absent requested Metal/offload settings; declarations do not prove execution",
+    "regression": "12 rejection subcases failed before the fix and pass after it; default requested profile accepted",
+    "python_tests_passed": 54,
+    "build_receipts": {
+      "iphoneos": {
+        "sdk": "iphoneos",
+        "configuration": "Release",
+        "architecture": "arm64",
+        "pins": {
+          "repo": "chaoliangUNSW/Jev-Style-0.8B-Decision-v3-GGUF",
+          "revision": "edf37c26a1098f83cf4264b8adbe0dca2d2ebb0c",
+          "manifest_sha256": "e370c55aa62c6b47154e72e56608bde79c691cc857c10b9adf1339306ece3473",
+          "model": "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+          "llama_cpp_commit": "441df11f65ea0b6d0c72965aaf70c8241070ddcb",
+          "llama_archive_sha256": "d55c444401db6734c2f4bba77c4d270f0e431c9e197ce5f35da8abe19a08c91b",
+          "files": [
+            "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+            "LICENSE",
+            "NOTICE",
+            "build_jev_score.sh",
+            "jev_score.cpp",
+            "jev_style_decision_gguf.py",
+            "readout_config.json",
+            "release_config.json",
+            "requirements.txt",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json"
+          ]
+        },
+        "xcode": "Xcode 27.0\nBuild version 27A266a",
+        "xcodegen": "Version: 2.46.0",
+        "native_archives": {
+          "native/ggml/src/Release-iphoneos/libggml-base.a": "5c4d590e0d3fc522baa25dc5147ab11dde0b56ee0f6ad5e9a1bd43c7f1e2f984",
+          "native/ggml/src/Release-iphoneos/libggml-cpu.a": "e0993c67bad717a385ab46b4e2cde9446d773da5fccf536a5a63a781c2e85ef6",
+          "native/ggml/src/Release-iphoneos/libggml.a": "5cfc0fbaf57303825abfab28a051671af8368f676d3a3d368601d848d3763584",
+          "native/ggml/src/ggml-metal/Release-iphoneos/libggml-metal.a": "ef028b39f0cec23378bd2937101ab974be6d21677f57956c997d0fd3a2a504c1",
+          "native/src/Release-iphoneos/libllama.a": "4b4db972a90e70043ada31d8b03db9e50952e7f5034e9f4538a737ed8e078589"
+        },
+        "sources": {
+          "Benchmark.cpp": "1e7dea82d5d5f4eafd2cb3e49f990636d4215b15368bde1fda1eb37fb9551275",
+          "Benchmark.hpp": "c24e0a792b2c21aebca686d42eaa98132313e1bbe838bde7b48f8bb9194763dc",
+          "app/M0App.swift": "89192b643205dc4294a7d06be93f145fd70893f29af762179239e51c2cceb699",
+          "app/NativeBenchmark.h": "146eb57e39207bfe47e4b5d5feaaf37b77cd3e0c5a18c26610f25f38c182963c",
+          "app/NativeBenchmark.mm": "58660f4a10bfbe2876cd198eda5e9fa1148b6fc09c651cdeade69be618566591",
+          "build.py": "7a7998452e8621430aeb7c4b4308f4c70ca5eeb7665af275e18acf77dabf1a51",
+          "host_main.cpp": "e189709712683027ab05c816b3da61aa0e241e381bc30b528489b0109146f441",
+          "prepare.py": "03b66f59a3d046ce142e362827a8c7883edcdd4ca9e34e1b1d3307bb41246a9c",
+          "report.py": "51258a601f153eaaaa656f2eac9af50ff446b82ea919954387ddeafa67adba0b",
+          "repro/NativeRepro.mm": "524d3ca7177f434872ffe5a3434d1ec7a83e9cfc19cad252ce516d02a0120d34",
+          "tests/BenchmarkUITests.swift": "1184477a1af53897d2face1245cf30ea2909c68720129c897ab51cfcdfa4699f",
+          "tests/NativeReproUITests.swift": "65176e916861096192f5c730313a82b13bdae4b0c1e251d58165ca0329eabd59"
+        },
+        "fixture_sha256": "86d5e67b5f834ca7a31d467c47bd6b0a9bc87ec361e983161cc19f18016c7027",
+        "app_binary_sha256": "b559c11e57a88931e6eb119494b9d4e0a3d8e581047c8564a35f09a7a68d4424"
+      },
+      "iphonesimulator": {
+        "sdk": "iphonesimulator",
+        "configuration": "Release",
+        "architecture": "arm64",
+        "pins": {
+          "repo": "chaoliangUNSW/Jev-Style-0.8B-Decision-v3-GGUF",
+          "revision": "edf37c26a1098f83cf4264b8adbe0dca2d2ebb0c",
+          "manifest_sha256": "e370c55aa62c6b47154e72e56608bde79c691cc857c10b9adf1339306ece3473",
+          "model": "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+          "llama_cpp_commit": "441df11f65ea0b6d0c72965aaf70c8241070ddcb",
+          "llama_archive_sha256": "d55c444401db6734c2f4bba77c4d270f0e431c9e197ce5f35da8abe19a08c91b",
+          "files": [
+            "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+            "LICENSE",
+            "NOTICE",
+            "build_jev_score.sh",
+            "jev_score.cpp",
+            "jev_style_decision_gguf.py",
+            "readout_config.json",
+            "release_config.json",
+            "requirements.txt",
+            "tokenizer/tokenizer.json",
+            "tokenizer/tokenizer_config.json"
+          ]
+        },
+        "xcode": "Xcode 27.0\nBuild version 27A266a",
+        "xcodegen": "Version: 2.46.0",
+        "native_archives": {
+          "native/ggml/src/Release-iphonesimulator/libggml-base.a": "3120c52422f636b669432e8be9d2cf678f13f0fd445954668f526e0b30f8e59b",
+          "native/ggml/src/Release-iphonesimulator/libggml-cpu.a": "8d6b404081379b3177bfcc72eb74f993e5aedde9f52c89f3857d19934c947212",
+          "native/ggml/src/Release-iphonesimulator/libggml.a": "a6fe027cffae6a46172e6560147b91c3e117d4eeae9a5cf02a1f76265165fcf7",
+          "native/ggml/src/ggml-metal/Release-iphonesimulator/libggml-metal.a": "abe3bdbbf0c417411464f1e6792053cfc2e9d7405c08f600ca205c77b42061c8",
+          "native/src/Release-iphonesimulator/libllama.a": "89b8738daab26576ecb5947d76d7669779f0045455c4cbd58364f0fd56a88229"
+        },
+        "sources": {
+          "Benchmark.cpp": "1e7dea82d5d5f4eafd2cb3e49f990636d4215b15368bde1fda1eb37fb9551275",
+          "Benchmark.hpp": "c24e0a792b2c21aebca686d42eaa98132313e1bbe838bde7b48f8bb9194763dc",
+          "app/M0App.swift": "89192b643205dc4294a7d06be93f145fd70893f29af762179239e51c2cceb699",
+          "app/NativeBenchmark.h": "146eb57e39207bfe47e4b5d5feaaf37b77cd3e0c5a18c26610f25f38c182963c",
+          "app/NativeBenchmark.mm": "58660f4a10bfbe2876cd198eda5e9fa1148b6fc09c651cdeade69be618566591",
+          "build.py": "7a7998452e8621430aeb7c4b4308f4c70ca5eeb7665af275e18acf77dabf1a51",
+          "host_main.cpp": "e189709712683027ab05c816b3da61aa0e241e381bc30b528489b0109146f441",
+          "prepare.py": "03b66f59a3d046ce142e362827a8c7883edcdd4ca9e34e1b1d3307bb41246a9c",
+          "report.py": "51258a601f153eaaaa656f2eac9af50ff446b82ea919954387ddeafa67adba0b",
+          "repro/NativeRepro.mm": "524d3ca7177f434872ffe5a3434d1ec7a83e9cfc19cad252ce516d02a0120d34",
+          "tests/BenchmarkUITests.swift": "1184477a1af53897d2face1245cf30ea2909c68720129c897ab51cfcdfa4699f",
+          "tests/NativeReproUITests.swift": "65176e916861096192f5c730313a82b13bdae4b0c1e251d58165ca0329eabd59"
+        },
+        "fixture_sha256": "86d5e67b5f834ca7a31d467c47bd6b0a9bc87ec361e983161cc19f18016c7027",
+        "app_binary_sha256": "6fb815266eed6c89075dfe319fb30f74a0a56f46d1323d7ec34038b93d0d0185"
+      }
+    },
+    "native_inference_code_changed": false
   }
 }

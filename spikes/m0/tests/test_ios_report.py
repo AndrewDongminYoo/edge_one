@@ -39,6 +39,11 @@ class IOSReportTests(unittest.TestCase):
                 "repetitions": 2,
                 "timing_scope": TIMING_SCOPE,
                 "model_hash_verified": True,
+                "n_gpu_layers": 999,
+                "offload_kqv": True,
+                "op_offload": True,
+                "metal_fusion_disable_requested": False,
+                "metal_shared_buffers_disable_requested": False,
                 "build": {
                     "sdk": "iphoneos",
                     "configuration": "Release",
@@ -223,6 +228,82 @@ class IOSReportTests(unittest.TestCase):
             )
             self.assertEqual(rejected.returncode, 1)
             self.assertIn("physical iOS metadata required", rejected.stderr)
+
+    def test_physical_cli_rejects_cpu_and_nondefault_metal_settings(self):
+        root = Path(__file__).resolve().parents[1]
+        pins = json.loads((root / "pins.json").read_text())
+        self.fixture["pins"] = pins
+        digest = hashlib.sha256(
+            json.dumps(self.fixture, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()
+        metadata = self.report["metadata"]
+        metadata.update(pins=pins, fixture_sha256=digest)
+        metadata["build"].update(pins=pins, fixture_sha256=digest)
+        with tempfile.TemporaryDirectory() as directory:
+            fixture = Path(directory) / "fixture.json"
+            report = Path(directory) / "report.json"
+            fixture.write_text(json.dumps(self.fixture))
+            command = [
+                sys.executable,
+                str(root / "ios/report.py"),
+                str(report),
+                "--fixture",
+                str(fixture),
+            ]
+            report.write_text(json.dumps(self.report))
+            accepted = subprocess.run(
+                command + ["--require-device-metadata"], capture_output=True, text=True
+            )
+            self.assertEqual(accepted.returncode, 0, accepted.stderr)
+            for changes in (
+                {"n_gpu_layers": 0, "offload_kqv": False, "op_offload": False},
+                {"n_gpu_layers": 1},
+                {"n_gpu_layers": True},
+                {"n_gpu_layers": 999.0},
+                {"offload_kqv": False},
+                {"offload_kqv": 1},
+                {"op_offload": False},
+                {"op_offload": 1},
+                {"metal_fusion_disable_requested": True},
+                {"metal_shared_buffers_disable_requested": True},
+                {"metal_fusion_disable_requested": None},
+                {"metal_shared_buffers_disable_requested": None},
+            ):
+                with self.subTest(changes=changes):
+                    modified = copy.deepcopy(self.report)
+                    modified["metadata"].update(changes)
+                    report.write_text(json.dumps(modified))
+                    diagnostic = subprocess.run(command, capture_output=True, text=True)
+                    self.assertEqual(diagnostic.returncode, 0, diagnostic.stderr)
+                    rejected = subprocess.run(
+                        command + ["--require-device-metadata"],
+                        capture_output=True,
+                        text=True,
+                    )
+                    self.assertEqual(rejected.returncode, 1)
+                    self.assertIn(
+                        "default Metal/offload metadata required", rejected.stderr
+                    )
+            for missing in (
+                "n_gpu_layers",
+                "offload_kqv",
+                "op_offload",
+                "metal_fusion_disable_requested",
+                "metal_shared_buffers_disable_requested",
+            ):
+                with self.subTest(missing=missing):
+                    modified = copy.deepcopy(self.report)
+                    modified["metadata"].pop(missing)
+                    report.write_text(json.dumps(modified))
+                    rejected = subprocess.run(
+                        command + ["--require-device-metadata"],
+                        capture_output=True,
+                        text=True,
+                    )
+                    self.assertEqual(rejected.returncode, 1)
+                    self.assertIn(
+                        "default Metal/offload metadata required", rejected.stderr
+                    )
 
 
 class ArchivedIOSEvidenceTests(unittest.TestCase):
