@@ -1,0 +1,21 @@
+{
+  "repo": "chaoliangUNSW/Jev-Style-0.8B-Decision-v3-GGUF",
+  "revision": "edf37c26a1098f83cf4264b8adbe0dca2d2ebb0c",
+  "manifest_sha256": "e370c55aa62c6b47154e72e56608bde79c691cc857c10b9adf1339306ece3473",
+  "model": "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+  "llama_cpp_commit": "441df11f65ea0b6d0c72965aaf70c8241070ddcb",
+  "llama_archive_sha256": "d55c444401db6734c2f4bba77c4d270f0e431c9e197ce5f35da8abe19a08c91b",
+  "files": [
+    "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+    "LICENSE",
+    "NOTICE",
+    "build_jev_score.sh",
+    "jev_score.cpp",
+    "jev_style_decision_gguf.py",
+    "readout_config.json",
+    "release_config.json",
+    "requirements.txt",
+    "tokenizer/tokenizer.json",
+    "tokenizer/tokenizer_config.json"
+  ]
+}

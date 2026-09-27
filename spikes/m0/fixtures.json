@@ -1,0 +1,35 @@
+{
+  "questions": [
+    {
+      "t": "choice",
+      "ins": "Which team should handle this ticket?",
+      "crit": {
+        "billing": "payments, invoices, refunds",
+        "technical": "bugs and outages",
+        "sales": "new purchases"
+      }
+    },
+    {
+      "t": "noul",
+      "ins": "Does the customer request a refund?"
+    },
+    {
+      "t": "score",
+      "ins": "How urgent is this ticket?",
+      "crit": ["low", "medium", "high"]
+    }
+  ],
+  "cases": [
+    {
+      "id": "structured-short",
+      "state": {
+        "ticket": "I was charged twice this month. Please refund the duplicate payment.",
+        "customer": { "tier": "pro", "locale": "en" },
+        "tags": ["duplicate-charge", "refund"]
+      }
+    },
+    { "id": "below-block", "prefix_tokens": 1023 },
+    { "id": "at-block", "prefix_tokens": 1024 },
+    { "id": "above-block", "prefix_tokens": 1025 }
+  ]
+}
