@@ -48,3 +48,6 @@ Default requested settings are accepted; CPU-only, modified and absent settings 
 All 54 Python tests pass; both SDK builds and receipts were refreshed again and preserved under `physical_cli_gate_repair`.
 The inferred hardware flag and numerical gate remain separate, and declared configuration does not independently establish physical or GPU execution.
 Native inference code and the failed Metal outcome are unchanged.
+The second hosted finding identified that shorter consistent reports could still pass the physical CLI gate.
+It now requires exactly 20 warm samples; 1, 2, 19 and 21 samples were observed incorrectly passing before the guard and are now rejected, while the unrestricted diagnostic reader still accepts them.
+All 55 Python tests pass, and the final refreshed SDK receipts are preserved separately under `warm_sample_gate_repair`.

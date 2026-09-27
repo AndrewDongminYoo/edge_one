@@ -181,7 +181,7 @@ def main():
     parser.add_argument(
         "--require-device-metadata",
         action="store_true",
-        help="require declared iPhone/Release/arm64 and default Metal/offload metadata; does not prove execution origin",
+        help="require 20 warm samples, declared iPhone/Release/arm64 and default Metal/offload metadata; does not prove execution origin",
     )
     args = parser.parse_args()
     pins = json.loads((Path(__file__).resolve().parents[1] / "pins.json").read_text())
@@ -192,6 +192,8 @@ def main():
         raise SystemExit(
             "physical iOS metadata required; host/simulator report rejected"
         )
+    if args.require_device_metadata and summary["warm_samples"] != 20:
+        raise SystemExit("20 warm samples required for the physical-device gate")
     metadata = report["metadata"]
     if args.require_device_metadata and not (
         type(metadata.get("n_gpu_layers")) is int

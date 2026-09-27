@@ -239,6 +239,16 @@ class IOSReportTests(unittest.TestCase):
         metadata = self.report["metadata"]
         metadata.update(pins=pins, fixture_sha256=digest)
         metadata["build"].update(pins=pins, fixture_sha256=digest)
+        metadata["repetitions"] = 20
+        first = self.report["records"][0]
+        self.report["records"] = [
+            {
+                **copy.deepcopy(first),
+                "sample": i,
+                "phase": "first" if i == 0 else "warm",
+            }
+            for i in range(21)
+        ]
         with tempfile.TemporaryDirectory() as directory:
             fixture = Path(directory) / "fixture.json"
             report = Path(directory) / "report.json"
@@ -304,6 +314,53 @@ class IOSReportTests(unittest.TestCase):
                     self.assertIn(
                         "default Metal/offload metadata required", rejected.stderr
                     )
+
+    def test_physical_cli_requires_exactly_20_warm_samples(self):
+        root = Path(__file__).resolve().parents[1]
+        pins = json.loads((root / "pins.json").read_text())
+        self.fixture["pins"] = pins
+        digest = hashlib.sha256(
+            json.dumps(self.fixture, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()
+        metadata = self.report["metadata"]
+        metadata.update(pins=pins, fixture_sha256=digest)
+        metadata["build"].update(pins=pins, fixture_sha256=digest)
+        first = self.report["records"][0]
+        with tempfile.TemporaryDirectory() as directory:
+            fixture = Path(directory) / "fixture.json"
+            report = Path(directory) / "report.json"
+            fixture.write_text(json.dumps(self.fixture))
+            for repetitions in (1, 2, 19, 20, 21):
+                with self.subTest(repetitions=repetitions):
+                    metadata["repetitions"] = repetitions
+                    self.report["records"] = [
+                        {
+                            **copy.deepcopy(first),
+                            "sample": i,
+                            "phase": "first" if i == 0 else "warm",
+                        }
+                        for i in range(repetitions + 1)
+                    ]
+                    report.write_text(json.dumps(self.report))
+                    command = [
+                        sys.executable,
+                        str(root / "ios/report.py"),
+                        str(report),
+                        "--fixture",
+                        str(fixture),
+                    ]
+                    diagnostic = subprocess.run(command, capture_output=True, text=True)
+                    self.assertEqual(diagnostic.returncode, 0, diagnostic.stderr)
+                    checked = subprocess.run(
+                        command + ["--require-device-metadata"],
+                        capture_output=True,
+                        text=True,
+                    )
+                    if repetitions == 20:
+                        self.assertEqual(checked.returncode, 0, checked.stderr)
+                    else:
+                        self.assertEqual(checked.returncode, 1)
+                        self.assertIn("20 warm samples required", checked.stderr)
 
 
 class ArchivedIOSEvidenceTests(unittest.TestCase):
