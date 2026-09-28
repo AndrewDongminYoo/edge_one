@@ -2,7 +2,9 @@
 
 ## Project Structure & Module Organization
 
-This repository is at the blueprint stage: `BLUEPRINT.md` defines the planned on-device decision runtime; source packages, tests, and build manifests are not yet present.
+`BLUEPRINT.md` defines the planned on-device decision runtime.
+`spikes/m0/` contains the implemented desktop and iOS feasibility experiments; production packages are not yet present.
+Python tests live in `spikes/m0/tests/`, iOS app and UI tests in `spikes/m0/ios/`, and measured records in `docs/notes/`.
 Keep specifications in `docs/specs/`, implementation plans in `docs/plans/`, and working notes in `docs/notes/`.
 
 The planned monorepo uses Melos and pnpm workspaces:
@@ -18,9 +20,10 @@ Generate Dart and TypeScript contract types from one JSON Schema; change the sch
 
 ## Build, Test, and Development Commands
 
-No runnable build or test workflow exists yet.
-When scaffolding packages, document exact working directories and scripts.
-The following are intended package-level checks once the corresponding manifests exist:
+From the repository root, run `python3 -m unittest discover -s spikes/m0/tests -v` for unit tests and `python3 spikes/m0/check_report.py docs/notes/2026-09-27-m0-desktop.json` for archived numerical evidence.
+On hosted Linux, `bash setup.sh` creates the hash-locked Python environment; set `EDGE_ONE_FETCH_MODEL=1` only for native inference work.
+See `README.md` for pinned model fetch, native build, and iOS commands.
+The following checks apply once production packages are scaffolded:
 
 - `dart format <paths>`: format explicitly selected Dart files.
 - `dart analyze` and `dart test`: analyze and test pure Dart packages.
@@ -37,7 +40,7 @@ Preserve the System One JSON contract and isolate extension fields with `x_` pre
 
 ## Testing Guidelines
 
-No test framework configuration or coverage threshold exists yet.
+M0 uses Python `unittest` and iOS XCTest; no coverage threshold is set.
 Use `test/*_test.dart` for Dart and Flutter tests when scaffolded.
 Prioritize contract fixtures, delimiter escaping, question-level routing, cancellation, and model integrity checks.
 Validate shared-prefix inference against separate prefill, targeting probability differences below `1e-3` as specified in the blueprint.
@@ -45,8 +48,7 @@ Report benchmark device, model revision, and cold/warm/sustained conditions.
 
 ## Commit & Pull Request Guidelines
 
-There is no commit history to establish conventions.
-Use concise Conventional Commit messages, such as `feat(core): validate choice requests`.
+History uses concise Conventional Commit messages, such as `feat(m0): validate pinned desktop inference and prefix sharing`.
 Include the problem, scope, verification commands and results, and relevant issues in PR descriptions.
 Attach screenshots for demo UI changes and measured evidence for performance claims.
 
@@ -55,3 +57,5 @@ Attach screenshots for demo UI changes and measured evidence for performance cla
 Default to local-only routing; require consent and masking before remote requests.
 Keep API keys out of Git.
 Pin model revisions, verify SHA-256 hashes, and validate manifests before loading models.
+Linux CI owns unit, archived-report, native-build, and desktop parity checks; hosted macOS CI owns unsigned Apple builds.
+Do not infer physical-device GPU placement, simulator Metal parity, or sustained thermal behavior from those jobs.

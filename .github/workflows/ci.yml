@@ -24,3 +24,91 @@ jobs:
         run: python -m unittest discover -s spikes/m0/tests -v
       - name: Validate archived measurements
         run: python spikes/m0/check_report.py docs/notes/2026-09-27-m0-desktop.json
+
+  linux-native:
+    name: Linux native build and parity
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: spikes/m0/requirements.lock
+      - name: Prove missing-tool error
+        shell: bash
+        run: |
+          if output=$(PATH=/nonexistent /bin/bash setup.sh 2>&1); then
+            echo 'setup.sh unexpectedly passed without tools' >&2
+            exit 1
+          fi
+          [[ $output == *'missing python3.12'* ]]
+      - name: Set up twice to check repeatability
+        run: |
+          bash setup.sh
+          bash setup.sh
+      - name: Fetch and verify pinned inputs
+        run: .cache/m0/.venv/bin/python spikes/m0/setup.py fetch
+      - name: Build Linux scorer
+        run: .cache/m0/.venv/bin/python spikes/m0/setup.py build --jobs 2
+      - name: Check native probability parity
+        run: .cache/m0/.venv/bin/python spikes/m0/run.py --output .cache/m0/linux-ci.json --repetitions 1 --threads 2
+      - name: Upload compact Linux evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: m0-linux-${{ github.sha }}
+          retention-days: 3
+          if-no-files-found: ignore
+          path: |
+            .cache/m0/build-receipt.json
+            .cache/m0/bin/jev-score
+            .cache/m0/llama.cpp-*/build/bin/*.so*
+            .cache/m0/linux-ci.json
+            .cache/m0/linux-ci.json.partial
+
+  apple-build:
+    name: Unsigned iOS and simulator builds
+    runs-on: macos-26
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: spikes/m0/requirements.lock
+      - name: Install pinned Python dependencies and XcodeGen
+        run: |
+          python3 -m venv .cache/m0/.venv
+          .cache/m0/.venv/bin/python -m pip install --disable-pip-version-check --require-hashes --only-binary=:all: -r spikes/m0/requirements.lock
+          if ! command -v xcodegen >/dev/null 2>&1; then brew install xcodegen; fi
+          xcodegen --version
+          xcodebuild -version
+      - name: Fetch and verify pinned inputs
+        run: .cache/m0/.venv/bin/python spikes/m0/setup.py fetch
+      - name: Build native scorer and prepare iOS fixture
+        run: |
+          .cache/m0/.venv/bin/python spikes/m0/setup.py build --jobs 2
+          .cache/m0/.venv/bin/python spikes/m0/ios/prepare.py
+      - name: Build unsigned iPhone app
+        run: .cache/m0/.venv/bin/python spikes/m0/ios/build.py --sdk iphoneos --jobs 2
+      - name: Build unsigned simulator app
+        run: .cache/m0/.venv/bin/python spikes/m0/ios/build.py --sdk iphonesimulator --jobs 2
+      - name: Upload compact Apple build evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: m0-apple-${{ github.sha }}
+          retention-days: 3
+          if-no-files-found: ignore
+          path: |
+            .cache/m0/ios/iphoneos/build-receipt.json
+            .cache/m0/ios/iphonesimulator/build-receipt.json
+            .cache/m0/ios/iphoneos/DerivedData/Build/Products/Release-iphoneos/EdgeOneM0.app/EdgeOneM0
+            .cache/m0/ios/iphonesimulator/DerivedData/Build/Products/Release-iphonesimulator/EdgeOneM0.app/EdgeOneM0

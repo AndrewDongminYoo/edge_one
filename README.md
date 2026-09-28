@@ -60,9 +60,20 @@ The first command checks changed files with the repository's configured linters.
 Run the second only when changing experimental dependencies and include both input and lockfile in the same change.
 Preserve the upstream model's LICENSE and NOTICE with downloaded artifacts.
 
-GitHub Actions runs the unit tests and validates the archived measurements against current fixture and model pins.
-The report checker recomputes probability gates, native sharing observations, and timing summaries from the stored records.
-CI does not rerun native inference or verify performance on its runner.
+GitHub Actions runs the unit tests and validates archived measurements against current fixture and model pins.
+It also builds the pinned native scorer on Ubuntu, runs a one-warm-sample numerical parity check, and builds unsigned iPhone and simulator apps on a hosted macOS runner.
+The report checker recomputes probability gates, native sharing observations, and timing summaries from stored records.
+CI build evidence excludes the 0.53 GB model and is retained for three days; a hosted build does not establish physical-device placement or sustained latency.
+
+## Hosted Linux setup
+
+For Codex Cloud, select the universal Linux image, set Python to 3.12, and configure the environment setup command as `bash setup.sh`.
+The script creates `.cache/m0/.venv` from the hash-locked requirements and checks for a C++ compiler and build tool.
+It is safe to run again after a cached environment resumes.
+The setup phase has network access, while agent-phase access depends on the cloud environment setting.
+For a native task that needs the pinned 0.53 GB model, set `EDGE_ONE_FETCH_MODEL=1` in that environment so the setup phase runs the repository's verified fetcher; leave it unset for contract, documentation, and unit-test tasks.
+The cloud environment must invoke the repository command explicitly; the universal image's own initialization is separate.
+The local Docker daemon was unavailable when this setup was added, so the GitHub Ubuntu job is the Linux execution check and an actual Codex Cloud run remains to be observed.
 
 ## M0 iOS Spike
 
