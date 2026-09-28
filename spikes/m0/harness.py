@@ -176,7 +176,16 @@ def summarize(records, fixtures, repetitions, microbatch):
                     fixture["option_names"], reference["results"], sample["results"]
                 )
                 if mode != "individual":
-                    comparisons[mode].extend(compared)
+                    comparisons[mode].extend(
+                        {
+                            "fixture": fixture["id"],
+                            "phase": sample["phase"],
+                            "sample": sample["sample"],
+                            "question": question,
+                            **comparison,
+                        }
+                        for question, comparison in enumerate(compared)
+                    )
             timings.append(
                 {
                     "fixture": fixture["id"],
@@ -198,6 +207,9 @@ def summarize(records, fixtures, repetitions, microbatch):
                 ),
                 "compared_questions": len(compared),
                 "passes_gate": all(c["passes_gate"] for c in compared),
+                "worst_comparison": max(
+                    compared, key=lambda c: c["max_abs_difference"]
+                ),
             }
             for mode, compared in comparisons.items()
         },

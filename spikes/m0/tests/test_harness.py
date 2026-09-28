@@ -159,6 +159,26 @@ class ReportTests(unittest.TestCase):
         self.assertEqual(summary["gates"]["batched"]["compared_questions"], 2)
         self.assertEqual(summary["timings"][0]["warm_p50_ms"], 10.0)
 
+    def test_summary_locates_worst_probability_drift(self):
+        records = copy.deepcopy(self.records)
+        records[-1]["results"] = [result(0.6, 0.4)]
+
+        summary = harness.summarize(records, self.fixtures, 1, 1024)
+
+        worst = summary["gates"]["batched"]["worst_comparison"]
+        self.assertEqual(
+            {key: value for key, value in worst.items() if key != "max_abs_difference"},
+            {
+                "fixture": "long",
+                "phase": "warm",
+                "sample": 1,
+                "question": 0,
+                "top_choice_agrees": True,
+                "passes_gate": False,
+            },
+        )
+        self.assertAlmostEqual(worst["max_abs_difference"], 0.15)
+
     def test_missing_warm_record_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "record set"):
             harness.summarize(self.records[:-1], self.fixtures, 1, 1024)
