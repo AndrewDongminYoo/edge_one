@@ -2,7 +2,33 @@
 
 An on-device decision runtime planned for Flutter and React Native, with optional remote escalation.
 The production API and architecture are described in [BLUEPRINT.md](BLUEPRINT.md).
-The repository currently implements a desktop feasibility experiment; production packages and mobile bindings are not available yet.
+The repository contains the M0 feasibility experiment and M1 contract scaffolding; production inference and mobile bindings are not available yet.
+
+## System One contracts
+
+`schemas/system-one-v1.schema.json` is the versioned source for the request, question, answer, usage, and `x_` extension shapes.
+Its base fields were checked against [TypeSafe OpenAPI 0.2.0](https://api.typesafe.ai/openapi.json); runtime interoperability and release readiness remain unverified.
+Generated Dart types live in `packages/edge_one/lib/src/generated/`; generated TypeScript types live in `packages/react-native-edge-one/src/generated/`.
+Edit the schema and rerun generation instead of editing either output.
+The generated Dart classes are typed data shapes, not JSON codecs or a running backend yet; validate wire data against the schema at a boundary.
+
+From the repository root:
+
+```bash
+pnpm install --frozen-lockfile
+pnpm run schema:test
+pnpm run contracts:generate
+pnpm run contracts:check
+pnpm run types:check
+flutter pub get --enforce-lockfile
+dart analyze packages/edge_one
+flutter analyze packages/edge_one_flutter
+```
+
+The pnpm workspace contains the planned React Native package; the Melos/Pub workspace contains `edge_one`, `edge_one_flutter`, and `edge_one_calibrate`.
+`packages/edge_one_core/` has a C++17 CMake target without inference sources yet.
+GitHub's Linux contract job validates schema fixtures, generated drift, TypeScript, and the Dart workspace.
+See the [contract specification](docs/specs/2026-09-29-m1-system-one-contract.md) for current limits.
 
 ## M0 Desktop Spike
 

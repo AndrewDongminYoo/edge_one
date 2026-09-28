@@ -3,11 +3,11 @@
 ## Project Structure & Module Organization
 
 `BLUEPRINT.md` defines the planned on-device decision runtime.
-`spikes/m0/` contains the implemented desktop and iOS feasibility experiments; production packages are not yet present.
+`spikes/m0/` contains the desktop and iOS feasibility experiments; `packages/` contains M1 scaffolds without production inference.
 Python tests live in `spikes/m0/tests/`, iOS app and UI tests in `spikes/m0/ios/`, and measured records in `docs/notes/`.
 Keep specifications in `docs/specs/`, implementation plans in `docs/plans/`, and working notes in `docs/notes/`.
 
-The planned monorepo uses Melos and pnpm workspaces:
+The scaffold defines Melos/Pub and pnpm workspaces. The following responsibilities are planned; only manifests and contract types exist so far:
 
 - `edge_one_core`: shared C++17/CMake inference core with a pinned llama.cpp submodule.
 - `edge_one`: pure Dart contract types and routing, without Flutter dependencies.
@@ -15,21 +15,22 @@ The planned monorepo uses Melos and pnpm workspaces:
 - `react-native-edge-one`: TypeScript and C++ TurboModule bindings.
 - `edge-one-calibrate`: Dart CLI for temperature and threshold fitting.
 
-Package directory locations remain to be established.
-Generate Dart and TypeScript contract types from one JSON Schema; change the schema rather than generated output.
+Packages are under `packages/`; the versioned contract is `schemas/system-one-v1.schema.json`.
+Generate Dart and TypeScript types with `python3 tools/generate_contracts.py`; change the schema rather than generated output.
 
 ## Build, Test, and Development Commands
 
 From the repository root, run `python3 -m unittest discover -s spikes/m0/tests -v` for unit tests and `python3 spikes/m0/check_report.py docs/notes/2026-09-27-m0-desktop.json` for archived numerical evidence.
 On hosted Linux, `bash setup.sh` creates the hash-locked Python environment; set `EDGE_ONE_FETCH_MODEL=1` only for native inference work.
 See `README.md` for pinned model fetch, native build, and iOS commands.
-The following checks apply once production packages are scaffolded:
+The following checks apply to the scaffolded contracts:
 
-- `dart format <paths>`: format explicitly selected Dart files.
-- `dart analyze` and `dart test`: analyze and test pure Dart packages.
-- `flutter analyze` and `flutter test`: analyze and test Flutter packages.
+- `pnpm install --frozen-lockfile`: restore pinned schema-test and TypeScript tools.
+- `pnpm run schema:test` and `pnpm run contracts:check`: validate fixtures and generated drift.
+- `pnpm run types:check`: compile the generated TypeScript contract.
+- `flutter pub get --enforce-lockfile`, `dart analyze packages/edge_one`, and `flutter analyze packages/edge_one_flutter`: resolve and analyze the Dart workspace.
 
-Define native CMake and pnpm scripts during scaffolding; do not assume root-level commands already work.
+The native target has no inference sources yet; see `README.md` for M0 build commands.
 
 ## Coding Style & Naming Conventions
 
@@ -40,7 +41,7 @@ Preserve the System One JSON contract and isolate extension fields with `x_` pre
 
 ## Testing Guidelines
 
-M0 uses Python `unittest` and iOS XCTest; no coverage threshold is set.
+M0 uses Python `unittest` and iOS XCTest; the contract schema uses Ajv fixtures. No coverage threshold is set.
 Use `test/*_test.dart` for Dart and Flutter tests when scaffolded.
 Prioritize contract fixtures, delimiter escaping, question-level routing, cancellation, and model integrity checks.
 Validate shared-prefix inference against separate prefill, targeting probability differences below `1e-3` as specified in the blueprint.
@@ -58,5 +59,5 @@ Attach screenshots for demo UI changes and measured evidence for performance cla
 Default to local-only routing; require consent and masking before remote requests.
 Keep API keys out of Git.
 Pin model revisions, verify SHA-256 hashes, and validate manifests before loading models.
-Linux CI owns unit, archived-report, native-build, and exact-prefix desktop parity checks; hosted macOS CI owns unsigned Apple builds.
+Linux CI owns contract drift, unit, archived-report, native-build, and exact-prefix desktop parity checks; hosted macOS CI owns unsigned Apple builds.
 Do not infer physical-device GPU placement, simulator Metal parity, or sustained thermal behavior from those jobs.
