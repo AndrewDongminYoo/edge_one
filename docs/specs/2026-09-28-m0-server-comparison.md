@@ -9,7 +9,7 @@ This comparison accepts **redacted exports**, not live credentials or private re
 - `id`: a non-sensitive stable question identifier;
 - `request_sha256`: SHA-256 of the exact UTF-8 request bytes sent to the scorer;
 - `token_ids_sha256`: SHA-256 of the compact JSON token-ID array (UTF-8, no spaces);
-- `option_names`: scorer option order;
+- `option_names`: authoritative scorer option order; probability-object key order is ignored;
 - `answer` and `probabilities`: the returned decision and normalized distribution.
 
 For example, hash token IDs in Python with `hashlib.sha256(json.dumps(ids, separators=(",", ":")).encode()).hexdigest()`. Hash the immutable template and readout artifacts themselves for `template_sha256` and `readout_config_sha256`. Digests may be supplied in either hexadecimal case; reports canonicalize them to lowercase. Exports should be prepared inside the approved environment; never commit request text, credentials, headers, or raw token IDs derived from private inputs.

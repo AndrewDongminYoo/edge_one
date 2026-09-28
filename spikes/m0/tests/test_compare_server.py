@@ -39,6 +39,17 @@ class ServerComparisonTests(unittest.TestCase):
         self.assertAlmostEqual(differences["yes"], -0.05)
         self.assertAlmostEqual(report["questions"][0]["max_abs_difference"], 0.05)
 
+    def test_probability_map_serialization_order_does_not_change_option_identity(self):
+        server = export("server")
+        server["requests"][0]["probabilities"] = {"yes": 0.75, "no": 0.25}
+
+        report = compare_server.compare_exports(export("local"), server)
+
+        self.assertTrue(report["summary"]["passes_gate"])
+        self.assertEqual(
+            list(report["questions"][0]["server_probabilities"]), ["no", "yes"]
+        )
+
     def test_attributes_changed_model_revision_separately(self):
         report = compare_server.compare_exports(
             export("local"), export("server", model_revision="model-r2")

@@ -34,6 +34,16 @@ def _metadata(value):
     }
 
 
+def _ordered_result(result, names, source, request_id):
+    probabilities = result.get("probabilities")
+    if not isinstance(probabilities, dict) or set(probabilities) != set(names):
+        raise ValueError(f"{source} probability options differ for {request_id}")
+    return {
+        "answer": result.get("answer"),
+        "probabilities": {name: probabilities[name] for name in names},
+    }
+
+
 def _validate_export(value, expected_source):
     if value.get("schema_version") != 1 or value.get("source") != expected_source:
         raise ValueError(f"invalid {expected_source} export header")
@@ -77,10 +87,19 @@ def compare_exports(local, server):
         names = local_request.get("option_names")
         if names != server_request.get("option_names"):
             raise ValueError(f"option names differ for {identifier}")
-        comparison = compare(names, local_request, server_request)
+        if (
+            not isinstance(names, list)
+            or not names
+            or any(not isinstance(name, str) or not name for name in names)
+            or len(names) != len(set(names))
+        ):
+            raise ValueError(f"invalid option names for {identifier}")
+        local_result = _ordered_result(local_request, names, "local", identifier)
+        server_result = _ordered_result(server_request, names, "server", identifier)
+        comparison = compare(names, local_result, server_result)
         differences = {
-            name: server_request["probabilities"][name]
-            - local_request["probabilities"][name]
+            name: server_result["probabilities"][name]
+            - local_result["probabilities"][name]
             for name in names
         }
         if any(not math.isfinite(value) for value in differences.values()):
@@ -90,10 +109,10 @@ def compare_exports(local, server):
                 "id": identifier,
                 "request_sha256": local_request["request_sha256"].lower(),
                 "token_ids_sha256": local_request["token_ids_sha256"].lower(),
-                "local_answer": local_request["answer"],
-                "server_answer": server_request["answer"],
-                "local_probabilities": local_request["probabilities"],
-                "server_probabilities": server_request["probabilities"],
+                "local_answer": local_result["answer"],
+                "server_answer": server_result["answer"],
+                "local_probabilities": local_result["probabilities"],
+                "server_probabilities": server_result["probabilities"],
                 "probability_differences": differences,
                 **comparison,
             }
