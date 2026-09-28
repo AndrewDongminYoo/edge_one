@@ -84,5 +84,5 @@ Both unsigned SDK builds and their current source and app-binary hashes are pres
 ## Later Physical Observation
 
 After separate installation approval, the operator reported the signed app running on an iPhone 16 Pro.
-The [device validation record](2026-09-28-m0-ios-device-validation.md) preserves one 120-second raw export: the default requested Metal profile passes the strict numerical gate, while actual GPU layer placement remains unobserved.
+The [device validation record](2026-09-28-m0-ios-device-validation.md) preserves two 120-second raw exports: the default requested Metal profile passes the strict numerical gate in both, while actual GPU layer placement remains unobserved.
 The simulator Metal failure and its cause are unchanged by that result.
