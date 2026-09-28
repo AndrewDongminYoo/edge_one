@@ -53,14 +53,53 @@ class ServerComparisonTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "token IDs"):
             compare_server.compare_exports(export("local"), server)
 
+    def test_rejects_malformed_sha256_digests_from_either_source(self):
+        for source in ("local", "server"):
+            for field in ("template_sha256", "request_sha256", "token_ids_sha256"):
+                for malformed in ("", "not-a-sha", "g" * 64, "a" * 63, "a" * 65):
+                    with self.subTest(
+                        source=source, field=field, malformed=malformed
+                    ):
+                        local = export("local")
+                        server = export("server")
+                        invalid = local if source == "local" else server
+                        if field == "template_sha256":
+                            invalid[field] = malformed
+                        else:
+                            invalid["requests"][0][field] = malformed
+                        with self.assertRaisesRegex(ValueError, field):
+                            compare_server.compare_exports(local, server)
+
+    def test_rejects_equal_malformed_sha256_digests(self):
+        for field in ("template_sha256", "request_sha256", "token_ids_sha256"):
+            with self.subTest(field=field):
+                local = export("local")
+                server = export("server")
+                if field == "template_sha256":
+                    local[field] = server[field] = "not-a-sha"
+                else:
+                    local["requests"][0][field] = "not-a-sha"
+                    server["requests"][0][field] = "not-a-sha"
+                with self.assertRaisesRegex(ValueError, field):
+                    compare_server.compare_exports(local, server)
+
     def test_cli_writes_reproducible_report_without_private_inputs(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            local, server, output = root / "local.json", root / "server.json", root / "report.json"
+            local = root / "local.json"
+            server = root / "server.json"
+            output = root / "report.json"
             local.write_text(json.dumps(export("local")))
             server.write_text(json.dumps(export("server", 0.7495)))
             completed = subprocess.run(
-                [sys.executable, compare_server.__file__, str(local), str(server), "--output", str(output)],
+                [
+                    sys.executable,
+                    compare_server.__file__,
+                    str(local),
+                    str(server),
+                    "--output",
+                    str(output),
+                ],
                 text=True,
                 capture_output=True,
             )

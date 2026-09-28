@@ -3,6 +3,7 @@
 import argparse
 import json
 import math
+import re
 from pathlib import Path
 
 from harness import compare
@@ -15,6 +16,13 @@ METADATA_FIELDS = (
     ("scorer_revision", lambda value: value["scorer_revision"]),
     ("template_sha256", lambda value: value["template_sha256"]),
 )
+SHA256_PATTERN = re.compile(r"[0-9a-fA-F]{64}")
+
+
+def _require_sha256(value, source, field, request_id=None):
+    if not isinstance(value, str) or SHA256_PATTERN.fullmatch(value) is None:
+        location = f" for {request_id}" if request_id else ""
+        raise ValueError(f"invalid {source} {field}{location}")
 
 
 def _validate_export(value, expected_source):
@@ -29,9 +37,15 @@ def _validate_export(value, expected_source):
             raise ValueError(f"missing {expected_source} metadata: {label}") from error
         if not isinstance(field, str) or not field:
             raise ValueError(f"invalid {expected_source} metadata: {label}")
+    _require_sha256(value["template_sha256"], expected_source, "template_sha256")
     ids = [request.get("id") for request in value["requests"]]
     if any(not identifier for identifier in ids) or len(ids) != len(set(ids)):
         raise ValueError(f"{expected_source} request IDs must be nonempty and unique")
+    for request in value["requests"]:
+        for field in HASH_FIELDS:
+            _require_sha256(
+                request.get(field), expected_source, field, request_id=request["id"]
+            )
 
 
 def compare_exports(local, server):
