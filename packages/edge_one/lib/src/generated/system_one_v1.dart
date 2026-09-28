@@ -1,5 +1,5 @@
 // Generated from schemas/system-one-v1.schema.json.
-// Schema SHA-256: b50719e9750907eaf07fd641c83148dfec1fcf33cae5e47426fe353dbc88a238
+// Schema SHA-256: a3f8e1f40d889c12aa56b9adf6b7c89acbaabf8dc103a7a60950d9c636fbdab7
 // Do not edit. Run: python3 tools/generate_contracts.py
 
 typedef JsonValue = Object?;

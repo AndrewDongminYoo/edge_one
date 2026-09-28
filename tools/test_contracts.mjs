@@ -116,6 +116,10 @@ expectInvalid({
 expectInvalid({ ...response, usage: { input_tokens: 12 } });
 expectInvalid({
   ...response,
+  usage: { input_tokens: 12, output_tokens: 2, debug: true },
+});
+expectInvalid({
+  ...response,
   answers: {
     team: {
       type: "choice",
