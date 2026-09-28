@@ -71,6 +71,7 @@ CI build evidence excludes the 0.53 GB model and is retained for three days; a h
 
 For Codex Cloud, select the universal Linux image, set Python to 3.12, and configure the environment setup command as `bash setup.sh`.
 The script creates `.cache/m0/.venv` from the hash-locked requirements and checks for a C++ compiler and build tool.
+It also installs the Trunk launcher to `/usr/local/bin/trunk`, downloads the CLI version, runtimes, and linters pinned in `.trunk/trunk.yaml`, and syncs Trunk's git hooks, so the agent phase does not need to download tools before `trunk check`.
 It is safe to run again after a cached environment resumes.
 The setup phase has network access, while agent-phase access depends on the cloud environment setting.
 For a native task that needs the pinned 0.53 GB model, set `EDGE_ONE_FETCH_MODEL=1` in that environment so the setup phase runs the repository's verified fetcher; leave it unset for contract, documentation, and unit-test tasks.

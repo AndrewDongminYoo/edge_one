@@ -49,6 +49,7 @@ Report benchmark device, model revision, and cold/warm/sustained conditions.
 ## Commit & Pull Request Guidelines
 
 History uses concise Conventional Commit messages, such as `feat(m0): validate pinned desktop inference and prefix sharing`.
+Before each commit, run `trunk check --no-fix` and commit only when it exits cleanly.
 Include the problem, scope, verification commands and results, and relevant issues in PR descriptions.
 Attach screenshots for demo UI changes and measured evidence for performance claims.
 
