@@ -78,6 +78,41 @@ fi
 "$venv_python" -m pip install --disable-pip-version-check --require-hashes --only-binary=:all: -r spikes/m0/requirements.lock
 "$venv_python" -m pip check
 
+install_trunk_launcher() {
+  if ! command -v curl >/dev/null 2>&1; then
+    install_apt_packages curl ca-certificates
+  fi
+  local launcher
+  launcher=$(mktemp)
+  if ! curl -fsSL https://trunk.io/releases/trunk -o "$launcher" ||
+    ! grep -q '^readonly TRUNK_LAUNCHER_VERSION=' "$launcher"; then
+    rm -f -- "$launcher"
+    echo 'missing trunk: launcher download failed' >&2
+    exit 1
+  fi
+  if (( EUID == 0 )); then
+    install -m 0755 "$launcher" /usr/local/bin/trunk
+  elif command -v sudo >/dev/null 2>&1; then
+    sudo install -m 0755 "$launcher" /usr/local/bin/trunk
+  else
+    rm -f -- "$launcher"
+    echo 'missing trunk: installing to /usr/local/bin requires root or sudo' >&2
+    exit 1
+  fi
+  rm -f -- "$launcher"
+}
+
+if ! command -v trunk >/dev/null 2>&1; then
+  install_trunk_launcher
+fi
+if ! command -v trunk >/dev/null 2>&1; then
+  echo 'missing trunk after installation' >&2
+  exit 1
+fi
+# Download the pinned CLI, runtimes, and linters while setup still has network access.
+trunk install --ci
+trunk git-hooks sync
+
 if [[ ${EDGE_ONE_FETCH_MODEL:-0} == 1 ]]; then
   "$venv_python" spikes/m0/setup.py fetch
 fi
