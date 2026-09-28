@@ -28,8 +28,8 @@ The specific kernel, runtime or build cause remains unknown.
 
 Unsigned iPhoneOS arm64 builds passed during this run, including the native diagnostic flags before the separate repro target was added.
 Both SDK builds and their source receipts were refreshed after the final generator/repro-source changes.
-Physical iPhone Metal behavior remains unmeasured and requires separate installation and launch approval.
-No physical-device writes occurred.
+At this simulator diagnostic stage, physical iPhone behavior remained unmeasured and required separate installation and launch approval.
+No physical-device writes occurred during this stage.
 Further native builds stopped when one-minute load reached 11.86 on 10 cores.
 Oracle resource precedent `wiki/concepts/mac-mini-resource-limits.md` confirmed sequential native jobs and reuse of the already booted simulator.
 After source review, the builder also rejects a fixture model SHA that differs from the verified manifest, and the direct repro now hashes the bundled model before loading it.
@@ -80,3 +80,9 @@ The subsequent run passed one test with no failures, and two new simulator CPU e
 Both have 20 warm samples, short sustained-format segments of five and seven requests, complete thermal fields, and maximum probability difference 0.00025757958476246845 across both segments.
 All recorded simulator thermal states were nominal; this does not establish how the daily iPhone behaves under sustained work.
 Both unsigned SDK builds and their current source and app-binary hashes are preserved with the probe.
+
+## Later Physical Observation
+
+After separate installation approval, the operator reported the signed app running on an iPhone 16 Pro.
+The [device validation record](2026-09-28-m0-ios-device-validation.md) preserves one 120-second raw export: the default requested Metal profile passes the strict numerical gate, while actual GPU layer placement remains unobserved.
+The simulator Metal failure and its cause are unchanged by that result.

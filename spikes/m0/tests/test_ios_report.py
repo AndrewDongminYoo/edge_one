@@ -1,4 +1,5 @@
 import copy
+import gzip
 import hashlib
 import json
 import math
@@ -557,6 +558,49 @@ class IOSReportTests(unittest.TestCase):
 
 
 class ArchivedIOSEvidenceTests(unittest.TestCase):
+    def test_physical_device_export_preserves_measured_gate_and_thermal_states(self):
+        root = Path(__file__).resolve().parents[3]
+        report_path = root / "docs/notes/2026-09-28-m0-ios-device-report.json.gz"
+        raw_bytes = gzip.decompress(report_path.read_bytes())
+        self.assertEqual(
+            hashlib.sha256(raw_bytes).hexdigest(),
+            "1c4349a63b2c0c4e7cdfd9ca8cd34f2e3a8b9fad07a6b97dd1aa1f3271dc09e1",
+        )
+        report = json.loads(raw_bytes)
+        archive = json.loads(
+            (root / "docs/notes/2026-09-27-m0-ios-validation.json").read_text()
+        )
+        pins = json.loads((root / "spikes/m0/pins.json").read_text())
+        summary = summarize_report(report, archive["fixture"], pins)
+        self.assertTrue(summary["passes_gate"])
+        self.assertTrue(summary["declared_physical_ios"])
+        self.assertEqual(summary["max_abs_difference"], 0.0)
+        self.assertEqual(summary["warm_samples"], 20)
+        self.assertEqual(summary["sustained_samples"], 693)
+        self.assertEqual(summary["sustained_tail_samples"], 151)
+        self.assertEqual(summary["thermal_state_at_start"], 0)
+        self.assertEqual(summary["thermal_state_at_end"], 2)
+        self.assertEqual(summary["thermal_state_max"], 2)
+        with tempfile.TemporaryDirectory() as directory:
+            fixture_path = Path(directory) / "fixture.json"
+            fixture_path.write_text(json.dumps(archive["fixture"]))
+            decompressed_report_path = Path(directory) / "report.json"
+            decompressed_report_path.write_bytes(raw_bytes)
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(root / "spikes/m0/ios/report.py"),
+                    str(decompressed_report_path),
+                    "--fixture",
+                    str(fixture_path),
+                    "--require-device-metadata",
+                ],
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout), summary)
+
     def test_archived_reports_preserve_measured_passes_and_failures(self):
         root = Path(__file__).resolve().parents[3]
         pins = json.loads((root / "spikes/m0/pins.json").read_text())

@@ -66,9 +66,10 @@ CI does not rerun native inference or verify performance on its runner.
 
 ## M0 iOS Spike
 
-Host inference and unsigned iOS/simulator arm64 builds have passed; physical-device validation remains pending.
+Host inference and unsigned iOS/simulator arm64 builds have passed.
+An observed [iPhone 16 Pro report](docs/notes/2026-09-28-m0-ios-device-validation.md) passes the physical report-format and numerical gates; actual GPU layer placement was not independently observed.
 Simulator CPU parity passes, while the default simulator Metal path fails parity; see the [validation record](docs/notes/2026-09-27-m0-ios-validation.md).
-The [direct native diagnostic](docs/notes/2026-09-28-m0-metal-diagnostic.md) reproduces the Metal failure without Scorer or Swift; its root cause and physical-device behavior remain unverified.
+The [direct native diagnostic](docs/notes/2026-09-28-m0-metal-diagnostic.md) reproduces the simulator Metal failure without Scorer or Swift; its root cause remains unverified despite the passing requested-profile iPhone report.
 Both SDK builds and source receipts were refreshed after the model-integrity repair; the wrong-model rejection test passes.
 The experimental SwiftUI app calls the pinned native Scorer in process.
 It verifies model and fixture SHA-256, loads one context, resets memory before each request, and exports the first request plus 20 warm samples.
