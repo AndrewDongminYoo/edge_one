@@ -46,6 +46,15 @@ The small synthetic fixture set checks numerical parity and prefix-sharing behav
 M0 still requires a separate iOS warm-latency measurement.
 Remote calls, model publishing, and device writes are outside this spike.
 
+## M0 Server Comparison
+
+Approved redacted server exports can be compared with matching local scorer exports
+using `spikes/m0/compare_server.py`. The tool verifies request and token-ID hashes,
+reports per-question probability differences, and separates matching-version runtime
+differences from model or scorer configuration drift. See the
+[export specification](docs/specs/2026-09-28-m0-server-comparison.md) and synthetic
+example fixtures; no server credentials or private request contents are stored here.
+
 ## Development
 
 Keep specs in `docs/specs/`, plans in `docs/plans/`, and measurements in `docs/notes/`.
