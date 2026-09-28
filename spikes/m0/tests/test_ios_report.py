@@ -155,6 +155,19 @@ class IOSReportTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "sustained"):
             summarize_report(self.report, self.fixture, self.pins)
 
+    def test_sustained_report_rejects_duration_longer_than_elapsed_interval(self):
+        self.add_sustained_samples()
+        for index in (0, 20):
+            with self.subTest(index=index):
+                report = copy.deepcopy(self.report)
+                report["sustained_records"][index]["duration_ms"] = 3000.001
+                with self.assertRaisesRegex(ValueError, "sustained elapsed time"):
+                    summarize_report(report, self.fixture, self.pins)
+        self.report["sustained_records"][20]["duration_ms"] = 3000.0
+        self.assertTrue(
+            summarize_report(self.report, self.fixture, self.pins)["passes_gate"]
+        )
+
     def test_recomputes_median_and_parity(self):
         summary = summarize_report(self.report, self.fixture, self.pins)
         self.assertEqual(summary["warm_p50_ms"], 45.0)

@@ -153,6 +153,7 @@ def summarize_report(report, fixture, pins):
         ):
             raise ValueError("invalid thermal state")
     differences = []
+    previous_sustained_elapsed = 0
     for i, phase, record in expected:
         if record["sample"] != i or record["phase"] != phase:
             raise ValueError("unexpected record set")
@@ -165,6 +166,11 @@ def summarize_report(report, fixture, pins):
             or duration <= 0
         ):
             raise ValueError("invalid duration")
+        if phase == "sustained":
+            elapsed = record["elapsed_ms"]
+            if elapsed - previous_sustained_elapsed < duration:
+                raise ValueError("sustained elapsed time shorter than duration")
+            previous_sustained_elapsed = elapsed
         native = record["native_response"]
         if (
             native["mode"] != "fused"
