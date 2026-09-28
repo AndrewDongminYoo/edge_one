@@ -20,6 +20,8 @@ IOS = Path(__file__).resolve().parent
 def require_capacity():
     if sys.platform != "darwin":
         raise RuntimeError("Apple SDK builds require macOS")
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        return
     load, cores = os.getloadavg()[0], os.cpu_count() or 1
     if load > cores:
         raise RuntimeError(
