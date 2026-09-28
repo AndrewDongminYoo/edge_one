@@ -15,6 +15,7 @@ METADATA_FIELDS = (
     ("model.revision", lambda value: value["model"]["revision"]),
     ("scorer_revision", lambda value: value["scorer_revision"]),
     ("template_sha256", lambda value: value["template_sha256"]),
+    ("readout_config_sha256", lambda value: value["readout_config_sha256"]),
 )
 SHA256_PATTERN = re.compile(r"[0-9a-fA-F]{64}")
 
@@ -23,6 +24,14 @@ def _require_sha256(value, source, field, request_id=None):
     if not isinstance(value, str) or SHA256_PATTERN.fullmatch(value) is None:
         location = f" for {request_id}" if request_id else ""
         raise ValueError(f"invalid {source} {field}{location}")
+
+
+def _metadata(value):
+    return {
+        label: field.lower() if label.endswith("_sha256") else field
+        for label, getter in METADATA_FIELDS
+        for field in (getter(value),)
+    }
 
 
 def _validate_export(value, expected_source):
@@ -37,7 +46,8 @@ def _validate_export(value, expected_source):
             raise ValueError(f"missing {expected_source} metadata: {label}") from error
         if not isinstance(field, str) or not field:
             raise ValueError(f"invalid {expected_source} metadata: {label}")
-    _require_sha256(value["template_sha256"], expected_source, "template_sha256")
+    for field in ("template_sha256", "readout_config_sha256"):
+        _require_sha256(value[field], expected_source, field)
     ids = [request.get("id") for request in value["requests"]]
     if any(not identifier for identifier in ids) or len(ids) != len(set(ids)):
         raise ValueError(f"{expected_source} request IDs must be nonempty and unique")
@@ -61,7 +71,7 @@ def compare_exports(local, server):
     for identifier, local_request in local_requests.items():
         server_request = server_requests[identifier]
         for field in HASH_FIELDS:
-            if local_request.get(field) != server_request.get(field):
+            if local_request[field].lower() != server_request[field].lower():
                 label = "token IDs" if field == "token_ids_sha256" else "request"
                 raise ValueError(f"{label} hash mismatch for {identifier}")
         names = local_request.get("option_names")
@@ -78,8 +88,8 @@ def compare_exports(local, server):
         questions.append(
             {
                 "id": identifier,
-                "request_sha256": local_request["request_sha256"],
-                "token_ids_sha256": local_request["token_ids_sha256"],
+                "request_sha256": local_request["request_sha256"].lower(),
+                "token_ids_sha256": local_request["token_ids_sha256"].lower(),
                 "local_answer": local_request["answer"],
                 "server_answer": server_request["answer"],
                 "local_probabilities": local_request["probabilities"],
@@ -89,8 +99,12 @@ def compare_exports(local, server):
             }
         )
 
+    local_metadata = _metadata(local)
+    server_metadata = _metadata(server)
     metadata_differences = [
-        label for label, getter in METADATA_FIELDS if getter(local) != getter(server)
+        label
+        for label in local_metadata
+        if local_metadata[label] != server_metadata[label]
     ]
     attribution = (
         "runtime_difference"
@@ -101,8 +115,8 @@ def compare_exports(local, server):
         "schema_version": 1,
         "attribution": attribution,
         "metadata_differences": metadata_differences,
-        "local_metadata": {label: getter(local) for label, getter in METADATA_FIELDS},
-        "server_metadata": {label: getter(server) for label, getter in METADATA_FIELDS},
+        "local_metadata": local_metadata,
+        "server_metadata": server_metadata,
         "questions": questions,
         "summary": {
             "compared_questions": len(questions),
