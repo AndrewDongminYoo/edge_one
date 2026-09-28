@@ -63,6 +63,7 @@ class BuildCapacityTests(unittest.TestCase):
     def test_overloaded_machine_refuses_before_verification_or_build(self):
         with (
             mock.patch("ios.build.sys.platform", "darwin"),
+            mock.patch.dict("ios.build.os.environ", {"GITHUB_ACTIONS": "false"}),
             mock.patch("ios.build.os.cpu_count", return_value=10),
             mock.patch("ios.build.os.getloadavg", return_value=(20.0, 15.0, 12.0)),
             mock.patch(
@@ -81,6 +82,15 @@ class BuildCapacityTests(unittest.TestCase):
             mock.patch("ios.build.sys.platform", "darwin"),
             mock.patch("ios.build.os.cpu_count", return_value=10),
             mock.patch("ios.build.os.getloadavg", return_value=(3.0, 5.0, 12.0)),
+        ):
+            build.require_capacity()
+
+    def test_hosted_runner_ignores_host_load(self):
+        with (
+            mock.patch("ios.build.sys.platform", "darwin"),
+            mock.patch.dict("ios.build.os.environ", {"GITHUB_ACTIONS": "true"}),
+            mock.patch("ios.build.os.cpu_count", return_value=3),
+            mock.patch("ios.build.os.getloadavg", return_value=(14.87, 10.0, 8.0)),
         ):
             build.require_capacity()
 
