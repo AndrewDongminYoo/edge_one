@@ -26,4 +26,5 @@ Probability values are range-checked by the schema, while cross-field totals and
 `pnpm run schema:test` validates representative positive and negative request/response fixtures.
 `pnpm run contracts:check` compares both generated files with the source schema, including its SHA-256 digest.
 `pnpm run types:check`, `dart analyze packages/edge_one`, and `flutter analyze packages/edge_one_flutter` check that the generated and exported types compile.
+`dart run tools/check_dart_contract.dart` checks that integer-valued JSON numbers can enter Dart `num` fields without a `double` cast.
 GitHub's Linux contract job runs these checks with pinned Node, pnpm, and Flutter versions.

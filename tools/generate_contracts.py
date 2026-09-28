@@ -108,7 +108,7 @@ def dart_type(value: dict) -> str:
         raise ValueError(f"Unsupported Dart anyOf: {options}")
     kind = value.get("type")
     if kind == "number":
-        return "double"
+        return "num"
     if kind == "integer":
         return "int"
     if kind == "boolean":

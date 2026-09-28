@@ -41,8 +41,8 @@ final class NoulQuestion extends SystemOneQuestion {
 final class ChoiceAnswer extends SystemOneAnswer {
   String get type => "choice";
   final String choice;
-  final Map<String, double> probabilities;
-  final double confidence;
+  final Map<String, num> probabilities;
+  final num confidence;
 
   const ChoiceAnswer({
     required this.choice,
@@ -53,10 +53,10 @@ final class ChoiceAnswer extends SystemOneAnswer {
 
 final class ScoreAnswer extends SystemOneAnswer {
   String get type => "score";
-  final double score;
+  final num score;
   final Map<String, StructuredValue> legend;
-  final Map<String, double> probabilities;
-  final double confidence;
+  final Map<String, num> probabilities;
+  final num confidence;
 
   const ScoreAnswer({
     required this.score,
@@ -68,7 +68,7 @@ final class ScoreAnswer extends SystemOneAnswer {
 
 final class NoulAnswer extends SystemOneAnswer {
   String get type => "noul";
-  final double noul;
+  final num noul;
 
   const NoulAnswer({required this.noul});
 }
@@ -97,7 +97,7 @@ final class SystemOneResponse {
   final Map<String, SystemOneAnswer> answers;
   final Usage usage;
   final String? xRoute;
-  final double? xLatencyMs;
+  final num? xLatencyMs;
   final JsonValue xEngine;
   final Map<String, JsonValue> xExtensions;
 

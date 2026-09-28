@@ -21,6 +21,7 @@ pnpm run contracts:generate
 pnpm run contracts:check
 pnpm run types:check
 flutter pub get --enforce-lockfile
+dart run tools/check_dart_contract.dart
 dart analyze packages/edge_one
 flutter analyze packages/edge_one_flutter
 ```

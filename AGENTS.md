@@ -28,7 +28,7 @@ The following checks apply to the scaffolded contracts:
 - `pnpm install --frozen-lockfile`: restore pinned schema-test and TypeScript tools.
 - `pnpm run schema:test` and `pnpm run contracts:check`: validate fixtures and generated drift.
 - `pnpm run types:check`: compile the generated TypeScript contract.
-- `flutter pub get --enforce-lockfile`, `dart analyze packages/edge_one`, and `flutter analyze packages/edge_one_flutter`: resolve and analyze the Dart workspace.
+- `flutter pub get --enforce-lockfile`, `dart run tools/check_dart_contract.dart`, `dart analyze packages/edge_one`, and `flutter analyze packages/edge_one_flutter`: resolve the Dart workspace and check JSON-number assignability and analysis.
 
 The native target has no inference sources yet; see `README.md` for M0 build commands.
 
