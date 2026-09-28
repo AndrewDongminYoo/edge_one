@@ -25,11 +25,19 @@ def validate_report(report, fixture_spec, pins):
         metadata["repetitions"],
         metadata["microbatch"],
     )
-    if summary != report["summary"]:
+    stored_summary = report["summary"]
+    comparable_summary = json.loads(json.dumps(summary))
+    # Reports created before drift localization was added have the same gates but
+    # no coordinate for their worst comparison. Keep those pinned measurements
+    # verifiable while requiring exact agreement for every field they contain.
+    for mode, gate in stored_summary.get("gates", {}).items():
+        if "worst_comparison" not in gate:
+            comparable_summary["gates"][mode].pop("worst_comparison", None)
+    if comparable_summary != stored_summary:
         raise ValueError("stored summary differs from raw measurements")
     if not all(gate["passes_gate"] for gate in summary["gates"].values()):
         raise ValueError("archived probability comparison failed")
-    return summary
+    return stored_summary
 
 
 def main():

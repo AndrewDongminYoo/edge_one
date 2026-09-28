@@ -63,6 +63,7 @@ Preserve the upstream model's LICENSE and NOTICE with downloaded artifacts.
 GitHub Actions runs the unit tests and validates archived measurements against current fixture and model pins.
 It also builds the pinned native scorer on Ubuntu, requires exact-prefix numerical parity with one warm sample, and builds unsigned iPhone and simulator apps on a hosted macOS runner.
 The Linux run still records batched-prefix results, but batched sharing remains experimental and is not a required production gate.
+Each new gate summary identifies its worst fixture, phase, sample, and question; see the [Linux batched-drift investigation](docs/notes/2026-09-28-m0-linux-batched-drift.md) for the observed failures and promotion criteria.
 The report checker recomputes probability gates, native sharing observations, and timing summaries from stored records.
 CI build evidence excludes the 0.53 GB model and is retained for three days; a hosted build does not establish physical-device placement or sustained latency.
 
