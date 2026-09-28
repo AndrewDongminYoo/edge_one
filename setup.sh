@@ -37,6 +37,13 @@ if ! command -v python3.12 >/dev/null 2>&1; then
   exit 1
 fi
 python3.12 -c 'import sys; assert sys.version_info[:2] == (3, 12)'
+if ! python3.12 -m ensurepip --version >/dev/null 2>&1; then
+  install_apt_packages python3.12-venv
+fi
+if ! python3.12 -m ensurepip --version >/dev/null 2>&1; then
+  echo 'missing ensurepip after python3.12-venv installation' >&2
+  exit 1
+fi
 
 if ! command -v c++ >/dev/null 2>&1 || {
   ! command -v ninja >/dev/null 2>&1 && ! command -v make >/dev/null 2>&1
