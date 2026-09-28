@@ -1,0 +1,3580 @@
+{
+  "schema_version": 1,
+  "fixture": {
+    "model_sha256": "0a19bc29bacc33e0d871146c8612b24dd14c2ed2e61cedeb7a928b0852628bac",
+    "native_request": {
+      "keep_prefix": false,
+      "mode": "fused",
+      "prefix": [
+        1349, 25, 198, 4754, 25686, 763, 328, 40, 557, 11102, 10598, 411, 2182,
+        13, 5044, 20325, 279, 21814, 7903, 10152, 328, 10726, 763, 5046, 47676,
+        763, 328, 751, 487, 328, 14069, 763, 328, 268, 13933, 328, 13679, 763,
+        4241, 61672, 12, 13492, 487, 328, 66165, 89254, 271
+      ],
+      "questions": [
+        {
+          "ids": [
+            14162, 498, 11409, 5491, 15451, 2015, 1220, 3579, 411, 11390, 30,
+            198, 3670, 25, 198, 12, 220, 37355, 25, 13767, 11, 61893, 11, 70057,
+            198, 12, 220, 69685, 25, 21851, 321, 680, 1098, 198, 12, 220, 28094,
+            25, 491, 22757, 198, 58223, 1754, 2904, 25, 198, 37355, 25, 13767,
+            11, 61893, 11, 70057, 1411, 198, 69685, 25, 21851, 321, 680, 1098,
+            1411, 198, 28094, 25, 491, 22757, 1411, 198
+          ],
+          "rows": [9542, 874],
+          "slots": [100, 108, 114]
+        }
+      ],
+      "share_prefix": true
+    },
+    "option_names": ["billing", "technical", "sales"],
+    "pins": {
+      "files": [
+        "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+        "LICENSE",
+        "NOTICE",
+        "build_jev_score.sh",
+        "jev_score.cpp",
+        "jev_style_decision_gguf.py",
+        "readout_config.json",
+        "release_config.json",
+        "requirements.txt",
+        "tokenizer/tokenizer.json",
+        "tokenizer/tokenizer_config.json"
+      ],
+      "llama_archive_sha256": "d55c444401db6734c2f4bba77c4d270f0e431c9e197ce5f35da8abe19a08c91b",
+      "llama_cpp_commit": "441df11f65ea0b6d0c72965aaf70c8241070ddcb",
+      "manifest_sha256": "e370c55aa62c6b47154e72e56608bde79c691cc857c10b9adf1339306ece3473",
+      "model": "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+      "repo": "chaoliangUNSW/Jev-Style-0.8B-Decision-v3-GGUF",
+      "revision": "edf37c26a1098f83cf4264b8adbe0dca2d2ebb0c"
+    },
+    "question": {
+      "crit": {
+        "billing": "payments, invoices, refunds",
+        "sales": "new purchases",
+        "technical": "bugs and outages"
+      },
+      "ins": "Which team should handle this ticket?",
+      "t": "choice"
+    },
+    "reference": {
+      "answer": "billing",
+      "backend": "llama.cpp",
+      "entropy_concentration": 0.9267979347184869,
+      "head_tokens": 69,
+      "input_tokens": 116,
+      "model": "Jev-Style-0.8B-Decision-v3",
+      "probabilities": {
+        "billing": 0.9863086046003187,
+        "sales": 0.009904519731999671,
+        "technical": 0.0037868756676816785
+      },
+      "scores": {
+        "billing": 2.874134063720703,
+        "sales": -1.174978256225586,
+        "technical": -2.021106719970703
+      },
+      "temperature": 0.8800546821789332,
+      "top_probability": 0.9863086046003187
+    },
+    "state": {
+      "customer": {
+        "locale": "en",
+        "tier": "pro"
+      },
+      "tags": ["duplicate-charge", "refund"],
+      "ticket": "I was charged twice this month. Please refund the duplicate payment."
+    },
+    "temperature": 0.8800546821789332
+  },
+  "reports": {
+    "host": {
+      "raw": {
+        "metadata": {
+          "compiler": "Apple LLVM 21.0.0 (clang-2100.3.34.2)",
+          "device": {
+            "hardware": "unknown",
+            "os": "unknown",
+            "platform": "host",
+            "simulator": false
+          },
+          "fixture_sha256": "86d5e67b5f834ca7a31d467c47bd6b0a9bc87ec361e983161cc19f18016c7027",
+          "flash_attn": "auto",
+          "integrity_ms": 474.753375,
+          "model_hash_verified": true,
+          "model_sha256": "0a19bc29bacc33e0d871146c8612b24dd14c2ed2e61cedeb7a928b0852628bac",
+          "n_gpu_layers": 999,
+          "pins": {
+            "files": [
+              "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+              "LICENSE",
+              "NOTICE",
+              "build_jev_score.sh",
+              "jev_score.cpp",
+              "jev_style_decision_gguf.py",
+              "readout_config.json",
+              "release_config.json",
+              "requirements.txt",
+              "tokenizer/tokenizer.json",
+              "tokenizer/tokenizer_config.json"
+            ],
+            "llama_archive_sha256": "d55c444401db6734c2f4bba77c4d270f0e431c9e197ce5f35da8abe19a08c91b",
+            "llama_cpp_commit": "441df11f65ea0b6d0c72965aaf70c8241070ddcb",
+            "manifest_sha256": "e370c55aa62c6b47154e72e56608bde79c691cc857c10b9adf1339306ece3473",
+            "model": "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+            "repo": "chaoliangUNSW/Jev-Style-0.8B-Decision-v3-GGUF",
+            "revision": "edf37c26a1098f83cf4264b8adbe0dca2d2ebb0c"
+          },
+          "repetitions": 2,
+          "threads": 4,
+          "timing_scope": "pretokenized native scoring including internal memory resets and verdict softmax"
+        },
+        "ready": {
+          "desc": "qwen35 0.8B Q4_K - Medium",
+          "load_ms": 625.651417,
+          "n_batch": 2048,
+          "n_ctx": 2048,
+          "n_outputs_max": 16,
+          "n_seq_max": 2,
+          "n_ubatch": 1024,
+          "system_info": "MTL : EMBED_LIBRARY = 1 | CPU : NEON = 1 | ARM_FMA = 1 | FP16_VA = 1 | MATMUL_INT8 = 1 | DOTPROD = 1 | SME = 1 | SME2 = 1 | ACCELERATE = 1 | REPACK = 1 | "
+        },
+        "records": [
+          {
+            "duration_ms": 524.837584,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.63637924194336, 15.762245178222656],
+                    [15.673774719238281, 17.694881439208984],
+                    [16.131155014038086, 17.306133270263672]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0.0,
+                "question_ms": [523.993167],
+                "total_ms": 524.828542
+              }
+            },
+            "phase": "first",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9863086046003187,
+                "sales": 0.009904519731999671,
+                "technical": 0.0037868756676816785
+              }
+            },
+            "sample": 0
+          },
+          {
+            "duration_ms": 74.602833,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.63637924194336, 15.762245178222656],
+                    [15.673774719238281, 17.694881439208984],
+                    [16.131155014038086, 17.306133270263672]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0.0,
+                "question_ms": [73.836083],
+                "total_ms": 74.595583
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9863086046003187,
+                "sales": 0.009904519731999671,
+                "technical": 0.0037868756676816785
+              }
+            },
+            "sample": 1
+          },
+          {
+            "duration_ms": 72.854917,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.63637924194336, 15.762245178222656],
+                    [15.673774719238281, 17.694881439208984],
+                    [16.131155014038086, 17.306133270263672]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0.0,
+                "question_ms": [72.06625],
+                "total_ms": 72.847167
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9863086046003187,
+                "sales": 0.009904519731999671,
+                "technical": 0.0037868756676816785
+              }
+            },
+            "sample": 2
+          }
+        ],
+        "schema_version": 1
+      },
+      "summary": {
+        "warm_p50_ms": 73.728875,
+        "warm_samples": 2,
+        "first_request_ms": 524.837584,
+        "max_abs_difference": 0.0,
+        "passes_gate": true,
+        "declared_physical_ios": false,
+        "timing_scope": "pretokenized native scoring including internal memory resets and verdict softmax"
+      }
+    },
+    "simulator_metal_1": {
+      "raw": {
+        "metadata": {
+          "build": {
+            "architecture": "arm64",
+            "configuration": "Release",
+            "fixture_sha256": "86d5e67b5f834ca7a31d467c47bd6b0a9bc87ec361e983161cc19f18016c7027",
+            "native_archives": {
+              "native/ggml/src/ggml-metal/Release-iphonesimulator/libggml-metal.a": "abe3bdbbf0c417411464f1e6792053cfc2e9d7405c08f600ca205c77b42061c8",
+              "native/ggml/src/Release-iphonesimulator/libggml-base.a": "c938ecf7478164fecc4aa2edde9b0365905d0aae684b0dd9d1bd2e400838a9de",
+              "native/ggml/src/Release-iphonesimulator/libggml-cpu.a": "8d6b404081379b3177bfcc72eb74f993e5aedde9f52c89f3857d19934c947212",
+              "native/ggml/src/Release-iphonesimulator/libggml.a": "a6fe027cffae6a46172e6560147b91c3e117d4eeae9a5cf02a1f76265165fcf7",
+              "native/src/Release-iphonesimulator/libllama.a": "89b8738daab26576ecb5947d76d7669779f0045455c4cbd58364f0fd56a88229"
+            },
+            "pins": {
+              "files": [
+                "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+                "LICENSE",
+                "NOTICE",
+                "build_jev_score.sh",
+                "jev_score.cpp",
+                "jev_style_decision_gguf.py",
+                "readout_config.json",
+                "release_config.json",
+                "requirements.txt",
+                "tokenizer/tokenizer.json",
+                "tokenizer/tokenizer_config.json"
+              ],
+              "llama_archive_sha256": "d55c444401db6734c2f4bba77c4d270f0e431c9e197ce5f35da8abe19a08c91b",
+              "llama_cpp_commit": "441df11f65ea0b6d0c72965aaf70c8241070ddcb",
+              "manifest_sha256": "e370c55aa62c6b47154e72e56608bde79c691cc857c10b9adf1339306ece3473",
+              "model": "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+              "repo": "chaoliangUNSW/Jev-Style-0.8B-Decision-v3-GGUF",
+              "revision": "edf37c26a1098f83cf4264b8adbe0dca2d2ebb0c"
+            },
+            "sdk": "iphonesimulator",
+            "sources": {
+              "app/M0App.swift": "89192b643205dc4294a7d06be93f145fd70893f29af762179239e51c2cceb699",
+              "app/NativeBenchmark.h": "146eb57e39207bfe47e4b5d5feaaf37b77cd3e0c5a18c26610f25f38c182963c",
+              "app/NativeBenchmark.mm": "58660f4a10bfbe2876cd198eda5e9fa1148b6fc09c651cdeade69be618566591",
+              "Benchmark.cpp": "563df94bea63b7c1bcbf7cf0a9e4a4b50bae8df14c1e4c0f467349fe09a62729",
+              "Benchmark.hpp": "c24e0a792b2c21aebca686d42eaa98132313e1bbe838bde7b48f8bb9194763dc",
+              "build.py": "fd2c5e0aaeb744c086cfe0e4685b78dbf00a43f5a2072a06e24719bb17c67fd4",
+              "host_main.cpp": "e189709712683027ab05c816b3da61aa0e241e381bc30b528489b0109146f441",
+              "prepare.py": "58d6c461f7ab743c0dca87280df00872f5122f3a2cca50d91eb383f58b5df955",
+              "report.py": "420633ad674f38974915d5eaa42d45836bea668d511e1d9f8af5322a54008fa5",
+              "tests/BenchmarkUITests.swift": "a35b04639e0971a693a790ae2d762889f357250bdb4d6a912af5e57430ac2fc8"
+            },
+            "xcode": "Xcode 27.0\nBuild version 27A266a",
+            "xcodegen": "Version: 2.46.0"
+          },
+          "compiler": "Apple LLVM 21.0.0 (clang-2100.3.34.2)",
+          "device": {
+            "hardware": "arm64",
+            "os": "26.5",
+            "platform": "iOS",
+            "simulator": true,
+            "thermal_state_at_start": 0
+          },
+          "finished_utc": "2026-09-27T14:16:45Z",
+          "fixture_sha256": "86d5e67b5f834ca7a31d467c47bd6b0a9bc87ec361e983161cc19f18016c7027",
+          "flash_attn": "auto",
+          "integrity_ms": 366.789041,
+          "model_hash_verified": true,
+          "model_sha256": "0a19bc29bacc33e0d871146c8612b24dd14c2ed2e61cedeb7a928b0852628bac",
+          "n_gpu_layers": 999,
+          "pins": {
+            "files": [
+              "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+              "LICENSE",
+              "NOTICE",
+              "build_jev_score.sh",
+              "jev_score.cpp",
+              "jev_style_decision_gguf.py",
+              "readout_config.json",
+              "release_config.json",
+              "requirements.txt",
+              "tokenizer/tokenizer.json",
+              "tokenizer/tokenizer_config.json"
+            ],
+            "llama_archive_sha256": "d55c444401db6734c2f4bba77c4d270f0e431c9e197ce5f35da8abe19a08c91b",
+            "llama_cpp_commit": "441df11f65ea0b6d0c72965aaf70c8241070ddcb",
+            "manifest_sha256": "e370c55aa62c6b47154e72e56608bde79c691cc857c10b9adf1339306ece3473",
+            "model": "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+            "repo": "chaoliangUNSW/Jev-Style-0.8B-Decision-v3-GGUF",
+            "revision": "edf37c26a1098f83cf4264b8adbe0dca2d2ebb0c"
+          },
+          "repetitions": 20,
+          "threads": 4,
+          "timing_scope": "pretokenized native scoring including internal memory resets and verdict softmax"
+        },
+        "ready": {
+          "desc": "qwen35 0.8B Q4_K - Medium",
+          "load_ms": 682.837916,
+          "n_batch": 2048,
+          "n_ctx": 2048,
+          "n_outputs_max": 16,
+          "n_seq_max": 2,
+          "n_ubatch": 1024,
+          "system_info": "MTL : EMBED_LIBRARY = 1 | CPU : NEON = 1 | ARM_FMA = 1 | FP16_VA = 1 | DOTPROD = 1 | LLAMAFILE = 1 | ACCELERATE = 1 | REPACK = 1 | "
+        },
+        "records": [
+          {
+            "duration_ms": 1280.740792,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [0, 0],
+                    [0, 0],
+                    [0.9976051449775696, -0.4670318365097046]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [1277.362291],
+                "total_ms": 1280.729875
+              }
+            },
+            "phase": "first",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0.13732969425938515,
+                "sales": 0.7253406114812296,
+                "technical": 0.13732969425938515
+              }
+            },
+            "sample": 0
+          },
+          {
+            "duration_ms": 1065.413625,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [74547335039811584, -15947464825634816],
+                    [74547335039811584, -15947464825634816],
+                    [0.9296048879623413, 0.8703851699829102]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [1062.416125],
+                "total_ms": 1065.397625
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.5,
+                "sales": 0,
+                "technical": 0.5
+              }
+            },
+            "sample": 1
+          },
+          {
+            "duration_ms": 1007.07575,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [5447174951272448, 1122184491696128],
+                    [5447174951272448, 1122184491696128],
+                    [1.379140853881836, 0.8810383677482605]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [1004.487875],
+                "total_ms": 1007.065416
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.5,
+                "sales": 0,
+                "technical": 0.5
+              }
+            },
+            "sample": 2
+          },
+          {
+            "duration_ms": 1055.088333,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-3054108026077184, 5299359893684224],
+                    [-3054108026077184, 5299359893684224],
+                    [0.7644187808036804, 0.6336789131164551]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [1052.217125],
+                "total_ms": 1055.038208
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 3
+          },
+          {
+            "duration_ms": 1185.269625,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-2736926838751232, 5170773404680192],
+                    [-2736926838751232, 5170773404680192],
+                    [0.17672622203826904, 0.5491541624069214]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [1182.408541],
+                "total_ms": 1185.259292
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 4
+          },
+          {
+            "duration_ms": 1526.2475,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-3567257833701376, 6508090929184768],
+                    [-3567257833701376, 6508090929184768],
+                    [0.5665997862815857, 1.380176067352295]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [1522.695708],
+                "total_ms": 1526.234042
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 5
+          },
+          {
+            "duration_ms": 1274.992708,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [3360126593400832, 6186186351575040],
+                    [3360126593400832, 6186186351575040],
+                    [0.495037704706192, 0.08699098974466324]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [1272.706417],
+                "total_ms": 1274.980125
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 6
+          },
+          {
+            "duration_ms": 1344.800667,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-1370514266259456, 7102316297584640],
+                    [-1370514266259456, 7102316297584640],
+                    [0.3300142288208008, 0.5152032971382141]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [1342.503458],
+                "total_ms": 1344.7905
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 7
+          },
+          {
+            "duration_ms": 1202.841375,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-4275789193281536, 5339296110215168],
+                    [-4275789193281536, 5339296110215168],
+                    [0.8921217918395996, 0.6834741830825806]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [1199.970833],
+                "total_ms": 1202.831292
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 8
+          },
+          {
+            "duration_ms": 1344.010084,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-2907746546483200, 5481008556146688],
+                    [-2907746546483200, 5481008556146688],
+                    [0.10127639770507812, 1.0729670524597168]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [1341.041708],
+                "total_ms": 1343.99825
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 9
+          },
+          {
+            "duration_ms": 1131.664417,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-1762734572044288, -42369047068672],
+                    [-1762734572044288, -42369047068672],
+                    [0.22741875052452087, 0.6774334907531738]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [1129.130208],
+                "total_ms": 1131.65275
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 10
+          },
+          {
+            "duration_ms": 1187.704375,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-4271054528708608, -1047461321768960],
+                    [-4271054528708608, -1047461321768960],
+                    [0.8024370670318604, 0.47658541798591614]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [1185.316916],
+                "total_ms": 1187.69525
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 11
+          },
+          {
+            "duration_ms": 1069.194833,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-1759500461670400, 2661559021076480],
+                    [-1759500461670400, 2661559021076480],
+                    [0.5617426037788391, 0.5873126983642578]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [1066.609208],
+                "total_ms": 1069.168208
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 12
+          },
+          {
+            "duration_ms": 1053.785375,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-1345088999391232, 1978877056385024],
+                    [-1345088999391232, 1978877056385024],
+                    [0.11708662658929825, 0.8670872449874878]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [1050.323708],
+                "total_ms": 1053.7725
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 13
+          },
+          {
+            "duration_ms": 737.850708,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-958818968141824, 2376387151265792],
+                    [-958818968141824, 2376387151265792],
+                    [0.448700875043869, 0.8890016078948975]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [736.050208],
+                "total_ms": 737.841875
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 14
+          },
+          {
+            "duration_ms": 1029.512792,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [1939743461867520, 6379563495981056],
+                    [1939743461867520, 6379563495981056],
+                    [-0.00917331874370575, 0.3262925446033478]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [1027.4665],
+                "total_ms": 1029.503625
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 15
+          },
+          {
+            "duration_ms": 915.091875,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-3046854900056064, 4499737109594112],
+                    [-3046854900056064, 4499737109594112],
+                    [0.8201741576194763, 0.3977704644203186]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [912.526875],
+                "total_ms": 915.082041
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 16
+          },
+          {
+            "duration_ms": 906.897208,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [378779675394048, 7802332079194112],
+                    [378779675394048, 7802332079194112],
+                    [0.5697599053382874, 0.7784413695335388]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [902.916958],
+                "total_ms": 906.886166
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 17
+          },
+          {
+            "duration_ms": 801.651959,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-932006963707904, 1617464282578944],
+                    [-932006963707904, 1617464282578944],
+                    [0.6245148181915283, 0.4980437457561493]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [799.394416],
+                "total_ms": 801.64175
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 18
+          },
+          {
+            "duration_ms": 763.952666,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-1441314117779456, 7753192821489664],
+                    [-1441314117779456, 7753192821489664],
+                    [0.5008271932601929, 0.9852779507637024]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [761.241625],
+                "total_ms": 763.943083
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 19
+          },
+          {
+            "duration_ms": 780.873417,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-1045702666878976, 5411819854233600],
+                    [-1045702666878976, 5411819854233600],
+                    [0.4061697721481323, 0.44201457500457764]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [777.847334],
+                "total_ms": 780.863625
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 20
+          }
+        ],
+        "schema_version": 1
+      },
+      "summary": {
+        "warm_p50_ms": 1060.250979,
+        "warm_samples": 20,
+        "first_request_ms": 1280.740792,
+        "max_abs_difference": 0.9900954802680003,
+        "passes_gate": false,
+        "declared_physical_ios": false,
+        "timing_scope": "pretokenized native scoring including internal memory resets and verdict softmax"
+      }
+    },
+    "simulator_metal_2": {
+      "raw": {
+        "metadata": {
+          "build": {
+            "architecture": "arm64",
+            "configuration": "Release",
+            "fixture_sha256": "86d5e67b5f834ca7a31d467c47bd6b0a9bc87ec361e983161cc19f18016c7027",
+            "native_archives": {
+              "native/ggml/src/ggml-metal/Release-iphonesimulator/libggml-metal.a": "abe3bdbbf0c417411464f1e6792053cfc2e9d7405c08f600ca205c77b42061c8",
+              "native/ggml/src/Release-iphonesimulator/libggml-base.a": "c938ecf7478164fecc4aa2edde9b0365905d0aae684b0dd9d1bd2e400838a9de",
+              "native/ggml/src/Release-iphonesimulator/libggml-cpu.a": "8d6b404081379b3177bfcc72eb74f993e5aedde9f52c89f3857d19934c947212",
+              "native/ggml/src/Release-iphonesimulator/libggml.a": "a6fe027cffae6a46172e6560147b91c3e117d4eeae9a5cf02a1f76265165fcf7",
+              "native/src/Release-iphonesimulator/libllama.a": "89b8738daab26576ecb5947d76d7669779f0045455c4cbd58364f0fd56a88229"
+            },
+            "pins": {
+              "files": [
+                "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+                "LICENSE",
+                "NOTICE",
+                "build_jev_score.sh",
+                "jev_score.cpp",
+                "jev_style_decision_gguf.py",
+                "readout_config.json",
+                "release_config.json",
+                "requirements.txt",
+                "tokenizer/tokenizer.json",
+                "tokenizer/tokenizer_config.json"
+              ],
+              "llama_archive_sha256": "d55c444401db6734c2f4bba77c4d270f0e431c9e197ce5f35da8abe19a08c91b",
+              "llama_cpp_commit": "441df11f65ea0b6d0c72965aaf70c8241070ddcb",
+              "manifest_sha256": "e370c55aa62c6b47154e72e56608bde79c691cc857c10b9adf1339306ece3473",
+              "model": "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+              "repo": "chaoliangUNSW/Jev-Style-0.8B-Decision-v3-GGUF",
+              "revision": "edf37c26a1098f83cf4264b8adbe0dca2d2ebb0c"
+            },
+            "sdk": "iphonesimulator",
+            "sources": {
+              "app/M0App.swift": "89192b643205dc4294a7d06be93f145fd70893f29af762179239e51c2cceb699",
+              "app/NativeBenchmark.h": "146eb57e39207bfe47e4b5d5feaaf37b77cd3e0c5a18c26610f25f38c182963c",
+              "app/NativeBenchmark.mm": "58660f4a10bfbe2876cd198eda5e9fa1148b6fc09c651cdeade69be618566591",
+              "Benchmark.cpp": "563df94bea63b7c1bcbf7cf0a9e4a4b50bae8df14c1e4c0f467349fe09a62729",
+              "Benchmark.hpp": "c24e0a792b2c21aebca686d42eaa98132313e1bbe838bde7b48f8bb9194763dc",
+              "build.py": "fd2c5e0aaeb744c086cfe0e4685b78dbf00a43f5a2072a06e24719bb17c67fd4",
+              "host_main.cpp": "e189709712683027ab05c816b3da61aa0e241e381bc30b528489b0109146f441",
+              "prepare.py": "58d6c461f7ab743c0dca87280df00872f5122f3a2cca50d91eb383f58b5df955",
+              "report.py": "420633ad674f38974915d5eaa42d45836bea668d511e1d9f8af5322a54008fa5",
+              "tests/BenchmarkUITests.swift": "a35b04639e0971a693a790ae2d762889f357250bdb4d6a912af5e57430ac2fc8"
+            },
+            "xcode": "Xcode 27.0\nBuild version 27A266a",
+            "xcodegen": "Version: 2.46.0"
+          },
+          "compiler": "Apple LLVM 21.0.0 (clang-2100.3.34.2)",
+          "device": {
+            "hardware": "arm64",
+            "os": "26.5",
+            "platform": "iOS",
+            "simulator": true,
+            "thermal_state_at_start": 0
+          },
+          "finished_utc": "2026-09-27T14:16:20Z",
+          "fixture_sha256": "86d5e67b5f834ca7a31d467c47bd6b0a9bc87ec361e983161cc19f18016c7027",
+          "flash_attn": "auto",
+          "integrity_ms": 364.824208,
+          "model_hash_verified": true,
+          "model_sha256": "0a19bc29bacc33e0d871146c8612b24dd14c2ed2e61cedeb7a928b0852628bac",
+          "n_gpu_layers": 999,
+          "pins": {
+            "files": [
+              "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+              "LICENSE",
+              "NOTICE",
+              "build_jev_score.sh",
+              "jev_score.cpp",
+              "jev_style_decision_gguf.py",
+              "readout_config.json",
+              "release_config.json",
+              "requirements.txt",
+              "tokenizer/tokenizer.json",
+              "tokenizer/tokenizer_config.json"
+            ],
+            "llama_archive_sha256": "d55c444401db6734c2f4bba77c4d270f0e431c9e197ce5f35da8abe19a08c91b",
+            "llama_cpp_commit": "441df11f65ea0b6d0c72965aaf70c8241070ddcb",
+            "manifest_sha256": "e370c55aa62c6b47154e72e56608bde79c691cc857c10b9adf1339306ece3473",
+            "model": "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+            "repo": "chaoliangUNSW/Jev-Style-0.8B-Decision-v3-GGUF",
+            "revision": "edf37c26a1098f83cf4264b8adbe0dca2d2ebb0c"
+          },
+          "repetitions": 20,
+          "threads": 4,
+          "timing_scope": "pretokenized native scoring including internal memory resets and verdict softmax"
+        },
+        "ready": {
+          "desc": "qwen35 0.8B Q4_K - Medium",
+          "load_ms": 874.639833,
+          "n_batch": 2048,
+          "n_ctx": 2048,
+          "n_outputs_max": 16,
+          "n_seq_max": 2,
+          "n_ubatch": 1024,
+          "system_info": "MTL : EMBED_LIBRARY = 1 | CPU : NEON = 1 | ARM_FMA = 1 | FP16_VA = 1 | DOTPROD = 1 | LLAMAFILE = 1 | ACCELERATE = 1 | REPACK = 1 | "
+        },
+        "records": [
+          {
+            "duration_ms": 1127.853792,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [0, 0],
+                    [0, 0],
+                    [0.9976051449775696, -0.4670318365097046]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [1123.837917],
+                "total_ms": 1127.846083
+              }
+            },
+            "phase": "first",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0.13732969425938515,
+                "sales": 0.7253406114812296,
+                "technical": 0.13732969425938515
+              }
+            },
+            "sample": 0
+          },
+          {
+            "duration_ms": 826.494708,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-1.0990766334882611e17, -65400059721678848],
+                    [-1.0990766334882611e17, -65400059721678848],
+                    [0.9296048879623413, 0.8703851699829102]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [824.397375],
+                "total_ms": 826.486708
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 1
+          },
+          {
+            "duration_ms": 772.893,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [5447174951272448, 1122184491696128],
+                    [5447174951272448, 1122184491696128],
+                    [0.9169652462005615, 0.4948577582836151]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [770.836041],
+                "total_ms": 772.884042
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.5,
+                "sales": 0,
+                "technical": 0.5
+              }
+            },
+            "sample": 2
+          },
+          {
+            "duration_ms": 795.230209,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-2492053841772544, 5189961171075072],
+                    [-2492053841772544, 5189961171075072],
+                    [0.5879193544387817, 0.439556360244751]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [791.720584],
+                "total_ms": 795.221291
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 3
+          },
+          {
+            "duration_ms": 794.344208,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [503554045378560, 6683347069698048],
+                    [503554045378560, 6683347069698048],
+                    [0.30230283737182617, 0.5635667443275452]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [791.863042],
+                "total_ms": 794.335083
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 4
+          },
+          {
+            "duration_ms": 1103.24575,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-3501000446967808, 5583311992782848],
+                    [-3501000446967808, 5583311992782848],
+                    [0.19784408807754517, 0.9919873476028442]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [1101.397],
+                "total_ms": 1103.236416
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 5
+          },
+          {
+            "duration_ms": 784.559833,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-2377984342228992, -779032509546496],
+                    [-2377984342228992, -779032509546496],
+                    [0.6527670621871948, 0.74739009141922]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [782.640375],
+                "total_ms": 784.54475
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 6
+          },
+          {
+            "duration_ms": 774.53275,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [1876325853822976, 5669823908413440],
+                    [1876325853822976, 5669823908413440],
+                    [0.4304763972759247, 0.6141911745071411]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [770.914459],
+                "total_ms": 774.52325
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 7
+          },
+          {
+            "duration_ms": 915.080416,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-2142898636193792, 3216675222585344],
+                    [-2142898636193792, 3216675222585344],
+                    [0.9828178286552429, 0.5902404189109802]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [912.117166],
+                "total_ms": 915.071958
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 8
+          },
+          {
+            "duration_ms": 963.643875,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-2774847910313984, 4074408914190336],
+                    [-2774847910313984, 4074408914190336],
+                    [0.5607339143753052, 0.9522897601127625]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [959.9815],
+                "total_ms": 963.633791
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 9
+          },
+          {
+            "duration_ms": 792.419625,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [362077554212864, 6885198721449984],
+                    [362077554212864, 6885198721449984],
+                    [0.07255053520202637, 0.4557099938392639]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [790.297],
+                "total_ms": 792.41125
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 10
+          },
+          {
+            "duration_ms": 752.592083,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [799150471905280, 8632712466268160],
+                    [799150471905280, 8632712466268160],
+                    [0.7731499671936035, 0.7343258261680603]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [750.757792],
+                "total_ms": 752.583875
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 11
+          },
+          {
+            "duration_ms": 721.859333,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-2731541218197504, 1513031079034880],
+                    [-2731541218197504, 1513031079034880],
+                    [0.2636634409427643, 0.41607844829559326]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [720.177458],
+                "total_ms": 721.844292
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 12
+          },
+          {
+            "duration_ms": 761.894875,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-1293411684450304, 5614167574708224],
+                    [-1293411684450304, 5614167574708224],
+                    [0.3152555525302887, 0.5187814831733704]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [760.315042],
+                "total_ms": 761.886958
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 13
+          },
+          {
+            "duration_ms": 735.611709,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-1766742313402368, 6828971157094400],
+                    [-1766742313402368, 6828971157094400],
+                    [0.5274999141693115, 0.6966190338134766]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [733.240292],
+                "total_ms": 735.6035
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 14
+          },
+          {
+            "duration_ms": 709.982334,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-3941486655700992, 5947867743125504],
+                    [-3941486655700992, 5947867743125504],
+                    [0.778810977935791, 0.44786936044692993]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [708.104042],
+                "total_ms": 709.973458
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 15
+          },
+          {
+            "duration_ms": 786.284125,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-3653949601087488, 2901956662132736],
+                    [-3653949601087488, 2901956662132736],
+                    [0.6938080787658691, 0.4272594153881073]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [783.969],
+                "total_ms": 786.276292
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 16
+          },
+          {
+            "duration_ms": 838.551333,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-1401071482175488, 6750323326582784],
+                    [-1401071482175488, 6750323326582784],
+                    [0.5683690905570984, 0.5635517835617065]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [836.244584],
+                "total_ms": 838.538459
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 17
+          },
+          {
+            "duration_ms": 850.707583,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [409652302970880, 5636603410120704],
+                    [409652302970880, 5636603410120704],
+                    [0.8533021807670593, 0.42268967628479004]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [847.982583],
+                "total_ms": 850.699208
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 18
+          },
+          {
+            "duration_ms": 759.865084,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-1999402436657152, 6335314058543104],
+                    [-1999402436657152, 6335314058543104],
+                    [0.3237770199775696, 1.2041771411895752]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [757.777916],
+                "total_ms": 759.857
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 19
+          },
+          {
+            "duration_ms": 947.042209,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [-1521349356945408, 5792893511925760],
+                    [-1521349356945408, 5792893511925760],
+                    [0.2636867165565491, 0.7546632289886475]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [943.835708],
+                "total_ms": 947.030458
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "sales",
+              "probabilities": {
+                "billing": 0,
+                "sales": 1,
+                "technical": 0
+              }
+            },
+            "sample": 20
+          }
+        ],
+        "schema_version": 1
+      },
+      "summary": {
+        "warm_p50_ms": 789.3518750000001,
+        "warm_samples": 20,
+        "first_request_ms": 1127.853792,
+        "max_abs_difference": 0.9900954802680003,
+        "passes_gate": false,
+        "declared_physical_ios": false,
+        "timing_scope": "pretokenized native scoring including internal memory resets and verdict softmax"
+      }
+    },
+    "simulator_cpu_1": {
+      "raw": {
+        "metadata": {
+          "build": {
+            "architecture": "arm64",
+            "configuration": "Release",
+            "fixture_sha256": "86d5e67b5f834ca7a31d467c47bd6b0a9bc87ec361e983161cc19f18016c7027",
+            "native_archives": {
+              "native/ggml/src/ggml-metal/Release-iphonesimulator/libggml-metal.a": "abe3bdbbf0c417411464f1e6792053cfc2e9d7405c08f600ca205c77b42061c8",
+              "native/ggml/src/Release-iphonesimulator/libggml-base.a": "c938ecf7478164fecc4aa2edde9b0365905d0aae684b0dd9d1bd2e400838a9de",
+              "native/ggml/src/Release-iphonesimulator/libggml-cpu.a": "8d6b404081379b3177bfcc72eb74f993e5aedde9f52c89f3857d19934c947212",
+              "native/ggml/src/Release-iphonesimulator/libggml.a": "a6fe027cffae6a46172e6560147b91c3e117d4eeae9a5cf02a1f76265165fcf7",
+              "native/src/Release-iphonesimulator/libllama.a": "89b8738daab26576ecb5947d76d7669779f0045455c4cbd58364f0fd56a88229"
+            },
+            "pins": {
+              "files": [
+                "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+                "LICENSE",
+                "NOTICE",
+                "build_jev_score.sh",
+                "jev_score.cpp",
+                "jev_style_decision_gguf.py",
+                "readout_config.json",
+                "release_config.json",
+                "requirements.txt",
+                "tokenizer/tokenizer.json",
+                "tokenizer/tokenizer_config.json"
+              ],
+              "llama_archive_sha256": "d55c444401db6734c2f4bba77c4d270f0e431c9e197ce5f35da8abe19a08c91b",
+              "llama_cpp_commit": "441df11f65ea0b6d0c72965aaf70c8241070ddcb",
+              "manifest_sha256": "e370c55aa62c6b47154e72e56608bde79c691cc857c10b9adf1339306ece3473",
+              "model": "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+              "repo": "chaoliangUNSW/Jev-Style-0.8B-Decision-v3-GGUF",
+              "revision": "edf37c26a1098f83cf4264b8adbe0dca2d2ebb0c"
+            },
+            "sdk": "iphonesimulator",
+            "sources": {
+              "app/M0App.swift": "89192b643205dc4294a7d06be93f145fd70893f29af762179239e51c2cceb699",
+              "app/NativeBenchmark.h": "146eb57e39207bfe47e4b5d5feaaf37b77cd3e0c5a18c26610f25f38c182963c",
+              "app/NativeBenchmark.mm": "58660f4a10bfbe2876cd198eda5e9fa1148b6fc09c651cdeade69be618566591",
+              "Benchmark.cpp": "6ca924a92df5f40ae66d1d9f049e18d06bf866ea14353273df4757d1ad05b09f",
+              "Benchmark.hpp": "c24e0a792b2c21aebca686d42eaa98132313e1bbe838bde7b48f8bb9194763dc",
+              "build.py": "fd2c5e0aaeb744c086cfe0e4685b78dbf00a43f5a2072a06e24719bb17c67fd4",
+              "host_main.cpp": "e189709712683027ab05c816b3da61aa0e241e381bc30b528489b0109146f441",
+              "prepare.py": "58d6c461f7ab743c0dca87280df00872f5122f3a2cca50d91eb383f58b5df955",
+              "report.py": "420633ad674f38974915d5eaa42d45836bea668d511e1d9f8af5322a54008fa5",
+              "tests/BenchmarkUITests.swift": "0818db4d90862a5210bec2613114f6ad8970d2765b1d4dfdcde30b6bc07ebc2e"
+            },
+            "xcode": "Xcode 27.0\nBuild version 27A266a",
+            "xcodegen": "Version: 2.46.0"
+          },
+          "compiler": "Apple LLVM 21.0.0 (clang-2100.3.34.2)",
+          "device": {
+            "hardware": "arm64",
+            "os": "26.5",
+            "platform": "iOS",
+            "simulator": true,
+            "thermal_state_at_start": 0
+          },
+          "finished_utc": "2026-09-27T14:19:17Z",
+          "fixture_sha256": "86d5e67b5f834ca7a31d467c47bd6b0a9bc87ec361e983161cc19f18016c7027",
+          "flash_attn": "auto",
+          "integrity_ms": 500.51775,
+          "model_hash_verified": true,
+          "model_sha256": "0a19bc29bacc33e0d871146c8612b24dd14c2ed2e61cedeb7a928b0852628bac",
+          "n_gpu_layers": 0,
+          "offload_kqv": false,
+          "op_offload": false,
+          "pins": {
+            "files": [
+              "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+              "LICENSE",
+              "NOTICE",
+              "build_jev_score.sh",
+              "jev_score.cpp",
+              "jev_style_decision_gguf.py",
+              "readout_config.json",
+              "release_config.json",
+              "requirements.txt",
+              "tokenizer/tokenizer.json",
+              "tokenizer/tokenizer_config.json"
+            ],
+            "llama_archive_sha256": "d55c444401db6734c2f4bba77c4d270f0e431c9e197ce5f35da8abe19a08c91b",
+            "llama_cpp_commit": "441df11f65ea0b6d0c72965aaf70c8241070ddcb",
+            "manifest_sha256": "e370c55aa62c6b47154e72e56608bde79c691cc857c10b9adf1339306ece3473",
+            "model": "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+            "repo": "chaoliangUNSW/Jev-Style-0.8B-Decision-v3-GGUF",
+            "revision": "edf37c26a1098f83cf4264b8adbe0dca2d2ebb0c"
+          },
+          "repetitions": 20,
+          "threads": 4,
+          "timing_scope": "pretokenized native scoring including internal memory resets and verdict softmax"
+        },
+        "ready": {
+          "desc": "qwen35 0.8B Q4_K - Medium",
+          "load_ms": 948.332,
+          "n_batch": 2048,
+          "n_ctx": 2048,
+          "n_outputs_max": 16,
+          "n_seq_max": 2,
+          "n_ubatch": 1024,
+          "system_info": "MTL : EMBED_LIBRARY = 1 | CPU : NEON = 1 | ARM_FMA = 1 | FP16_VA = 1 | DOTPROD = 1 | LLAMAFILE = 1 | ACCELERATE = 1 | REPACK = 1 | "
+        },
+        "records": [
+          {
+            "duration_ms": 656.326583,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [655.347083],
+                "total_ms": 656.313875
+              }
+            },
+            "phase": "first",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 0
+          },
+          {
+            "duration_ms": 623.726416,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [622.752875],
+                "total_ms": 623.67975
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 1
+          },
+          {
+            "duration_ms": 693.461334,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [692.647458],
+                "total_ms": 693.451459
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 2
+          },
+          {
+            "duration_ms": 569.897125,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [568.964375],
+                "total_ms": 569.88525
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 3
+          },
+          {
+            "duration_ms": 513.082375,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [512.182375],
+                "total_ms": 513.064584
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 4
+          },
+          {
+            "duration_ms": 809.636667,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [805.99775],
+                "total_ms": 809.625
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 5
+          },
+          {
+            "duration_ms": 589.617875,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [588.774],
+                "total_ms": 589.60675
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 6
+          },
+          {
+            "duration_ms": 789.31125,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [788.490959],
+                "total_ms": 789.297375
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 7
+          },
+          {
+            "duration_ms": 584.587291,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [583.797541],
+                "total_ms": 584.577208
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 8
+          },
+          {
+            "duration_ms": 549.085,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [548.123333],
+                "total_ms": 549.063292
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 9
+          },
+          {
+            "duration_ms": 485.042375,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [484.232958],
+                "total_ms": 485.034667
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 10
+          },
+          {
+            "duration_ms": 552.758416,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [551.790417],
+                "total_ms": 552.74525
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 11
+          },
+          {
+            "duration_ms": 453.259958,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [452.45625],
+                "total_ms": 453.251417
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 12
+          },
+          {
+            "duration_ms": 470.569708,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [469.776209],
+                "total_ms": 470.555875
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 13
+          },
+          {
+            "duration_ms": 478.574875,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [477.716542],
+                "total_ms": 478.567375
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 14
+          },
+          {
+            "duration_ms": 514.609125,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [513.794625],
+                "total_ms": 514.601333
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 15
+          },
+          {
+            "duration_ms": 527.981541,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [527.286875],
+                "total_ms": 527.972833
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 16
+          },
+          {
+            "duration_ms": 456.877792,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [456.079166],
+                "total_ms": 456.866583
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 17
+          },
+          {
+            "duration_ms": 409.059,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [408.342375],
+                "total_ms": 409.051083
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 18
+          },
+          {
+            "duration_ms": 496.610459,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [495.84325],
+                "total_ms": 496.603083
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 19
+          },
+          {
+            "duration_ms": 366.399167,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [365.667958],
+                "total_ms": 366.392166
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 20
+          }
+        ],
+        "schema_version": 1
+      },
+      "summary": {
+        "warm_p50_ms": 521.295333,
+        "warm_samples": 20,
+        "first_request_ms": 656.326583,
+        "max_abs_difference": 0.00025757958476246845,
+        "passes_gate": true,
+        "declared_physical_ios": false,
+        "timing_scope": "pretokenized native scoring including internal memory resets and verdict softmax"
+      }
+    },
+    "simulator_cpu_2": {
+      "raw": {
+        "metadata": {
+          "build": {
+            "architecture": "arm64",
+            "configuration": "Release",
+            "fixture_sha256": "86d5e67b5f834ca7a31d467c47bd6b0a9bc87ec361e983161cc19f18016c7027",
+            "native_archives": {
+              "native/ggml/src/ggml-metal/Release-iphonesimulator/libggml-metal.a": "abe3bdbbf0c417411464f1e6792053cfc2e9d7405c08f600ca205c77b42061c8",
+              "native/ggml/src/Release-iphonesimulator/libggml-base.a": "c938ecf7478164fecc4aa2edde9b0365905d0aae684b0dd9d1bd2e400838a9de",
+              "native/ggml/src/Release-iphonesimulator/libggml-cpu.a": "8d6b404081379b3177bfcc72eb74f993e5aedde9f52c89f3857d19934c947212",
+              "native/ggml/src/Release-iphonesimulator/libggml.a": "a6fe027cffae6a46172e6560147b91c3e117d4eeae9a5cf02a1f76265165fcf7",
+              "native/src/Release-iphonesimulator/libllama.a": "89b8738daab26576ecb5947d76d7669779f0045455c4cbd58364f0fd56a88229"
+            },
+            "pins": {
+              "files": [
+                "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+                "LICENSE",
+                "NOTICE",
+                "build_jev_score.sh",
+                "jev_score.cpp",
+                "jev_style_decision_gguf.py",
+                "readout_config.json",
+                "release_config.json",
+                "requirements.txt",
+                "tokenizer/tokenizer.json",
+                "tokenizer/tokenizer_config.json"
+              ],
+              "llama_archive_sha256": "d55c444401db6734c2f4bba77c4d270f0e431c9e197ce5f35da8abe19a08c91b",
+              "llama_cpp_commit": "441df11f65ea0b6d0c72965aaf70c8241070ddcb",
+              "manifest_sha256": "e370c55aa62c6b47154e72e56608bde79c691cc857c10b9adf1339306ece3473",
+              "model": "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+              "repo": "chaoliangUNSW/Jev-Style-0.8B-Decision-v3-GGUF",
+              "revision": "edf37c26a1098f83cf4264b8adbe0dca2d2ebb0c"
+            },
+            "sdk": "iphonesimulator",
+            "sources": {
+              "app/M0App.swift": "89192b643205dc4294a7d06be93f145fd70893f29af762179239e51c2cceb699",
+              "app/NativeBenchmark.h": "146eb57e39207bfe47e4b5d5feaaf37b77cd3e0c5a18c26610f25f38c182963c",
+              "app/NativeBenchmark.mm": "58660f4a10bfbe2876cd198eda5e9fa1148b6fc09c651cdeade69be618566591",
+              "Benchmark.cpp": "6ca924a92df5f40ae66d1d9f049e18d06bf866ea14353273df4757d1ad05b09f",
+              "Benchmark.hpp": "c24e0a792b2c21aebca686d42eaa98132313e1bbe838bde7b48f8bb9194763dc",
+              "build.py": "fd2c5e0aaeb744c086cfe0e4685b78dbf00a43f5a2072a06e24719bb17c67fd4",
+              "host_main.cpp": "e189709712683027ab05c816b3da61aa0e241e381bc30b528489b0109146f441",
+              "prepare.py": "58d6c461f7ab743c0dca87280df00872f5122f3a2cca50d91eb383f58b5df955",
+              "report.py": "420633ad674f38974915d5eaa42d45836bea668d511e1d9f8af5322a54008fa5",
+              "tests/BenchmarkUITests.swift": "0818db4d90862a5210bec2613114f6ad8970d2765b1d4dfdcde30b6bc07ebc2e"
+            },
+            "xcode": "Xcode 27.0\nBuild version 27A266a",
+            "xcodegen": "Version: 2.46.0"
+          },
+          "compiler": "Apple LLVM 21.0.0 (clang-2100.3.34.2)",
+          "device": {
+            "hardware": "arm64",
+            "os": "26.5",
+            "platform": "iOS",
+            "simulator": true,
+            "thermal_state_at_start": 0
+          },
+          "finished_utc": "2026-09-27T14:19:34Z",
+          "fixture_sha256": "86d5e67b5f834ca7a31d467c47bd6b0a9bc87ec361e983161cc19f18016c7027",
+          "flash_attn": "auto",
+          "integrity_ms": 434.500584,
+          "model_hash_verified": true,
+          "model_sha256": "0a19bc29bacc33e0d871146c8612b24dd14c2ed2e61cedeb7a928b0852628bac",
+          "n_gpu_layers": 0,
+          "offload_kqv": false,
+          "op_offload": false,
+          "pins": {
+            "files": [
+              "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+              "LICENSE",
+              "NOTICE",
+              "build_jev_score.sh",
+              "jev_score.cpp",
+              "jev_style_decision_gguf.py",
+              "readout_config.json",
+              "release_config.json",
+              "requirements.txt",
+              "tokenizer/tokenizer.json",
+              "tokenizer/tokenizer_config.json"
+            ],
+            "llama_archive_sha256": "d55c444401db6734c2f4bba77c4d270f0e431c9e197ce5f35da8abe19a08c91b",
+            "llama_cpp_commit": "441df11f65ea0b6d0c72965aaf70c8241070ddcb",
+            "manifest_sha256": "e370c55aa62c6b47154e72e56608bde79c691cc857c10b9adf1339306ece3473",
+            "model": "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+            "repo": "chaoliangUNSW/Jev-Style-0.8B-Decision-v3-GGUF",
+            "revision": "edf37c26a1098f83cf4264b8adbe0dca2d2ebb0c"
+          },
+          "repetitions": 20,
+          "threads": 4,
+          "timing_scope": "pretokenized native scoring including internal memory resets and verdict softmax"
+        },
+        "ready": {
+          "desc": "qwen35 0.8B Q4_K - Medium",
+          "load_ms": 749.330708,
+          "n_batch": 2048,
+          "n_ctx": 2048,
+          "n_outputs_max": 16,
+          "n_seq_max": 2,
+          "n_ubatch": 1024,
+          "system_info": "MTL : EMBED_LIBRARY = 1 | CPU : NEON = 1 | ARM_FMA = 1 | FP16_VA = 1 | DOTPROD = 1 | LLAMAFILE = 1 | ACCELERATE = 1 | REPACK = 1 | "
+        },
+        "records": [
+          {
+            "duration_ms": 717.180375,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [714.733],
+                "total_ms": 717.167166
+              }
+            },
+            "phase": "first",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 0
+          },
+          {
+            "duration_ms": 679.570458,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [678.713125],
+                "total_ms": 679.562959
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 1
+          },
+          {
+            "duration_ms": 622.881791,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [622.101417],
+                "total_ms": 622.874
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 2
+          },
+          {
+            "duration_ms": 595.171708,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [594.198917],
+                "total_ms": 595.152583
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 3
+          },
+          {
+            "duration_ms": 649.603125,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [648.788542],
+                "total_ms": 649.591542
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 4
+          },
+          {
+            "duration_ms": 511.231416,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [510.200042],
+                "total_ms": 511.220458
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 5
+          },
+          {
+            "duration_ms": 368.082625,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [367.316167],
+                "total_ms": 368.074583
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 6
+          },
+          {
+            "duration_ms": 700.357042,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [699.55575],
+                "total_ms": 700.346625
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 7
+          },
+          {
+            "duration_ms": 683.91375,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [683.085709],
+                "total_ms": 683.904125
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 8
+          },
+          {
+            "duration_ms": 1203.74475,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [1199.768708],
+                "total_ms": 1203.732708
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 9
+          },
+          {
+            "duration_ms": 629.939833,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [629.016292],
+                "total_ms": 629.932
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 10
+          },
+          {
+            "duration_ms": 637.087875,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [636.283167],
+                "total_ms": 637.0785
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 11
+          },
+          {
+            "duration_ms": 497.303792,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [496.482291],
+                "total_ms": 497.294959
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 12
+          },
+          {
+            "duration_ms": 883.629,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [882.830625],
+                "total_ms": 883.619708
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 13
+          },
+          {
+            "duration_ms": 532.883916,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [532.102875],
+                "total_ms": 532.874125
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 14
+          },
+          {
+            "duration_ms": 544.514417,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [543.731833],
+                "total_ms": 544.504667
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 15
+          },
+          {
+            "duration_ms": 707.063667,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [706.283333],
+                "total_ms": 707.055542
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 16
+          },
+          {
+            "duration_ms": 728.390542,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [725.780708],
+                "total_ms": 728.380083
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 17
+          },
+          {
+            "duration_ms": 554.37925,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [553.61875],
+                "total_ms": 554.372125
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 18
+          },
+          {
+            "duration_ms": 629.482792,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [628.685],
+                "total_ms": 629.473375
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 19
+          },
+          {
+            "duration_ms": 835.526292,
+            "memory_reset": true,
+            "native_response": {
+              "mode": "fused",
+              "n_prefix": 47,
+              "prefix_reused": false,
+              "results": [
+                {
+                  "finite": true,
+                  "scores": [
+                    [18.637454986572266, 15.747798919677734],
+                    [15.716014862060547, 17.71569061279297],
+                    [16.151321411132812, 17.29007911682129]
+                  ]
+                }
+              ],
+              "timing": {
+                "prefix_ms": 0,
+                "question_ms": [834.710083],
+                "total_ms": 835.51525
+              }
+            },
+            "phase": "warm",
+            "result": {
+              "answer": "billing",
+              "probabilities": {
+                "billing": 0.9860510250155562,
+                "sales": 0.010137583106552767,
+                "technical": 0.0038113918778909478
+              }
+            },
+            "sample": 20
+          }
+        ],
+        "schema_version": 1
+      },
+      "summary": {
+        "warm_p50_ms": 633.513854,
+        "warm_samples": 20,
+        "first_request_ms": 717.180375,
+        "max_abs_difference": 0.00025757958476246845,
+        "passes_gate": true,
+        "declared_physical_ios": false,
+        "timing_scope": "pretokenized native scoring including internal memory resets and verdict softmax"
+      }
+    }
+  }
+}
