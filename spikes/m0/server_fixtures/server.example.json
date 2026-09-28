@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "source": "server",
+  "model": {"id": "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf", "revision": "edf37c26a1098f83cf4264b8adbe0dca2d2ebb0c"},
+  "scorer_revision": "441df11f65ea0b6d0c72965aaf70c8241070ddcb",
+  "template_sha256": "91921a6607d087f921289f2ec6f70d01016417be458ef5f39ace54d6f03e63f7",
+  "requests": [{
+    "id": "redacted-ticket/0",
+    "request_sha256": "c76b022bf77e248e2c9e09fcf5e718538dabdd62c7855e5525732649b095ac18",
+    "token_ids_sha256": "2883e40a50fdace9dbb97d3e6b98317d6fa296f7d882d88639a3e298f66e5af7",
+    "option_names": ["false", "true"],
+    "answer": "true",
+    "probabilities": {"false": 0.2005, "true": 0.7995}
+  }]
+}
