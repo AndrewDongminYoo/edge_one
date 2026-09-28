@@ -7,6 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import harness
+import run as spike_run
 
 
 def result(a=0.75, b=0.25):
@@ -153,6 +154,8 @@ class ReportTests(unittest.TestCase):
         summary = harness.summarize(records, self.fixtures, 1, 1024)
         self.assertTrue(summary["gates"]["exact"]["passes_gate"])
         self.assertFalse(summary["gates"]["batched"]["passes_gate"])
+        self.assertTrue(spike_run.required_gates_pass(summary, "exact"))
+        self.assertFalse(spike_run.required_gates_pass(summary, "all"))
         self.assertEqual(summary["gates"]["batched"]["compared_questions"], 2)
         self.assertEqual(summary["timings"][0]["warm_p50_ms"], 10.0)
 

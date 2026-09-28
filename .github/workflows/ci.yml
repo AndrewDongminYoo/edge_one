@@ -55,7 +55,7 @@ jobs:
       - name: Build Linux scorer
         run: .cache/m0/.venv/bin/python spikes/m0/setup.py build --jobs 2
       - name: Check native probability parity
-        run: .cache/m0/.venv/bin/python spikes/m0/run.py --output .cache/m0/linux-ci.json --repetitions 1 --threads 2
+        run: .cache/m0/.venv/bin/python spikes/m0/run.py --output .cache/m0/linux-ci.json --repetitions 1 --threads 2 --required-parity exact
       - name: Upload compact Linux evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

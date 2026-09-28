@@ -76,7 +76,17 @@ def load_runtime():
     return module, manifest, receipt
 
 
-def run(output, repetitions, threads, microbatch):
+def required_gates_pass(summary, required_parity):
+    if required_parity == "exact":
+        modes = ("exact",)
+    elif required_parity == "all":
+        modes = ("exact", "batched")
+    else:
+        raise ValueError(f"unknown required parity mode: {required_parity}")
+    return all(summary["gates"][mode]["passes_gate"] for mode in modes)
+
+
+def run(output, repetitions, threads, microbatch, required_parity="all"):
     if repetitions < 1 or threads < 1 or microbatch < 1:
         raise ValueError("repetitions, threads, and microbatch must be positive")
     if output.exists():
@@ -122,6 +132,7 @@ def run(output, repetitions, threads, microbatch):
             "n_gpu_layers": 999,
             "flash_attn": "auto",
             "gate": "max_abs_difference < 1e-3",
+            "required_parity": required_parity,
             "first_definition": "first request after a fresh scorer process; OS caches not controlled",
             "warm_definition": "same process, memory reset before every request; no prefix reuse across requests",
         },
@@ -245,7 +256,7 @@ def run(output, repetitions, threads, microbatch):
         stream.write(json.dumps(report, indent=2, allow_nan=False) + "\n")
     partial.unlink()
     print(json.dumps(report["summary"], indent=2))
-    return all(g["passes_gate"] for g in report["summary"]["gates"].values())
+    return required_gates_pass(report["summary"], required_parity)
 
 
 def main():
@@ -254,10 +265,17 @@ def main():
     parser.add_argument("--repetitions", type=int, default=5)
     parser.add_argument("--threads", type=int, default=4)
     parser.add_argument("--microbatch", type=int, default=1024)
+    parser.add_argument("--required-parity", choices=("all", "exact"), default="all")
     args = parser.parse_args()
     return (
         0
-        if run(args.output.resolve(), args.repetitions, args.threads, args.microbatch)
+        if run(
+            args.output.resolve(),
+            args.repetitions,
+            args.threads,
+            args.microbatch,
+            args.required_parity,
+        )
         else 1
     )
 

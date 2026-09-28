@@ -57,5 +57,5 @@ Attach screenshots for demo UI changes and measured evidence for performance cla
 Default to local-only routing; require consent and masking before remote requests.
 Keep API keys out of Git.
 Pin model revisions, verify SHA-256 hashes, and validate manifests before loading models.
-Linux CI owns unit, archived-report, native-build, and desktop parity checks; hosted macOS CI owns unsigned Apple builds.
+Linux CI owns unit, archived-report, native-build, and exact-prefix desktop parity checks; hosted macOS CI owns unsigned Apple builds.
 Do not infer physical-device GPU placement, simulator Metal parity, or sustained thermal behavior from those jobs.

@@ -52,6 +52,11 @@ if ! command -v ninja >/dev/null 2>&1 && ! command -v make >/dev/null 2>&1; then
   exit 1
 fi
 c++ --version >/dev/null
+if command -v ninja >/dev/null 2>&1; then
+  ninja --version >/dev/null
+else
+  make --version >/dev/null
+fi
 
 venv_python=.cache/m0/.venv/bin/python
 if [[ ! -x $venv_python ]]; then

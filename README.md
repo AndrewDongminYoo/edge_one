@@ -61,7 +61,8 @@ Run the second only when changing experimental dependencies and include both inp
 Preserve the upstream model's LICENSE and NOTICE with downloaded artifacts.
 
 GitHub Actions runs the unit tests and validates archived measurements against current fixture and model pins.
-It also builds the pinned native scorer on Ubuntu, runs a one-warm-sample numerical parity check, and builds unsigned iPhone and simulator apps on a hosted macOS runner.
+It also builds the pinned native scorer on Ubuntu, requires exact-prefix numerical parity with one warm sample, and builds unsigned iPhone and simulator apps on a hosted macOS runner.
+The Linux run still records batched-prefix results, but batched sharing remains experimental and is not a required production gate.
 The report checker recomputes probability gates, native sharing observations, and timing summaries from stored records.
 CI build evidence excludes the 0.53 GB model and is retained for three days; a hosted build does not establish physical-device placement or sustained latency.
 
