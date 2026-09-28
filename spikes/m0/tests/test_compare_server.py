@@ -14,6 +14,7 @@ def export(source, probability=0.75, model_revision="model-r1"):
         "schema_version": 1,
         "source": source,
         "model": {"id": "decision-model", "revision": model_revision},
+        "model_sha256": "e" * 64,
         "scorer_revision": "scorer-r1",
         "template_sha256": "a" * 64,
         "readout_config_sha256": "b" * 64,
@@ -59,6 +60,15 @@ class ServerComparisonTests(unittest.TestCase):
         )
         self.assertEqual(report["metadata_differences"], ["model.revision"])
 
+    def test_attributes_changed_model_artifact_separately(self):
+        server = export("server")
+        server["model_sha256"] = "f" * 64
+        report = compare_server.compare_exports(export("local"), server)
+        self.assertEqual(
+            report["attribution"], "server_model_or_configuration_difference"
+        )
+        self.assertEqual(report["metadata_differences"], ["model_sha256"])
+
     def test_attributes_changed_readout_configuration_separately(self):
         server = export("server")
         server["readout_config_sha256"] = "5" * 64
@@ -70,6 +80,7 @@ class ServerComparisonTests(unittest.TestCase):
 
     def test_canonicalizes_digest_case_before_comparison(self):
         server = export("server")
+        server["model_sha256"] = server["model_sha256"].upper()
         server["template_sha256"] = server["template_sha256"].upper()
         server["readout_config_sha256"] = server["readout_config_sha256"].upper()
         server["requests"][0]["request_sha256"] = (
@@ -95,6 +106,7 @@ class ServerComparisonTests(unittest.TestCase):
     def test_rejects_malformed_sha256_digests_from_either_source(self):
         for source in ("local", "server"):
             for field in (
+                "model_sha256",
                 "template_sha256",
                 "readout_config_sha256",
                 "request_sha256",
@@ -107,7 +119,11 @@ class ServerComparisonTests(unittest.TestCase):
                         local = export("local")
                         server = export("server")
                         invalid = local if source == "local" else server
-                        if field in ("template_sha256", "readout_config_sha256"):
+                        if field in (
+                            "model_sha256",
+                            "template_sha256",
+                            "readout_config_sha256",
+                        ):
                             invalid[field] = malformed
                         else:
                             invalid["requests"][0][field] = malformed
@@ -116,6 +132,7 @@ class ServerComparisonTests(unittest.TestCase):
 
     def test_rejects_equal_malformed_sha256_digests(self):
         for field in (
+            "model_sha256",
             "template_sha256",
             "readout_config_sha256",
             "request_sha256",
@@ -124,7 +141,11 @@ class ServerComparisonTests(unittest.TestCase):
             with self.subTest(field=field):
                 local = export("local")
                 server = export("server")
-                if field in ("template_sha256", "readout_config_sha256"):
+                if field in (
+                    "model_sha256",
+                    "template_sha256",
+                    "readout_config_sha256",
+                ):
                     local[field] = server[field] = "not-a-sha"
                 else:
                     local["requests"][0][field] = "not-a-sha"

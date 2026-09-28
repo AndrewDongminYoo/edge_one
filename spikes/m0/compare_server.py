@@ -10,9 +10,15 @@ from harness import compare
 
 
 HASH_FIELDS = ("request_sha256", "token_ids_sha256")
+METADATA_HASH_FIELDS = (
+    "model_sha256",
+    "template_sha256",
+    "readout_config_sha256",
+)
 METADATA_FIELDS = (
     ("model.id", lambda value: value["model"]["id"]),
     ("model.revision", lambda value: value["model"]["revision"]),
+    ("model_sha256", lambda value: value["model_sha256"]),
     ("scorer_revision", lambda value: value["scorer_revision"]),
     ("template_sha256", lambda value: value["template_sha256"]),
     ("readout_config_sha256", lambda value: value["readout_config_sha256"]),
@@ -56,7 +62,7 @@ def _validate_export(value, expected_source):
             raise ValueError(f"missing {expected_source} metadata: {label}") from error
         if not isinstance(field, str) or not field:
             raise ValueError(f"invalid {expected_source} metadata: {label}")
-    for field in ("template_sha256", "readout_config_sha256"):
+    for field in METADATA_HASH_FIELDS:
         _require_sha256(value[field], expected_source, field)
     ids = [request.get("id") for request in value["requests"]]
     if any(not identifier for identifier in ids) or len(ids) != len(set(ids)):
