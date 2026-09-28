@@ -1,0 +1,15 @@
+{
+  "name": "edge-one-workspace",
+  "private": true,
+  "packageManager": "pnpm@11.24.0",
+  "scripts": {
+    "contracts:generate": "python3 tools/generate_contracts.py",
+    "contracts:check": "python3 tools/generate_contracts.py --check",
+    "schema:test": "node tools/test_contracts.mjs",
+    "types:check": "tsc --project packages/react-native-edge-one/tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "ajv": "8.17.1",
+    "typescript": "5.9.3"
+  }
+}

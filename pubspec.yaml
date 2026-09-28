@@ -1,0 +1,16 @@
+name: edge_one_workspace
+publish_to: none
+environment:
+  sdk: ^3.9.0
+workspace:
+  - packages/edge_one
+  - packages/edge_one_flutter
+  - packages/edge-one-calibrate
+dev_dependencies:
+  melos: ^8.0.0
+melos:
+  scripts:
+    analyze:
+      exec:
+        command: dart analyze
+        concurrency: 1

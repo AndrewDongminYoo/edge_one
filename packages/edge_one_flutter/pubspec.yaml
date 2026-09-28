@@ -1,0 +1,11 @@
+name: edge_one_flutter
+description: Planned Flutter bindings for the edge_one decision runtime.
+version: 0.0.1
+publish_to: none
+environment:
+  sdk: ^3.9.0
+resolution: workspace
+dependencies:
+  edge_one: 0.0.1
+  flutter:
+    sdk: flutter

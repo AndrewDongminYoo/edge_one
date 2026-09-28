@@ -1,0 +1,7 @@
+name: edge_one
+description: Pure Dart System One contract types for the planned decision runtime.
+version: 0.0.1
+publish_to: none
+environment:
+  sdk: ^3.9.0
+resolution: workspace

@@ -1,0 +1,180 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/AndrewDongminYoo/edge_one/blob/main/schemas/system-one-v1.schema.json",
+  "title": "SystemOneV1",
+  "description": "System One request and response contract based on the TypeSafe OpenAPI 0.2.0 shapes, with local x_ response extensions.",
+  "oneOf": [
+    { "$ref": "#/definitions/SystemOneRequest" },
+    { "$ref": "#/definitions/SystemOneResponse" }
+  ],
+  "definitions": {
+    "JsonValue": {
+      "description": "An arbitrary JSON value for local response extensions."
+    },
+    "StructuredValue": {
+      "anyOf": [
+        { "type": "string" },
+        { "type": "object", "additionalProperties": true },
+        { "type": "array", "items": {} }
+      ]
+    },
+    "OptionalStructuredValue": {
+      "anyOf": [{ "$ref": "#/definitions/StructuredValue" }, { "type": "null" }]
+    },
+    "ChoiceQuestion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "criteria"],
+      "properties": {
+        "type": { "const": "choice" },
+        "instructions": { "$ref": "#/definitions/OptionalStructuredValue" },
+        "criteria": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/OptionalStructuredValue"
+          }
+        }
+      }
+    },
+    "ScoreQuestion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "criteria"],
+      "properties": {
+        "type": { "const": "score" },
+        "instructions": { "$ref": "#/definitions/OptionalStructuredValue" },
+        "criteria": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/definitions/StructuredValue" }
+        }
+      }
+    },
+    "NoulQuestion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "noul" },
+        "instructions": { "$ref": "#/definitions/OptionalStructuredValue" },
+        "criteria": {
+          "anyOf": [
+            {
+              "type": "object",
+              "propertyNames": { "enum": ["true", "false"] },
+              "additionalProperties": {
+                "$ref": "#/definitions/OptionalStructuredValue"
+              }
+            },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "SystemOneRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "model", "questions"],
+      "properties": {
+        "state": { "$ref": "#/definitions/StructuredValue" },
+        "model": { "type": "string" },
+        "questions": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "oneOf": [
+              { "$ref": "#/definitions/ChoiceQuestion" },
+              { "$ref": "#/definitions/ScoreQuestion" },
+              { "$ref": "#/definitions/NoulQuestion" }
+            ]
+          }
+        }
+      }
+    },
+    "ChoiceAnswer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "choice", "probabilities", "confidence"],
+      "properties": {
+        "type": { "const": "choice" },
+        "choice": { "type": "string" },
+        "probabilities": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "ScoreAnswer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "score", "legend", "probabilities", "confidence"],
+      "properties": {
+        "type": { "const": "score" },
+        "score": { "type": "number" },
+        "legend": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": { "$ref": "#/definitions/StructuredValue" }
+        },
+        "probabilities": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "NoulAnswer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "noul"],
+      "properties": {
+        "type": { "const": "noul" },
+        "noul": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "Usage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["input_tokens", "output_tokens"],
+      "properties": {
+        "input_tokens": { "type": "integer", "minimum": 0 },
+        "output_tokens": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "SystemOneResponse": {
+      "type": "object",
+      "required": ["model", "answers", "usage"],
+      "properties": {
+        "model": { "type": "string" },
+        "answers": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "oneOf": [
+              { "$ref": "#/definitions/ChoiceAnswer" },
+              { "$ref": "#/definitions/ScoreAnswer" },
+              { "$ref": "#/definitions/NoulAnswer" }
+            ]
+          }
+        },
+        "usage": { "$ref": "#/definitions/Usage" },
+        "x_route": { "enum": ["local", "remote", "auto"] },
+        "x_latency_ms": { "type": "number", "minimum": 0 },
+        "x_engine": { "$ref": "#/definitions/JsonValue" }
+      },
+      "patternProperties": { "^x_": { "$ref": "#/definitions/JsonValue" } },
+      "additionalProperties": false
+    }
+  }
+}

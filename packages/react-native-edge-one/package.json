@@ -1,0 +1,6 @@
+{
+  "name": "react-native-edge-one",
+  "version": "0.0.0",
+  "private": true,
+  "types": "src/generated/system-one-v1.ts"
+}

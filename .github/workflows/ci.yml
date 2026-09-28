@@ -9,6 +9,45 @@ permissions:
   contents: read
 
 jobs:
+  contracts:
+    name: System One schema and generated types
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.20.0
+      - name: Install pinned pnpm and dependencies
+        run: |
+          npm install --global pnpm@11.24.0
+          pnpm install --frozen-lockfile
+      - name: Validate schema, generated drift, and TypeScript
+        run: |
+          pnpm run schema:test
+          pnpm run contracts:check
+          pnpm run types:check
+      - name: Configure C++17 package scaffold
+        run: cmake -S packages/edge_one_core -B "$RUNNER_TEMP/edge-one-core"
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: 3.47.5
+          channel: stable
+          cache: true
+      - name: Resolve and analyze Dart workspace
+        run: |
+          flutter pub get --enforce-lockfile
+          dart pub workspace list
+          dart format --output=none --set-exit-if-changed packages/edge_one/lib packages/edge_one_flutter/lib
+          dart run tools/check_dart_contract.dart
+          dart analyze packages/edge_one
+          flutter analyze packages/edge_one_flutter
+
   desktop-evidence:
     name: Unit tests and archived measurements
     runs-on: ubuntu-latest
