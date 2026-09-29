@@ -474,6 +474,42 @@ void main() {
   );
 
   test(
+    'HTTP transport requests identity for full and resumed byte ranges',
+    () async {
+      final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+      addTearDown(() => server.close(force: true));
+      final encodings = <String?>[];
+      server.listen((request) {
+        encodings.add(request.headers.value(HttpHeaders.acceptEncodingHeader));
+        final start = request.headers.value(HttpHeaders.rangeHeader) == null
+            ? 0
+            : 2;
+        if (start > 0) {
+          request.response.statusCode = HttpStatus.partialContent;
+          request.response.headers.set(
+            HttpHeaders.contentRangeHeader,
+            'bytes 2-3/4',
+          );
+        }
+        request.response.add(modelBytes.sublist(start));
+        unawaited(request.response.close());
+      });
+      final transport = HttpModelTransport();
+      addTearDown(transport.close);
+      final url = Uri.http('127.0.0.1:${server.port}', '/model');
+
+      for (final start in [0, 2]) {
+        final response = await transport.get(url, start: start);
+        expect(
+          await response.body.expand((chunk) => chunk).toList(),
+          modelBytes.sublist(start),
+        );
+      }
+      expect(encodings, ['identity', 'identity']);
+    },
+  );
+
+  test(
     'HTTP transport omits compressed length after auto-uncompress',
     () async {
       final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);

@@ -57,6 +57,7 @@ final class HttpModelTransport implements ModelTransport {
   @override
   Future<ModelResponse> get(Uri url, {required int start}) async {
     final request = await _client.getUrl(url);
+    request.headers.set(HttpHeaders.acceptEncodingHeader, 'identity');
     if (start > 0)
       request.headers.set(HttpHeaders.rangeHeader, 'bytes=$start-');
     final response = await request.close().timeout(
