@@ -151,3 +151,49 @@ jobs:
             .cache/m0/ios/iphonesimulator/build-receipt.json
             .cache/m0/ios/iphoneos/DerivedData/Build/Products/Release-iphoneos/EdgeOneM0.app/EdgeOneM0
             .cache/m0/ios/iphonesimulator/DerivedData/Build/Products/Release-iphonesimulator/EdgeOneM0.app/EdgeOneM0
+
+  ios-27-numerical:
+    name: iOS 27 simulator CPU/Metal numerical gate
+    runs-on: xcode-27
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: spikes/m0/requirements.lock
+      - name: Check iOS 27 simulator and Metal toolchain
+        run: python3 spikes/m0/ios/hosted_gate.py preflight
+      - name: Install pinned Python dependencies and XcodeGen
+        run: |
+          python3 -m venv .cache/m0/.venv
+          .cache/m0/.venv/bin/python -m pip install --disable-pip-version-check --require-hashes --only-binary=:all: -r spikes/m0/requirements.lock
+          if ! command -v xcodegen >/dev/null 2>&1; then brew install xcodegen; fi
+          xcodegen --version
+      - name: Fetch and verify pinned inputs
+        run: .cache/m0/.venv/bin/python spikes/m0/setup.py fetch
+      - name: Build scorer and prepare fixed fixture
+        run: |
+          .cache/m0/.venv/bin/python spikes/m0/setup.py build --jobs 2
+          .cache/m0/.venv/bin/python spikes/m0/ios/prepare.py
+      - name: Build unsigned simulator apps
+        run: |
+          .cache/m0/.venv/bin/python spikes/m0/ios/build.py --sdk iphonesimulator --jobs 2
+          xcodebuild -project .cache/m0/ios/iphonesimulator/EdgeOneM0.xcodeproj -scheme NativeRepro -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath .cache/m0/ios/iphonesimulator/DerivedData -jobs 2 CODE_SIGNING_ALLOWED=NO build -quiet
+      - name: Run direct CPU and Metal numerical gate
+        run: python3 spikes/m0/ios/hosted_gate.py run
+      - name: Upload compact simulator evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: m0-ios27-numerical-${{ github.sha }}
+          retention-days: 3
+          if-no-files-found: warn
+          path: |
+            .cache/m0/ios/hosted/preflight.json
+            .cache/m0/ios/hosted/native-repro.txt
+            .cache/m0/ios/hosted/summary.json
+            .cache/m0/ios/iphonesimulator/build-receipt.json

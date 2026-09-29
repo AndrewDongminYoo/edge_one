@@ -274,6 +274,10 @@ def build(sdk, jobs):
                 {"sdk": "UIKit.framework"},
             ],
         }
+        spec["schemes"]["NativeRepro"] = {
+            "build": {"targets": {"NativeRepro": "all"}},
+            "run": {"config": "Release"},
+        }
         spec["targets"]["EdgeOneM0UITests"] = {
             "type": "bundle.ui-testing",
             "platform": "iOS",
