@@ -78,6 +78,66 @@ fi
 "$venv_python" -m pip install --disable-pip-version-check --require-hashes --only-binary=:all: -r spikes/m0/requirements.lock
 "$venv_python" -m pip check
 
+# Keep this pin equal to the Linux contract job's Flutter version.
+flutter_version=3.47.5
+flutter_archive=flutter_linux_${flutter_version}-stable.tar.xz
+flutter_sha256=2132e990f236f8d22e7c6314b29a191a95b10d7cbcfec9b4e2e303d996652cbb
+flutter_home=.cache/flutter/$flutter_version
+
+install_flutter_sdk() {
+  if [[ $(uname -m) != x86_64 ]]; then
+    echo 'missing flutter: the pinned Linux archive requires x86_64' >&2
+    exit 1
+  fi
+  if ! command -v curl >/dev/null 2>&1; then
+    install_apt_packages curl ca-certificates
+  fi
+  if ! command -v xz >/dev/null 2>&1 || ! command -v unzip >/dev/null 2>&1 ||
+    ! command -v git >/dev/null 2>&1; then
+    install_apt_packages xz-utils unzip git
+  fi
+  local download=.cache/flutter/$flutter_archive.part
+  local staging=$flutter_home.partial
+  mkdir -p .cache/flutter
+  rm -rf -- "$download" "$staging" "$flutter_home"
+  if ! curl -fsSL "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/$flutter_archive" -o "$download"; then
+    rm -f -- "$download"
+    echo 'missing flutter: archive download failed' >&2
+    exit 1
+  fi
+  if ! printf '%s  %s\n' "$flutter_sha256" "$download" | sha256sum --check --status; then
+    rm -f -- "$download"
+    echo 'missing flutter: archive SHA-256 mismatch' >&2
+    exit 1
+  fi
+  mkdir -p -- "$staging"
+  tar --no-same-owner -xJf "$download" -C "$staging"
+  rm -f -- "$download"
+  mv -- "$staging" "$flutter_home"
+}
+
+if [[ ${EDGE_ONE_INSTALL_FLUTTER:-0} == 1 ]]; then
+  if [[ ! -x $flutter_home/flutter/bin/flutter ]]; then
+    install_flutter_sdk
+  fi
+  flutter_bin=$PWD/$flutter_home/flutter/bin
+  for tool in flutter dart; do
+    if ! command -v "$tool" >/dev/null 2>&1; then
+      if (( EUID == 0 )); then
+        ln -sfn -- "$flutter_bin/$tool" "/usr/local/bin/$tool"
+      elif command -v sudo >/dev/null 2>&1; then
+        sudo ln -sfn -- "$flutter_bin/$tool" "/usr/local/bin/$tool"
+      else
+        echo "add $flutter_bin to PATH to use $tool" >&2
+      fi
+    fi
+  done
+  "$flutter_bin/flutter" --disable-analytics >/dev/null
+  "$flutter_bin/flutter" --version
+  # Resolve the locked workspace while setup still has network access.
+  "$flutter_bin/flutter" pub get --enforce-lockfile
+fi
+
 install_trunk_launcher() {
   if ! command -v curl >/dev/null 2>&1; then
     install_apt_packages curl ca-certificates

@@ -21,7 +21,7 @@ Generate Dart and TypeScript types with `python3 tools/generate_contracts.py`; c
 ## Build, Test, and Development Commands
 
 From the repository root, run `python3 -m unittest discover -s spikes/m0/tests -v` for unit tests and `python3 spikes/m0/check_report.py docs/notes/2026-09-27-m0-desktop.json` for archived numerical evidence.
-On hosted Linux, `bash setup.sh` creates the hash-locked Python environment; set `EDGE_ONE_FETCH_MODEL=1` only for native inference work.
+On hosted Linux, `bash setup.sh` creates the hash-locked Python environment; set `EDGE_ONE_FETCH_MODEL=1` only for native inference work and `EDGE_ONE_INSTALL_FLUTTER=1` only for Dart or Flutter work.
 See `README.md` for pinned model fetch, native build, and iOS commands.
 The following checks apply to the scaffolded contracts:
 

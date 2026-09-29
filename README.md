@@ -111,6 +111,8 @@ It also installs the Trunk launcher to `/usr/local/bin/trunk`, downloads the CLI
 It is safe to run again after a cached environment resumes.
 The setup phase has network access, while agent-phase access depends on the cloud environment setting.
 For a native task that needs the pinned 0.53 GB model, set `EDGE_ONE_FETCH_MODEL=1` in that environment so the setup phase runs the repository's verified fetcher; leave it unset for contract, documentation, and unit-test tasks.
+For Dart or Flutter tasks, set `EDGE_ONE_INSTALL_FLUTTER=1`: setup downloads the CI-pinned Flutter 3.47.5 Linux x64 archive (1.58 GB, Dart 3.13.4), checks its SHA-256, and unpacks it under ignored `.cache/flutter/`.
+It links `flutter` and `dart` into `/usr/local/bin` unless they are already on `PATH`, then resolves the workspace with `flutter pub get --enforce-lockfile`.
 The cloud environment must invoke the repository command explicitly; the universal image's own initialization is separate.
 The local Docker daemon was unavailable when this setup was added, so the GitHub Ubuntu job is the Linux execution check and an actual Codex Cloud run remains to be observed.
 
