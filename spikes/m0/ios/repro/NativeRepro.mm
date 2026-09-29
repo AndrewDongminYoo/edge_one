@@ -1,6 +1,9 @@
 #import <UIKit/UIKit.h>
 #include <CommonCrypto/CommonDigest.h>
 #include "fixture_tokens.hpp"
+#include "ggml-backend.h"
+#include "llama-model.h"
+#include <cstring>
 #include <fstream>
 #include <iomanip>
 #include <memory>
@@ -35,6 +38,20 @@ struct NativeBackend {
     ~NativeBackend() { llama_backend_free(); }
 };
 
+static size_t metal_weight_bytes(const llama_model * model) {
+    size_t total = 0;
+    for (const auto & [buffer_type, bytes] : model->memory_breakdown()) {
+        ggml_backend_dev_t device = ggml_backend_buft_get_device(buffer_type);
+        if (!device) continue;
+        const char * backend = ggml_backend_reg_name(ggml_backend_dev_backend_reg(device));
+        const auto type = ggml_backend_dev_type(device);
+        if (backend && std::strcmp(backend, "MTL") == 0 &&
+            (type == GGML_BACKEND_DEVICE_TYPE_GPU || type == GGML_BACKEND_DEVICE_TYPE_IGPU))
+            total += bytes;
+    }
+    return total;
+}
+
 // Direct llama.cpp reproduction: no Scorer, Swift, renderer or JSON path.
 static void decode_once(const char * model_path, bool gpu, std::ostream & out) {
     llama_model_params mp = llama_model_default_params();
@@ -42,6 +59,11 @@ static void decode_once(const char * model_path, bool gpu, std::ostream & out) {
     std::unique_ptr<llama_model, decltype(&llama_model_free)> model(
         llama_model_load_from_file(model_path, mp), llama_model_free);
     if (!model) throw std::runtime_error("model load failed");
+    if (gpu) {
+        const size_t bytes = metal_weight_bytes(model.get());
+        if (bytes == 0) throw std::runtime_error("Metal weight offload absent");
+        out << "metal_offload MTL " << bytes << '\n';
+    }
     llama_context_params cp = llama_context_default_params();
     cp.n_ctx = cp.n_batch = 2048;
     cp.n_ubatch = 1024;

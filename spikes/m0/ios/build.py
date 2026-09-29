@@ -257,6 +257,7 @@ def build(sdk, jobs):
                 "HEADER_SEARCH_PATHS": [
                     "$(inherited)",
                     *map(str, headers),
+                    str(SOURCE / "src"),
                     str(CACHE / "ios"),
                 ],
             }

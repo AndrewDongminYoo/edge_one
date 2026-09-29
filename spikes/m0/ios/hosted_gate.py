@@ -49,8 +49,19 @@ def summarize(raw, fixture):
     if not lines or lines[0] != f"fixture_sha256 {digest}":
         raise ValueError("direct output fixture SHA-256 mismatch")
     names = fixture["option_names"]
-    if not names or len(lines) != 1 + 2 * len(names):
+    if not names:
+        raise ValueError("empty direct output options")
+    if len(lines) == 1 + 2 * len(names):
+        raise ValueError("Metal offload evidence missing")
+    if len(lines) != 2 + 2 * len(names):
         raise ValueError("direct output row count mismatch")
+    offload = lines[1 + len(names)].split()
+    if (
+        len(offload) != 3
+        or offload[:2] != ["metal_offload", "MTL"]
+        or not re.fullmatch(r"[1-9]\d*", offload[2])
+    ):
+        raise ValueError("invalid Metal offload evidence")
     reference = fixture["reference"]
     if set(reference["probabilities"]) != set(names):
         raise ValueError("fixture reference options mismatch")
@@ -69,7 +80,7 @@ def summarize(raw, fixture):
     for backend in ("cpu", "metal"):
         logits = []
         for index in range(len(names)):
-            parts = lines[1 + (backend == "metal") * len(names) + index].split()
+            parts = lines[1 + (backend == "metal") * (len(names) + 1) + index].split()
             if len(parts) != 4 or parts[:2] != [backend, str(index)]:
                 raise ValueError(f"invalid {backend} row {index}")
             try:
@@ -96,6 +107,7 @@ def summarize(raw, fixture):
     }
     return {
         "fixture_sha256": digest,
+        "metal_weight_bytes": int(offload[2]),
         "distributions": distributions,
         "comparisons": comparisons,
         "passes_gate": all(item["passes_gate"] for item in comparisons.values()),
@@ -150,18 +162,20 @@ def preflight():
         result["simulator_sdk"] = command(
             "xcrun", "--sdk", "iphonesimulator", "--show-sdk-version"
         )
-        result["metal_tool"] = command("xcrun", "-f", "metal")
         if not re.search(r"^Xcode 27(?:\.|$)", result["xcode"], re.MULTILINE):
             raise ValueError("Xcode 27 is required")
         if not result["simulator_sdk"].startswith("27."):
             raise ValueError("iOS 27 simulator SDK is required")
         try:
+            result["metal_tool"] = command("xcrun", "-f", "metal")
             check_metal_compiler()
         except RuntimeError as error:
             result["metal_initial_error"] = str(error)
             result["metal_toolchain_download_attempted"] = True
             write_json(EVIDENCE / "preflight.json", result)
             command("xcodebuild", "-downloadComponent", "MetalToolchain")
+            if "metal_tool" not in result:
+                result["metal_tool"] = command("xcrun", "-f", "metal")
             check_metal_compiler()
         result["metal_compile"] = True
         listing = json.loads(

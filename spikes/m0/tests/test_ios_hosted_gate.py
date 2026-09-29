@@ -21,7 +21,9 @@ class HostedGateTests(unittest.TestCase):
             (root / "docs/notes/2026-09-28-m0-metal-diagnostic.json").read_text()
         )
         cls.fixture = archive["fixture"]
-        cls.raw = archive["direct_native_repro"]["raw_text"]
+        cls.archived_raw = archive["direct_native_repro"]["raw_text"]
+        lines = cls.archived_raw.splitlines()
+        cls.raw = "\n".join(lines[:4] + ["metal_offload MTL 1024"] + lines[4:]) + "\n"
 
     def test_selects_available_ios_27_iphone(self):
         devices = {
@@ -51,9 +53,20 @@ class HostedGateTests(unittest.TestCase):
     def test_matching_metal_rows_pass(self):
         lines = self.raw.splitlines()
         matching = "\n".join(
-            lines[:4] + [line.replace("cpu ", "metal ", 1) for line in lines[1:4]]
+            lines[:5] + [line.replace("cpu ", "metal ", 1) for line in lines[1:4]]
         )
-        self.assertTrue(summarize(matching, self.fixture)["passes_gate"])
+        result = summarize(matching, self.fixture)
+        self.assertTrue(result["passes_gate"])
+        self.assertEqual(result["metal_weight_bytes"], 1024)
+
+    def test_rejects_missing_or_cpu_only_metal_offload(self):
+        for raw in (
+            self.archived_raw,
+            self.raw.replace("metal_offload MTL 1024", "metal_offload CPU 0"),
+        ):
+            with self.subTest(raw=raw[-50:]):
+                with self.assertRaisesRegex(ValueError, "Metal offload"):
+                    summarize(raw, self.fixture)
 
     def test_rejects_wrong_hash_missing_and_nonfinite_rows(self):
         digest = hashlib.sha256(
@@ -147,6 +160,47 @@ class HostedGateTests(unittest.TestCase):
             self.assertTrue(result["supported"])
             self.assertTrue(result["metal_toolchain_download_attempted"])
             self.assertTrue(result["metal_compile"])
+
+    def test_preflight_recovers_missing_metal_lookup(self):
+        with tempfile.TemporaryDirectory() as directory:
+            evidence = Path(directory)
+            attempts = []
+            listing = {
+                "devices": {
+                    "com.apple.CoreSimulator.SimRuntime.iOS-27-0": [
+                        {"name": "iPhone 18 Pro", "udid": "phone", "state": "Shutdown"}
+                    ]
+                }
+            }
+
+            def fake_command(*args):
+                attempts.append(args)
+                if args == ("xcodebuild", "-version"):
+                    return "Xcode 27.0\nBuild version test"
+                if args == ("xcrun", "--sdk", "iphonesimulator", "--show-sdk-version"):
+                    return "27.0"
+                if args == ("xcrun", "-f", "metal"):
+                    if attempts.count(args) == 1:
+                        raise RuntimeError("metal not found")
+                    return "/tmp/metal"
+                if args == ("xcodebuild", "-downloadComponent", "MetalToolchain"):
+                    return "downloaded"
+                if args == ("xcrun", "simctl", "list", "devices", "available", "-j"):
+                    return json.dumps(listing)
+                self.fail(f"unexpected command: {args}")
+
+            with (
+                mock.patch.object(hosted_gate, "EVIDENCE", evidence),
+                mock.patch.object(hosted_gate, "command", side_effect=fake_command),
+                mock.patch.object(hosted_gate, "check_metal_compiler"),
+            ):
+                self.assertTrue(hosted_gate.preflight())
+            self.assertIn(
+                ("xcodebuild", "-downloadComponent", "MetalToolchain"), attempts
+            )
+            self.assertTrue(
+                json.loads((evidence / "preflight.json").read_text())["supported"]
+            )
 
     def test_run_gate_preserves_failed_metal_evidence(self):
         with tempfile.TemporaryDirectory() as directory:
