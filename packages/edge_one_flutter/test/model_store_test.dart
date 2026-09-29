@@ -22,8 +22,15 @@ ModelManifest fixtureManifest({List<String> mirrors = const []}) {
     'template': 'macjev-render-v1',
     'readout': 'verdict',
     'slot_tokens': {'yes': 1, 'no': 2, 'verdict_slot': 3},
+    'temperature': {'global': 0.8800546821789332},
     'limits': {'max_options': 26, 'max_levels': 10, 'n_ctx': 2048},
     'license': 'Apache-2.0',
+    'legal_assets': {
+      'license_sha256':
+          'bbedc3fda3305820b977265f01b8619d87570a6739de3a5582c3464840f1e57a',
+      'notice_sha256':
+          '5b20e266b5b9b9c12df4cb53db6801bc08fe8f1471355aaec15c1a9f9aa0b201',
+    },
     'source': 'https://example.test/resolve/$revision/$modelName',
     'mirrors': mirrors,
   };
@@ -94,28 +101,32 @@ void main() {
     );
   });
 
-  test(
-    'unexpected source revision is rejected even with a matching digest',
-    () {
-      final valid = fixtureManifest();
-      expect(valid.revision, revision);
-      final json = {
-        'id': 'fixture-model',
-        'revision': revision,
-        'file': modelName,
-        'sha256': sha256.convert(modelBytes).toString(),
-        'bytes': modelBytes.length,
-        'template': 'macjev-render-v1',
-        'readout': 'verdict',
-        'slot_tokens': {'yes': 1, 'no': 2, 'verdict_slot': 3},
-        'limits': {'max_options': 26, 'max_levels': 10, 'n_ctx': 2048},
-        'license': 'Apache-2.0',
-        'source': 'https://example.test/resolve/other/$modelName',
-        'mirrors': <String>[],
-      };
-      expect(() => parseFixture(json), throwsFormatException);
-    },
-  );
+  test('unexpected source revision is rejected even with a matching digest', () {
+    final valid = fixtureManifest();
+    expect(valid.revision, revision);
+    final json = {
+      'id': 'fixture-model',
+      'revision': revision,
+      'file': modelName,
+      'sha256': sha256.convert(modelBytes).toString(),
+      'bytes': modelBytes.length,
+      'template': 'macjev-render-v1',
+      'readout': 'verdict',
+      'slot_tokens': {'yes': 1, 'no': 2, 'verdict_slot': 3},
+      'temperature': {'global': 0.8800546821789332},
+      'limits': {'max_options': 26, 'max_levels': 10, 'n_ctx': 2048},
+      'license': 'Apache-2.0',
+      'legal_assets': {
+        'license_sha256':
+            'bbedc3fda3305820b977265f01b8619d87570a6739de3a5582c3464840f1e57a',
+        'notice_sha256':
+            '5b20e266b5b9b9c12df4cb53db6801bc08fe8f1471355aaec15c1a9f9aa0b201',
+      },
+      'source': 'https://example.test/resolve/other/$modelName',
+      'mirrors': <String>[],
+    };
+    expect(() => parseFixture(json), throwsFormatException);
+  });
 
   test('wrong hash rejects primary and accepts a verified mirror', () async {
     final manifest = fixtureManifest(

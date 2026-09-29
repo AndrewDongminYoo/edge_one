@@ -7,3 +7,5 @@ __pycache__/
 **/.dart_tool/
 **/node_modules/
 /.cache/flutter/
+/packages/edge_one_flutter/build/
+/packages/edge_one_flutter/example/asset_host/build/

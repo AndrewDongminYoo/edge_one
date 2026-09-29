@@ -101,7 +101,10 @@ uv pip compile spikes/m0/requirements.in --python-version 3.12 --generate-hashes
 
 The first command checks changed files with the repository's configured linters.
 Run the second only when changing experimental dependencies and include both input and lockfile in the same change.
-Preserve the upstream model's LICENSE and NOTICE with downloaded artifacts.
+Preserve the upstream model's LICENSE and NOTICE when distributing the model.
+The Flutter package bundles those exact files from the [pinned model revision](https://huggingface.co/chaoliangUNSW/Jev-Style-0.8B-Decision-v3-GGUF/tree/edf37c26a1098f83cf4264b8adbe0dca2d2ebb0c) and verifies their SHA-256 digests against its app-pinned manifest.
+The manifest also carries the released global readout temperature; category-specific calibration remains a later engine concern.
+Host apps must call `loadPinnedModelNotices` and include both returned texts in their open-source notices when they distribute this model.
 
 GitHub Actions runs the unit tests and validates archived measurements against current fixture and model pins.
 It also builds the pinned native scorer on Ubuntu, requires exact-prefix numerical parity with one warm sample, and builds unsigned iPhone and simulator apps on a hosted macOS runner.

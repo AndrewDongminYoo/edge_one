@@ -7,8 +7,13 @@
   "template": "macjev-render-v1",
   "readout": "verdict",
   "slot_tokens": { "yes": 9542, "no": 874, "verdict_slot": 1411 },
+  "temperature": { "global": 0.8800546821789332 },
   "limits": { "max_options": 26, "max_levels": 10, "n_ctx": 2048 },
   "license": "Apache-2.0",
+  "legal_assets": {
+    "license_sha256": "bbedc3fda3305820b977265f01b8619d87570a6739de3a5582c3464840f1e57a",
+    "notice_sha256": "5b20e266b5b9b9c12df4cb53db6801bc08fe8f1471355aaec15c1a9f9aa0b201"
+  },
   "source": "https://huggingface.co/chaoliangUNSW/Jev-Style-0.8B-Decision-v3-GGUF/resolve/edf37c26a1098f83cf4264b8adbe0dca2d2ebb0c/Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
   "mirrors": []
 }

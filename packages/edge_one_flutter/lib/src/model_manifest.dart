@@ -6,7 +6,7 @@ import 'package:crypto/crypto.dart' as crypto;
 /// The digest is compiled into the app, so replacing the bundled asset alone
 /// cannot change the trusted model or its download endpoints.
 const pinnedModelManifestSha256 =
-    'e1f063a43727c94436bc429cb87e82cb444b1411ffe074c10bcda721c5538bb0';
+    'a3f01ccddcca8d893fa874ba43412889e621d2a0f00acb998aef9d3aeaf4670d';
 
 final class ModelManifest {
   ModelManifest._({
@@ -18,8 +18,11 @@ final class ModelManifest {
     required this.template,
     required this.readout,
     required this.slotTokens,
+    required this.globalTemperature,
     required this.limits,
     required this.license,
+    required this.licenseSha256,
+    required this.noticeSha256,
     required this.source,
     required this.mirrors,
   });
@@ -32,8 +35,11 @@ final class ModelManifest {
   final String template;
   final String readout;
   final Map<String, int> slotTokens;
+  final double globalTemperature;
   final Map<String, int> limits;
   final String license;
+  final String licenseSha256;
+  final String noticeSha256;
   final Uri source;
   final List<Uri> mirrors;
 
@@ -59,11 +65,23 @@ final class ModelManifest {
     final file = _string(decoded, 'file');
     final hash = _string(decoded, 'sha256');
     final size = _positiveInt(decoded, 'bytes');
+    final temperature = decoded['temperature'];
+    if (temperature is! Map<String, dynamic>) {
+      throw const FormatException('temperature must be an object');
+    }
+    final legalAssets = decoded['legal_assets'];
+    if (legalAssets is! Map<String, dynamic>) {
+      throw const FormatException('legal_assets must be an object');
+    }
+    final licenseSha256 = _string(legalAssets, 'license_sha256');
+    final noticeSha256 = _string(legalAssets, 'notice_sha256');
     if (!RegExp(r'^[a-z0-9]+(?:[.-][a-z0-9]+)*$').hasMatch(id) ||
         !RegExp(r'^[a-f0-9]{40}$').hasMatch(revision) ||
-        !RegExp(r'^[a-f0-9]{64}$').hasMatch(hash) ||
+        !_validSha256(hash) ||
+        !_validSha256(licenseSha256) ||
+        !_validSha256(noticeSha256) ||
         !RegExp(r'^[A-Za-z0-9][A-Za-z0-9._-]*$').hasMatch(file)) {
-      throw const FormatException('Invalid model identity or file');
+      throw const FormatException('Invalid model identity or digest');
     }
     final source = _url(decoded['source']);
     if (source.pathSegments.length < 3 ||
@@ -92,12 +110,15 @@ final class ModelManifest {
         'no',
         'verdict_slot',
       ]),
+      globalTemperature: _positiveNumber(temperature, 'global'),
       limits: _intMap(decoded, 'limits', const [
         'max_options',
         'max_levels',
         'n_ctx',
       ]),
       license: _string(decoded, 'license'),
+      licenseSha256: licenseSha256,
+      noticeSha256: noticeSha256,
       source: source,
       mirrors: mirrors,
     );
@@ -118,6 +139,17 @@ final class ModelManifest {
     }
     return value;
   }
+
+  static double _positiveNumber(Map<String, dynamic> map, String key) {
+    final value = map[key];
+    if (value is! num || !value.isFinite || value <= 0) {
+      throw FormatException('$key must be a positive finite number');
+    }
+    return value.toDouble();
+  }
+
+  static bool _validSha256(String value) =>
+      RegExp(r'^[a-f0-9]{64}$').hasMatch(value);
 
   static Map<String, int> _intMap(
     Map<String, dynamic> map,
