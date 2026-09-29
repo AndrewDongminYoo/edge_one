@@ -153,6 +153,42 @@ void main() {
     expect(evaluation.score('impact'), isA<Uncertain<num>>());
   });
 
+  test('normalizes weights whose sum would overflow', () async {
+    for (final weight in [1e308, double.maxFinite, 5e-324]) {
+      final engine = FakeEngine(
+        weights: {
+          'team': {'billing': weight, 'shipping': weight},
+        },
+      );
+      final answers = (await answer(engine))['answers'] as Map<String, Object?>;
+      expect((answers['team'] as Map)['probabilities'], {
+        'billing': 0.5,
+        'shipping': 0.5,
+        'returns': 0.0,
+      });
+    }
+  });
+
+  test('rejects a Choice without options', () async {
+    final empty = SystemOneJson.decodeRequest({
+      'state': 's',
+      'model': 'm',
+      'questions': {
+        'pick': {'type': 'choice', 'criteria': {}},
+      },
+    });
+    await expectLater(
+      FakeEngine().evaluate(empty),
+      throwsA(
+        isA<SystemOneFormatException>().having(
+          (e) => e.pointer,
+          'pointer',
+          '/questions/pick/criteria',
+        ),
+      ),
+    );
+  });
+
   test('rejects weights that do not fit the question', () async {
     await expectLater(
       FakeEngine(

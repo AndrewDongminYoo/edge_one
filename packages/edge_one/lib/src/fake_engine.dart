@@ -1,4 +1,5 @@
 import 'client.dart';
+import 'contract_json.dart';
 import 'generated/system_one_v1.dart';
 
 /// A deterministic backend that answers each question from fixed weights.
@@ -38,8 +39,9 @@ final class FakeEngine implements SystemOneBackend {
 
   final Map<String, Map<String, num>> weights;
 
-  /// Throws [StateError] when weights name an unknown answer key or leave a
-  /// question with zero total weight.
+  /// Throws [SystemOneFormatException] for a Choice without options, which
+  /// no answer can satisfy, and [StateError] when weights name an unknown
+  /// answer key or leave a question with zero total weight.
   @override
   Future<SystemOneResponse> evaluate(SystemOneRequest request) async =>
       SystemOneResponse(
@@ -55,6 +57,13 @@ final class FakeEngine implements SystemOneBackend {
   SystemOneAnswer _answer(String key, SystemOneQuestion question) {
     switch (question) {
       case ChoiceQuestion(:final criteria):
+        if (criteria.isEmpty) {
+          throw SystemOneFormatException(
+            '/questions/${key.replaceAll('~', '~0').replaceAll('/', '~1')}'
+                '/criteria',
+            'a Choice needs at least one option to be answered',
+          );
+        }
         final probabilities = _distribution(key, criteria.keys.toList());
         return ChoiceAnswer(
           choice: _mostLikely(probabilities),
@@ -97,12 +106,19 @@ final class FakeEngine implements SystemOneBackend {
     final chosen = [
       for (final name in keys) configured == null ? 1 : configured[name] ?? 0,
     ];
-    final total = chosen.fold<num>(0, (sum, weight) => sum + weight);
+    var scaled = chosen;
+    var total = chosen.fold<num>(0, (sum, weight) => sum + weight);
     if (total <= 0) {
       throw StateError('FakeEngine weights for "$question" sum to zero');
     }
+    if (!total.isFinite) {
+      // Finite weights can overflow when summed; scale by the largest first.
+      final top = chosen.reduce((a, b) => a > b ? a : b);
+      scaled = [for (final weight in chosen) weight / top];
+      total = scaled.fold<num>(0, (sum, weight) => sum + weight);
+    }
     return {
-      for (final (index, name) in keys.indexed) name: chosen[index] / total,
+      for (final (index, name) in keys.indexed) name: scaled[index] / total,
     };
   }
 }
