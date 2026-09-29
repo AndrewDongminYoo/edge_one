@@ -103,11 +103,13 @@ final class FakeEngine implements SystemOneBackend {
         }
       }
     }
+    // Doubles, because summing 64-bit integer weights can wrap silently.
     final chosen = [
-      for (final name in keys) configured == null ? 1 : configured[name] ?? 0,
+      for (final name in keys)
+        configured == null ? 1.0 : (configured[name] ?? 0).toDouble(),
     ];
     var scaled = chosen;
-    var total = chosen.fold<num>(0, (sum, weight) => sum + weight);
+    var total = chosen.fold<double>(0, (sum, weight) => sum + weight);
     if (total <= 0) {
       throw StateError('FakeEngine weights for "$question" sum to zero');
     }
@@ -115,7 +117,7 @@ final class FakeEngine implements SystemOneBackend {
       // Finite weights can overflow when summed; scale by the largest first.
       final top = chosen.reduce((a, b) => a > b ? a : b);
       scaled = [for (final weight in chosen) weight / top];
-      total = scaled.fold<num>(0, (sum, weight) => sum + weight);
+      total = scaled.fold<double>(0, (sum, weight) => sum + weight);
     }
     return {
       for (final (index, name) in keys.indexed) name: scaled[index] / total,

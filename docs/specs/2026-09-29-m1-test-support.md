@@ -11,7 +11,7 @@ The library stays pure Dart: recordings are written to a `StringSink` and replay
 `FakeEngine` answers each question from fixed weights keyed by question key, then by the answer's probability key: the option name for Choice, `true` or `false` for Noul, and the level index for Score.
 Weights are normalized; omitted keys weigh 0, and a question without weights receives a uniform distribution.
 Negative or non-finite weights fail at construction, and weights naming an unknown key or summing to zero fail with `StateError` when the request arrives.
-Weights whose sum overflows are scaled by the largest weight before normalizing.
+Weights are summed as doubles, so 64-bit integer weights cannot wrap, and a sum that overflows is scaled by the largest weight before normalizing.
 A Choice without options, which the wire schema allows but no answer can satisfy, fails with `SystemOneFormatException` at its `criteria` pointer; the schema is unchanged because upstream permits it and local option limits belong to #8's 422-equivalent validation.
 
 Choice answers choose the first most probable option in request order.

@@ -169,6 +169,22 @@ void main() {
     }
   });
 
+  test('normalizes integer weights whose sum would wrap', () async {
+    // Dart VM integers are 64-bit, so summing them as ints can wrap.
+    const maxInt = 0x7fffffffffffffff;
+    final engine = FakeEngine(
+      weights: {
+        'team': {'billing': maxInt, 'shipping': maxInt},
+      },
+    );
+    final answers = (await answer(engine))['answers'] as Map<String, Object?>;
+    expect((answers['team'] as Map)['probabilities'], {
+      'billing': 0.5,
+      'shipping': 0.5,
+      'returns': 0.0,
+    });
+  });
+
   test('rejects a Choice without options', () async {
     final empty = SystemOneJson.decodeRequest({
       'state': 's',
