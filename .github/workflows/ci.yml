@@ -50,6 +50,16 @@ jobs:
       - name: Test pure Dart contract and Decision API
         working-directory: packages/edge_one
         run: dart test
+      - name: Test pinned model manifest and legal assets
+        working-directory: packages/edge_one_flutter
+        run: |
+          dart test test/model_manifest_test.dart
+          flutter test test/pinned_model_flutter_test.dart
+      - name: Verify package assets from a Flutter host
+        working-directory: packages/edge_one_flutter/example/asset_host
+        run: |
+          flutter pub get --enforce-lockfile
+          flutter test test/package_assets_test.dart
 
   desktop-evidence:
     name: Unit tests and archived measurements
