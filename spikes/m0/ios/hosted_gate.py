@@ -18,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[3]
 IOS_CACHE = ROOT / ".cache/m0/ios"
 EVIDENCE = IOS_CACHE / "hosted"
 BUNDLE_ID = "com.andrewdongminyoo.edgeone.m0.native-repro"
+BOOT_TIMEOUT = 600
 APP = (
     IOS_CACHE
     / "iphonesimulator/DerivedData/Build/Products/Release-iphonesimulator/NativeRepro.app"
@@ -38,7 +39,14 @@ def select_device(listing):
     ]
     if not candidates:
         raise ValueError("no available iOS 27 iPhone simulator")
-    return min(candidates, key=lambda device: (device["name"], device["udid"]))
+    return min(
+        candidates,
+        key=lambda device: (
+            device["state"] != "Booted",
+            device["name"],
+            device["udid"],
+        ),
+    )
 
 
 def summarize(raw, fixture):
@@ -114,14 +122,18 @@ def summarize(raw, fixture):
     }
 
 
-def command(*args):
+def command(*args, timeout=180):
     try:
         result = subprocess.run(
-            args, capture_output=True, text=True, check=True, timeout=180
+            args, capture_output=True, text=True, check=True, timeout=timeout
         )
     except subprocess.TimeoutExpired as error:
+        detail = error.stdout or error.stderr or ""
+        if isinstance(detail, bytes):
+            detail = detail.decode(errors="replace")
+        suffix = f": {detail.strip()[-1000:]}" if detail.strip() else ""
         raise RuntimeError(
-            f"{' '.join(args)} timed out after {error.timeout}s"
+            f"{' '.join(args)} timed out after {error.timeout}s{suffix}"
         ) from error
     except subprocess.CalledProcessError as error:
         detail = (error.stderr or error.stdout or "").strip()
@@ -247,17 +259,17 @@ def run_gate(timeout):
         preflight_result = json.loads((EVIDENCE / "preflight.json").read_text())
         if not preflight_result["supported"]:
             raise ValueError("hosted simulator preflight failed")
-        device = preflight_result["device"]
+        listing = json.loads(
+            command("xcrun", "simctl", "list", "devices", "available", "-j")
+        )
+        device = select_device(listing)
         device_id = device["udid"]
         summary["device"] = device
         if not APP.is_dir():
             raise FileNotFoundError(f"NativeRepro app missing: {APP}")
-        if device["state"] == "Shutdown":
-            mark("boot")
-            command("xcrun", "simctl", "boot", device_id)
-            booted_here = True
+        booted_here = device["state"] == "Shutdown"
         mark("bootstatus")
-        command("xcrun", "simctl", "bootstatus", device_id, "-b")
+        command("xcrun", "simctl", "bootstatus", device_id, "-b", timeout=BOOT_TIMEOUT)
         mark("install")
         command("xcrun", "simctl", "install", device_id, str(APP))
         mark("get_app_container")

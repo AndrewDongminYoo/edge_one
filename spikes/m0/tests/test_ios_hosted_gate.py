@@ -44,6 +44,17 @@ class HostedGateTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "available iOS 27 iPhone"):
             select_device(devices)
 
+    def test_prefers_booted_ios_27_iphone(self):
+        listing = {
+            "devices": {
+                "com.apple.CoreSimulator.SimRuntime.iOS-27-0": [
+                    {"name": "iPhone 17", "udid": "cold", "state": "Shutdown"},
+                    {"name": "iPhone 17 Pro", "udid": "warm", "state": "Booted"},
+                ]
+            }
+        }
+        self.assertEqual(select_device(listing)["udid"], "warm")
+
     def test_archived_metal_failure_and_cpu_success(self):
         result = summarize(self.raw, self.fixture)
         self.assertTrue(result["comparisons"]["cpu_reference"]["passes_gate"])
@@ -221,8 +232,24 @@ class HostedGateTests(unittest.TestCase):
             app.mkdir()
             container = root / "container"
             (container / "Documents").mkdir(parents=True)
+            calls = []
 
-            def fake_command(*args):
+            def fake_command(*args, **kwargs):
+                calls.append((args, kwargs))
+                if args[2:3] == ("list",):
+                    return json.dumps(
+                        {
+                            "devices": {
+                                "com.apple.CoreSimulator.SimRuntime.iOS-27-0": [
+                                    {
+                                        "name": "iPhone 17",
+                                        "udid": "phone",
+                                        "state": "Shutdown",
+                                    }
+                                ]
+                            }
+                        }
+                    )
                 if args[2:3] == ("get_app_container",):
                     return str(container)
                 if args[2:3] == ("launch",):
@@ -249,6 +276,13 @@ class HostedGateTests(unittest.TestCase):
             self.assertEqual(
                 (evidence / "native-repro-status.txt").read_text(), "metal_complete"
             )
+            self.assertIn(
+                (("xcrun", "simctl", "bootstatus", "phone", "-b"), {"timeout": 600}),
+                calls,
+            )
+            self.assertNotIn(
+                ("xcrun", "simctl", "boot", "phone"), [args for args, _ in calls]
+            )
 
     def test_run_gate_records_app_failure_without_plaintext(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -265,7 +299,21 @@ class HostedGateTests(unittest.TestCase):
             container = root / "container"
             (container / "Documents").mkdir(parents=True)
 
-            def fake_command(*args):
+            def fake_command(*args, **kwargs):
+                if args[2:3] == ("list",):
+                    return json.dumps(
+                        {
+                            "devices": {
+                                "com.apple.CoreSimulator.SimRuntime.iOS-27-0": [
+                                    {
+                                        "name": "iPhone 17",
+                                        "udid": "phone",
+                                        "state": "Booted",
+                                    }
+                                ]
+                            }
+                        }
+                    )
                 if args[2:3] == ("get_app_container",):
                     return str(container)
                 if args[2:3] == ("launch",):
@@ -294,7 +342,10 @@ class HostedGateTests(unittest.TestCase):
             evidence.mkdir()
             (evidence / "preflight.json").write_text(
                 json.dumps(
-                    {"supported": True, "device": {"udid": "phone", "state": "Booted"}}
+                    {
+                        "supported": True,
+                        "device": {"udid": "phone", "state": "Shutdown"},
+                    }
                 )
             )
             app = root / "NativeRepro.app"
@@ -302,7 +353,21 @@ class HostedGateTests(unittest.TestCase):
             container = root / "container"
             (container / "Documents").mkdir(parents=True)
 
-            def fake_command(*args):
+            def fake_command(*args, **kwargs):
+                if args[2:3] == ("list",):
+                    return json.dumps(
+                        {
+                            "devices": {
+                                "com.apple.CoreSimulator.SimRuntime.iOS-27-0": [
+                                    {
+                                        "name": "iPhone 17",
+                                        "udid": "phone",
+                                        "state": "Booted",
+                                    }
+                                ]
+                            }
+                        }
+                    )
                 if args[2:3] == ("get_app_container",):
                     return str(container)
                 if args[2:3] == ("launch",):
@@ -341,6 +406,20 @@ class HostedGateTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "timed out after 180s"):
                 hosted_gate.command("xcrun", "simctl", "bootstatus")
         self.assertEqual(run.call_args.kwargs["timeout"], 180)
+
+    def test_bootstatus_timeout_preserves_partial_output(self):
+        with mock.patch.object(
+            hosted_gate.subprocess,
+            "run",
+            side_effect=subprocess.TimeoutExpired(
+                ["xcrun", "simctl", "bootstatus"], 600, output=b"boot progress"
+            ),
+        ) as run:
+            with self.assertRaisesRegex(RuntimeError, "boot progress"):
+                hosted_gate.command(
+                    "xcrun", "simctl", "bootstatus", "phone", "-b", timeout=600
+                )
+        self.assertEqual(run.call_args.kwargs["timeout"], 600)
 
 
 if __name__ == "__main__":
