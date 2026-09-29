@@ -1,0 +1,14 @@
+{
+  "id": "jev-style-0.8b-decision-v3",
+  "revision": "edf37c26a1098f83cf4264b8adbe0dca2d2ebb0c",
+  "file": "Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+  "sha256": "0a19bc29bacc33e0d871146c8612b24dd14c2ed2e61cedeb7a928b0852628bac",
+  "bytes": 529296864,
+  "template": "macjev-render-v1",
+  "readout": "verdict",
+  "slot_tokens": { "yes": 9542, "no": 874, "verdict_slot": 1411 },
+  "limits": { "max_options": 26, "max_levels": 10, "n_ctx": 2048 },
+  "license": "Apache-2.0",
+  "source": "https://huggingface.co/chaoliangUNSW/Jev-Style-0.8B-Decision-v3-GGUF/resolve/edf37c26a1098f83cf4264b8adbe0dca2d2ebb0c/Jev-Style-0.8B-Decision-v3-Q4_K_M.gguf",
+  "mirrors": []
+}

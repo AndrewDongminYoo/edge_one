@@ -28,11 +28,14 @@ dart run tools/check_dart_contract.dart
 dart analyze packages/edge_one
 flutter analyze packages/edge_one_flutter
 (cd packages/edge_one && dart test)
+(cd packages/edge_one_flutter && dart test)
 ```
 
 The pnpm workspace contains the planned React Native package; the Melos/Pub workspace contains `edge_one`, `edge_one_flutter`, and `edge_one_calibrate`.
+`edge_one_flutter` ships an app-pinned model manifest and a Dart model store that verifies resumed downloads before returning a path.
+The host app must supply durable storage and a free-space check; platform background transfers and storage policy are separate integration work.
 `packages/edge_one_core/` has a C++17 CMake target without inference sources yet.
-GitHub's Linux contract job validates schema fixtures, generated drift, TypeScript, and the Dart workspace, then runs the `edge_one` tests.
+GitHub's Linux contract job validates schema fixtures, generated drift, TypeScript, and the Dart workspace, then runs both Dart packages' tests.
 See the [contract specification](docs/specs/2026-09-29-m1-system-one-contract.md) for current limits.
 
 ## M0 Desktop Spike
