@@ -149,7 +149,14 @@ def preflight():
             raise ValueError("Xcode 27 is required")
         if not result["simulator_sdk"].startswith("27."):
             raise ValueError("iOS 27 simulator SDK is required")
-        check_metal_compiler()
+        try:
+            check_metal_compiler()
+        except RuntimeError as error:
+            result["metal_initial_error"] = str(error)
+            result["metal_toolchain_download_attempted"] = True
+            write_json(EVIDENCE / "preflight.json", result)
+            command("xcodebuild", "-downloadComponent", "MetalToolchain")
+            check_metal_compiler()
         result["metal_compile"] = True
         listing = json.loads(
             command("xcrun", "simctl", "list", "devices", "available", "-j")

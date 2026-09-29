@@ -84,17 +84,21 @@ class HostedGateTests(unittest.TestCase):
     def test_preflight_records_metal_compiler_failure(self):
         with tempfile.TemporaryDirectory() as directory:
             evidence = Path(directory)
+
+            def fake_command(*args):
+                if args == ("xcodebuild", "-version"):
+                    return "Xcode 27.0\nBuild version test"
+                if args == ("xcrun", "--sdk", "iphonesimulator", "--show-sdk-version"):
+                    return "27.0"
+                if args == ("xcrun", "-f", "metal"):
+                    return "/tmp/metal"
+                if args == ("xcodebuild", "-downloadComponent", "MetalToolchain"):
+                    raise RuntimeError("Metal Toolchain download unavailable")
+                self.fail(f"unexpected command: {args}")
+
             with (
                 mock.patch.object(hosted_gate, "EVIDENCE", evidence),
-                mock.patch.object(
-                    hosted_gate,
-                    "command",
-                    side_effect=[
-                        "Xcode 27.0\nBuild version test",
-                        "27.0",
-                        "/tmp/metal",
-                    ],
-                ),
+                mock.patch.object(hosted_gate, "command", side_effect=fake_command),
                 mock.patch.object(
                     hosted_gate,
                     "check_metal_compiler",
@@ -104,7 +108,44 @@ class HostedGateTests(unittest.TestCase):
                 self.assertFalse(hosted_gate.preflight())
             result = json.loads((evidence / "preflight.json").read_text())
             self.assertFalse(result["supported"])
-            self.assertIn("Metal Toolchain missing", result["error"])
+            self.assertTrue(result["metal_toolchain_download_attempted"])
+            self.assertIn("download unavailable", result["error"])
+
+    def test_preflight_installs_missing_metal_toolchain(self):
+        with tempfile.TemporaryDirectory() as directory:
+            evidence = Path(directory)
+            listing = {
+                "devices": {
+                    "com.apple.CoreSimulator.SimRuntime.iOS-27-0": [
+                        {"name": "iPhone 18 Pro", "udid": "phone", "state": "Shutdown"}
+                    ]
+                }
+            }
+            outputs = iter(
+                [
+                    "Xcode 27.0\nBuild version test",
+                    "27.0",
+                    "/tmp/metal",
+                    "downloaded",
+                    json.dumps(listing),
+                ]
+            )
+            with (
+                mock.patch.object(hosted_gate, "EVIDENCE", evidence),
+                mock.patch.object(
+                    hosted_gate, "command", side_effect=lambda *args: next(outputs)
+                ),
+                mock.patch.object(
+                    hosted_gate,
+                    "check_metal_compiler",
+                    side_effect=[RuntimeError("Metal Toolchain missing"), None],
+                ),
+            ):
+                self.assertTrue(hosted_gate.preflight())
+            result = json.loads((evidence / "preflight.json").read_text())
+            self.assertTrue(result["supported"])
+            self.assertTrue(result["metal_toolchain_download_attempted"])
+            self.assertTrue(result["metal_compile"])
 
     def test_run_gate_preserves_failed_metal_evidence(self):
         with tempfile.TemporaryDirectory() as directory:
