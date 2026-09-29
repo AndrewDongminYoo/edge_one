@@ -103,13 +103,14 @@ static void decode_once(const char * model_path, bool gpu, std::ostream & out) {
     }
 }
 
-@interface NativeReproApp : UIResponder <UIApplicationDelegate>
+@interface NativeReproScene : UIResponder <UIWindowSceneDelegate>
 @property(strong, nonatomic) UIWindow * window;
 @end
 
-@implementation NativeReproApp
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)options {
-    self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+@implementation NativeReproScene
+- (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)options {
+    if (![scene isKindOfClass:UIWindowScene.class]) return;
+    self.window = [[UIWindow alloc] initWithWindowScene:(UIWindowScene *)scene];
     UIViewController * controller = [UIViewController new];
     UILabel * label = [[UILabel alloc] initWithFrame:self.window.bounds];
     label.textAlignment = NSTextAlignmentCenter;
@@ -147,7 +148,17 @@ static void decode_once(const char * model_path, bool gpu, std::ostream & out) {
         write_repro_status(status);
         dispatch_async(dispatch_get_main_queue(), ^{ label.text = status; });
     });
-    return YES;
+}
+@end
+
+@interface NativeReproApp : UIResponder <UIApplicationDelegate>
+@end
+
+@implementation NativeReproApp
+- (UISceneConfiguration *)application:(UIApplication *)application configurationForConnectingSceneSession:(UISceneSession *)session options:(UISceneConnectionOptions *)options {
+    UISceneConfiguration * configuration = [[UISceneConfiguration alloc] initWithName:@"Default Configuration" sessionRole:session.role];
+    configuration.delegateClass = NativeReproScene.class;
+    return configuration;
 }
 @end
 

@@ -253,7 +253,6 @@ def build(sdk, jobs):
         repro_settings.update(
             {
                 "PRODUCT_BUNDLE_IDENTIFIER": "com.andrewdongminyoo.edgeone.m0.native-repro",
-                "INFOPLIST_KEY_UIApplicationSceneManifest_Generation": "NO",
                 "HEADER_SEARCH_PATHS": [
                     "$(inherited)",
                     *map(str, headers),
