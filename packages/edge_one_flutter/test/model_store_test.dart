@@ -360,6 +360,62 @@ void main() {
     expect(transport.requests.last.$2, 2);
   });
 
+  test(
+    'stalled response headers time out without disabling the client',
+    () async {
+      final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+      addTearDown(() => server.close(force: true));
+      server.listen((request) {
+        if (request.uri.path == '/stalled') return;
+        request.response.write('good');
+        unawaited(request.response.close());
+      });
+      final transport = HttpModelTransport(
+        responseHeaderTimeout: const Duration(milliseconds: 100),
+      );
+      addTearDown(transport.close);
+      final host = '127.0.0.1:${server.port}';
+
+      await expectLater(
+        transport
+            .get(Uri.http(host, '/stalled'), start: 0)
+            .timeout(
+              const Duration(seconds: 3),
+              onTimeout: () => throw StateError('Header timeout did not fire'),
+            ),
+        throwsA(isA<TimeoutException>()),
+      );
+      final healthy = await transport.get(Uri.http(host, '/healthy'), start: 0);
+      expect(await healthy.body.expand((chunk) => chunk).toList(), modelBytes);
+    },
+  );
+
+  test('complete verified partial survives a terminal stream error', () async {
+    Stream<List<int>> brokenBody() async* {
+      yield modelBytes;
+      throw const SocketException('connection closed after body');
+    }
+
+    final manifest = fixtureManifest();
+    final transport = FakeTransport(
+      (_, _) async => ModelResponse(
+        statusCode: HttpStatus.ok,
+        body: brokenBody(),
+        contentLength: modelBytes.length,
+      ),
+    );
+    final store = ModelStore(
+      root: root,
+      manifest: manifest,
+      transport: transport,
+      freeBytes: (_) async => 100,
+    );
+    final verified = await store.ensure();
+    expect(await verified.file.readAsBytes(), modelBytes);
+    expect(transport.requests.length, 1);
+    expect(await File('${verified.file.path}.part').exists(), isFalse);
+  });
+
   test('wrong content range cannot append to a partial file', () async {
     final manifest = fixtureManifest();
     final partial = File(

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
@@ -43,16 +44,30 @@ abstract interface class ModelTransport {
 }
 
 final class HttpModelTransport implements ModelTransport {
-  HttpModelTransport() : _client = HttpClient();
+  HttpModelTransport({this.responseHeaderTimeout = const Duration(seconds: 60)})
+    : _client = HttpClient() {
+    _client.connectionTimeout = responseHeaderTimeout;
+  }
 
   final HttpClient _client;
+  final Duration responseHeaderTimeout;
 
   @override
   Future<ModelResponse> get(Uri url, {required int start}) async {
     final request = await _client.getUrl(url);
     if (start > 0)
       request.headers.set(HttpHeaders.rangeHeader, 'bytes=$start-');
-    final response = await request.close();
+    final response = await request.close().timeout(
+      responseHeaderTimeout,
+      onTimeout: () {
+        final error = TimeoutException(
+          'Model response headers timed out',
+          responseHeaderTimeout,
+        );
+        request.abort(error);
+        throw error;
+      },
+    );
     return ModelResponse(
       statusCode: response.statusCode,
       body: response,
@@ -134,7 +149,12 @@ final class ModelStore {
       var retriedFromZero = false;
       while (true) {
         try {
-          final resumed = await _download(url, partial, onProgress);
+          var resumed = false;
+          try {
+            resumed = await _download(url, partial, onProgress);
+          } catch (_) {
+            if (!await _verified(partial)) rethrow;
+          }
           if (!await _verified(partial)) {
             await partial.delete();
             if (resumed && !retriedFromZero) {
