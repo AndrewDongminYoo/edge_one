@@ -131,6 +131,10 @@ const _noulCriteria = {'true', 'false'};
 // JSON integers beyond 2^53 cannot round-trip through JavaScript clients.
 const _maxSafeInteger = 9007199254740991;
 
+// Absorbs binary64 summation error, so a total such as 0.33 + 0.33 + 0.33
+// that lies exactly on the tolerance boundary is accepted.
+const _sumRoundingSlack = 1e-12;
+
 SystemOneRequest _request(Object? json, String pointer) {
   final map = _object(json, pointer, _requestFields, _requestFields);
   final questions = _object(
@@ -438,7 +442,8 @@ void _checkKeys(
 
 void _checkTotal(Map<String, num> probabilities, String pointer) {
   final total = probabilities.values.fold<double>(0, (sum, p) => sum + p);
-  if ((total - 1).abs() > SystemOneJson.probabilitySumTolerance) {
+  if ((total - 1).abs() >
+      SystemOneJson.probabilitySumTolerance + _sumRoundingSlack) {
     throw SystemOneFormatException(pointer, 'probabilities sum to $total');
   }
 }
@@ -550,10 +555,13 @@ Map<String, num> _probabilities(Object? json, String pointer) {
 
 int _count(Object? json, String pointer) {
   final value = _number(json, pointer, min: 0);
+  if (value > _maxSafeInteger) {
+    throw SystemOneFormatException(pointer, 'expected at most 2^53 - 1');
+  }
   if (value is int) {
     return value;
   }
-  if (value != value.roundToDouble() || value > _maxSafeInteger) {
+  if (value != value.roundToDouble()) {
     throw SystemOneFormatException(pointer, 'expected an integer');
   }
   return value.toInt();
@@ -572,26 +580,37 @@ Object _structured(Object? json, String pointer) {
 Object? _optionalStructured(Object? json, String pointer) =>
     json == null ? null : _structured(json, pointer);
 
-Object? _jsonValue(Object? json, String pointer) {
+Object? _jsonValue(Object? json, String pointer) =>
+    _copyJson(json, pointer, Set.identity());
+
+/// Copies [json], rejecting containers already open on the current path.
+Object? _copyJson(Object? json, String pointer, Set<Object> open) {
   if (json == null || json is String || json is bool) {
     return json;
   }
   if (json is num) {
     return _number(json, pointer);
   }
-  if (json is List) {
-    return List<Object?>.unmodifiable([
-      for (final (index, item) in json.indexed)
-        _jsonValue(item, '$pointer/$index'),
-    ]);
+  if (json is! List && json is! Map) {
+    throw SystemOneFormatException(pointer, 'expected a JSON value');
   }
-  if (json is Map) {
+  if (!open.add(json)) {
+    throw SystemOneFormatException(pointer, 'expected an acyclic value');
+  }
+  try {
+    if (json is List) {
+      return List<Object?>.unmodifiable([
+        for (final (index, item) in json.indexed)
+          _copyJson(item, '$pointer/$index', open),
+      ]);
+    }
     return Map<String, Object?>.unmodifiable({
       for (final MapEntry(:key, :value) in _map(json, pointer).entries)
-        key: _jsonValue(value, _child(pointer, key)),
+        key: _copyJson(value, _child(pointer, key), open),
     });
+  } finally {
+    open.remove(json);
   }
-  throw SystemOneFormatException(pointer, 'expected a JSON value');
 }
 
 String _child(String pointer, String key) =>

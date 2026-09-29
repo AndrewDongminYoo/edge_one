@@ -155,6 +155,36 @@ void main() {
       );
     });
 
+    test('reject cyclic values but accept shared ones', () {
+      final cyclic = <String, Object?>{};
+      cyclic['self'] = cyclic;
+      expect(
+        () => SystemOneJson.decodeRequest({...request, 'state': cyclic}),
+        throwsFormatAt('/state/self'),
+      );
+      final loop = <Object?>[];
+      loop.add(loop);
+      expect(
+        () => SystemOneJson.encodeResponse(
+          SystemOneResponse(
+            model: 'm',
+            answers: const {'q': NoulAnswer(noul: 0.5)},
+            usage: const Usage(inputTokens: 1, outputTokens: 0),
+            xExtensions: {'x_loop': loop},
+          ),
+        ),
+        throwsFormatAt('/x_loop/0'),
+      );
+      final shared = {'tier': 'pro'};
+      expect(
+        SystemOneJson.decodeRequest({
+          ...request,
+          'state': {'a': shared, 'b': shared},
+        }).state,
+        {'a': shared, 'b': shared},
+      );
+    });
+
     test('escape JSON Pointer characters in error locations', () {
       expect(
         () => SystemOneJson.decodeRequest({
@@ -214,6 +244,23 @@ void main() {
           ...response,
           'usage': {'input_tokens': 9007199254740992.0, 'output_tokens': 0},
         }),
+        throwsFormatAt('/usage/input_tokens'),
+      );
+      expect(
+        () => SystemOneJson.decodeResponse({
+          ...response,
+          'usage': {'input_tokens': 0, 'output_tokens': 9007199254740992},
+        }),
+        throwsFormatAt('/usage/output_tokens'),
+      );
+      expect(
+        () => SystemOneJson.encodeResponse(
+          const SystemOneResponse(
+            model: 'm',
+            answers: {'q': NoulAnswer(noul: 0.5)},
+            usage: Usage(inputTokens: 9007199254740992, outputTokens: 0),
+          ),
+        ),
         throwsFormatAt('/usage/input_tokens'),
       );
     });
@@ -431,12 +478,29 @@ void main() {
           questions,
           answers(
             answer('team', {
-              'probabilities': {'billing': 0.8, 'shipping': 0.199},
+              'probabilities': {'billing': 0.5, 'shipping': 0.489},
             }),
           ),
         ),
-        returnsNormally,
+        throwsFormatAt('/answers/team/probabilities'),
       );
+    });
+
+    test('accept probability totals on the tolerance boundary', () {
+      // Both totals differ from 1 by 0.010000000000000009 in binary64.
+      for (final shipping in [0.49, 0.51]) {
+        expect(
+          () => SystemOneJson.checkAnswers(
+            questions,
+            answers(
+              answer('team', {
+                'probabilities': {'billing': 0.5, 'shipping': shipping},
+              }),
+            ),
+          ),
+          returnsNormally,
+        );
+      }
     });
 
     test('reject a Score legend with another level count', () {

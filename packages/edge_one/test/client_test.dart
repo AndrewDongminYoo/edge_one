@@ -127,6 +127,12 @@ void main() {
         client.evaluate(state: 'ticket', questions: {}),
         throwsFormatAt('/questions'),
       );
+      final cyclic = <String, Object?>{};
+      cyclic['self'] = cyclic;
+      await expectLater(
+        client.evaluate(state: cyclic, questions: {'urgent': Noul('Urgent?')}),
+        throwsFormatAt('/state/self'),
+      );
       expect(backend.requests, isEmpty);
     });
 

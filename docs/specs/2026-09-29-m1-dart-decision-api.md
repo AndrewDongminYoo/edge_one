@@ -11,7 +11,8 @@ It has no Flutter, FFI, network, or inference dependency; the local engine, remo
 `SystemOneJson.decodeRequest` and `decodeResponse` accept exactly the documents that `schemas/system-one-v1.schema.json` accepts and return unmodifiable deep copies.
 `encodeRequest` and `encodeResponse` validate their own output, so hand-built Dart objects with non-JSON values, empty maps, or out-of-range numbers are rejected before they reach a backend or caller.
 Violations raise `SystemOneFormatException`, a `FormatException` with an RFC 6901 pointer; the request-side case is the Dart counterpart of the planned 422-equivalent status.
-Integer fields accept integral JSON numbers that Dart parses as doubles, such as `12.0`, up to 2^53 − 1.
+Integer fields accept integers and integral doubles such as `12.0` up to 2^53 − 1, the largest integer JavaScript clients represent exactly.
+Cyclic Dart maps or lists are rejected as non-JSON values; shared, acyclic references are copied.
 Explicit `null` values for `instructions`, Noul `criteria`, and `x_engine` are omitted on encode; other `x_` fields keep their `null` values.
 Encoding rejects `xExtensions` keys that lack the `x_` prefix or duplicate `x_route`, `x_latency_ms`, or `x_engine`.
 
@@ -20,10 +21,10 @@ Encoding rejects `xExtensions` keys that lack the `x_` prefix or duplicate `x_ro
 - every question has exactly one answer, and each answer has the question's type;
 - Choice probabilities cover exactly the requested options, and `choice` is one of them;
 - a Score legend has one entry per requested level, and its keys match the probability keys;
-- each probability map sums to 1 within `SystemOneJson.probabilitySumTolerance` (`1e-2`).
+- each probability map sums to 1 within `SystemOneJson.probabilitySumTolerance` (`1e-2`), boundary included despite binary64 summation error.
 
 The tolerance allows per-value rounding in remote responses; it is not the `1e-3` per-probability parity gate for local inference.
-Score legend keys are not tied to level positions, and `choice` is not required to be the most probable option, because the upstream contract does not state either rule.
+Score legend keys are not tied to level positions, legend values are not compared with the requested levels, and `choice` is not required to be the most probable option, because the upstream contract does not state these rules; the scaffold's fixture already pairs the level `{"level": "high"}` with the legend value `"high"`.
 
 ## Decisions
 
