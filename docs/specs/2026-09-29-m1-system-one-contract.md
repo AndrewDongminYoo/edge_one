@@ -19,7 +19,7 @@ The response requires `model`, a nonempty `answers` map, and `usage` with intege
 Known `x_route`, `x_latency_ms`, and `x_engine` fields and additional `x_` fields are response-only.
 Unlike OpenAPI's implicit allowance for undeclared object fields, this versioned local profile rejects unknown request, question, and answer fields and non-`x_` response fields; revisit that restriction before claiming full upstream wire compatibility.
 The generated Dart types use `Object`/`Object?` aliases for structured JSON values and do not enforce string/object/array membership on their own.
-Probability values are range-checked by the schema, while cross-field totals and question-to-answer matching require runtime checks in a later implementation.
+Probability values are range-checked by the schema, while cross-field totals and question-to-answer matching require runtime checks; issue #10 adds them in the [Dart codec](2026-09-29-m1-dart-decision-api.md).
 
 ## Verification
 

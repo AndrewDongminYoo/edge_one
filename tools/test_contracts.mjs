@@ -130,4 +130,33 @@ expectInvalid({
   },
 });
 expectInvalid({ ...response, unrelated: true });
+
+// The Dart codec tests read the same corpus, so both validators must agree.
+const corpus = JSON.parse(
+  readFileSync("schemas/fixtures/system-one-v1-cases.json", "utf8"),
+);
+assert.deepEqual(Object.keys(corpus).sort(), [
+  "SystemOneRequest",
+  "SystemOneResponse",
+]);
+for (const [definition, cases] of Object.entries(corpus)) {
+  const validateDefinition = ajv.getSchema(
+    `${schema.$id}#/definitions/${definition}`,
+  );
+  assert.ok(validateDefinition, `Missing schema definition ${definition}`);
+  for (const { name, value } of cases.valid) {
+    assert.equal(
+      validateDefinition(value),
+      true,
+      `${definition} ${name}: ${JSON.stringify(validateDefinition.errors)}`,
+    );
+  }
+  for (const { name, value } of cases.invalid) {
+    assert.equal(
+      validateDefinition(value),
+      false,
+      `${definition} ${name}: expected the schema to reject this value`,
+    );
+  }
+}
 console.log("System One schema fixtures passed");

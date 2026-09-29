@@ -43,10 +43,13 @@ jobs:
         run: |
           flutter pub get --enforce-lockfile
           dart pub workspace list
-          dart format --output=none --set-exit-if-changed packages/edge_one/lib packages/edge_one_flutter/lib
+          dart format --output=none --set-exit-if-changed packages/edge_one packages/edge_one_flutter/lib
           dart run tools/check_dart_contract.dart
           dart analyze packages/edge_one
           flutter analyze packages/edge_one_flutter
+      - name: Test pure Dart contract and Decision API
+        working-directory: packages/edge_one
+        run: dart test
 
   desktop-evidence:
     name: Unit tests and archived measurements
