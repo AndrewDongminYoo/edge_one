@@ -1,0 +1,17 @@
+name: edge_one_asset_host
+description: Fixture that verifies package assets from a consuming Flutter project.
+publish_to: none
+environment:
+  sdk: ^3.9.0
+dependencies:
+  edge_one:
+    path: ../../../edge_one
+  edge_one_flutter:
+    path: ../..
+  flutter:
+    sdk: flutter
+dependency_overrides:
+  edge_one:
+    path: ../../../edge_one
+dev_dependencies:
+  test: ^1.32.0
