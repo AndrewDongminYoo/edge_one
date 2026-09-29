@@ -287,6 +287,49 @@ class HostedGateTests(unittest.TestCase):
                 "Repro failed: model hash mismatch",
             )
 
+    def test_run_gate_records_launch_diagnostics_without_app_status(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            evidence = root / "hosted"
+            evidence.mkdir()
+            (evidence / "preflight.json").write_text(
+                json.dumps(
+                    {"supported": True, "device": {"udid": "phone", "state": "Booted"}}
+                )
+            )
+            app = root / "NativeRepro.app"
+            app.mkdir()
+            container = root / "container"
+            (container / "Documents").mkdir(parents=True)
+
+            def fake_command(*args):
+                if args[2:3] == ("get_app_container",):
+                    return str(container)
+                if args[2:3] == ("launch",):
+                    return f"{hosted_gate.BUNDLE_ID}: 1234"
+                return ""
+
+            def fake_run(args, **kwargs):
+                if args[0] == "ps":
+                    return subprocess.CompletedProcess(args, 1, "", "")
+                if args[:4] == ["xcrun", "simctl", "spawn", "phone"]:
+                    return subprocess.CompletedProcess(
+                        args, 0, "NativeRepro crashed", ""
+                    )
+                self.fail(f"unexpected subprocess: {args}")
+
+            with (
+                mock.patch.object(hosted_gate, "EVIDENCE", evidence),
+                mock.patch.object(hosted_gate, "APP", app),
+                mock.patch.object(hosted_gate, "command", side_effect=fake_command),
+                mock.patch.object(hosted_gate.subprocess, "run", side_effect=fake_run),
+            ):
+                self.assertFalse(hosted_gate.run_gate(0))
+            summary = json.loads((evidence / "summary.json").read_text())
+            self.assertEqual(summary["launch_output"], f"{hosted_gate.BUNDLE_ID}: 1234")
+            self.assertEqual(summary["launch_process"], "not running")
+            self.assertIn("NativeRepro crashed", summary["launch_log"])
+
     def test_simctl_command_has_bounded_timeout(self):
         with mock.patch.object(
             hosted_gate.subprocess,

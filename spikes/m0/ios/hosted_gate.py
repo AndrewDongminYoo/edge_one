@@ -190,6 +190,48 @@ def preflight():
     return result["supported"]
 
 
+def launch_diagnostics(device_id, launch_output):
+    result = {"launch_output": launch_output}
+    pid = re.search(r":\s*(\d+)\s*$", launch_output)
+    if pid:
+        try:
+            process = subprocess.run(
+                ["ps", "-p", pid[1], "-o", "pid=,stat=,etime=,comm="],
+                capture_output=True,
+                text=True,
+                timeout=10,
+            )
+            result["launch_process"] = process.stdout.strip() or "not running"
+        except (OSError, subprocess.TimeoutExpired) as error:
+            result["launch_process"] = str(error)
+    else:
+        result["launch_process"] = "pid unavailable"
+    try:
+        logs = subprocess.run(
+            [
+                "xcrun",
+                "simctl",
+                "spawn",
+                device_id,
+                "log",
+                "show",
+                "--style",
+                "compact",
+                "--last",
+                "10m",
+                "--predicate",
+                f'process == "NativeRepro" OR eventMessage CONTAINS[c] "{BUNDLE_ID}"',
+            ],
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        result["launch_log"] = (logs.stdout or logs.stderr).strip()[-12000:]
+    except (OSError, subprocess.TimeoutExpired) as error:
+        result["launch_log"] = str(error)
+    return result
+
+
 def run_gate(timeout):
     summary = {"passes_gate": False}
     booted_here = False
@@ -229,7 +271,7 @@ def run_gate(timeout):
         output.unlink(missing_ok=True)
         status_file.unlink(missing_ok=True)
         mark("launch")
-        command("xcrun", "simctl", "launch", device_id, BUNDLE_ID)
+        launch_output = command("xcrun", "simctl", "launch", device_id, BUNDLE_ID)
         mark("wait_for_output")
         deadline = time.monotonic() + timeout
         while not output.is_file():
@@ -241,6 +283,7 @@ def run_gate(timeout):
                 break
             time.sleep(2)
         if not output.is_file():
+            summary.update(launch_diagnostics(device_id, launch_output))
             raise TimeoutError(
                 f"NativeRepro produced no plaintext output within {timeout}s"
             )
