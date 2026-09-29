@@ -45,6 +45,8 @@ Preserve the System One JSON contract and isolate extension fields with `x_` pre
 M0 uses Python `unittest` and iOS XCTest; the contract schema uses Ajv fixtures. No coverage threshold is set.
 Use `test/*_test.dart` for Dart and Flutter tests.
 Add wire-format cases to `schemas/fixtures/system-one-v1-cases.json` so Ajv and the Dart codec check the same corpus.
+After changing `FakeEngine`, the recording format, or `schemas/examples/`, run `dart run tool/update_examples.dart` from `packages/edge_one` and review the regenerated answers.
+Commit only synthetic recordings; state redaction does not anonymize a request.
 Prioritize contract fixtures, delimiter escaping, question-level routing, cancellation, and model integrity checks.
 Validate shared-prefix inference against separate prefill, targeting probability differences below `1e-3` as specified in the blueprint.
 Report benchmark device, model revision, and cold/warm/sustained conditions.

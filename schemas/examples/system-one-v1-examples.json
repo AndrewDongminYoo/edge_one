@@ -1,0 +1,300 @@
+{
+  "examples": [
+    {
+      "name": "support ticket routing",
+      "request": {
+        "state": {
+          "ticket": {
+            "subject": "Charged twice",
+            "body": "My card was billed twice for the March invoice."
+          },
+          "customer": {
+            "plan": "pro",
+            "locale": "en"
+          }
+        },
+        "model": "edge-one-example",
+        "questions": {
+          "team": {
+            "type": "choice",
+            "instructions": "Which team should handle this ticket?",
+            "criteria": {
+              "billing": "Payments, invoices, and refunds",
+              "shipping": "Delivery status and damaged items",
+              "account": null
+            }
+          },
+          "urgent": {
+            "type": "noul",
+            "instructions": "Does the customer need a reply within one hour?",
+            "criteria": {
+              "true": "Service is down or a payment failed",
+              "false": "General questions"
+            }
+          },
+          "frustration": {
+            "type": "score",
+            "instructions": "How frustrated is the customer?",
+            "criteria": ["calm", "annoyed", "angry"]
+          }
+        }
+      },
+      "fake_weights": {
+        "team": {
+          "billing": 8,
+          "shipping": 1,
+          "account": 1
+        },
+        "urgent": {
+          "true": 3,
+          "false": 1
+        },
+        "frustration": {
+          "0": 1,
+          "1": 3,
+          "2": 6
+        }
+      },
+      "fake_response": {
+        "model": "edge-one-example",
+        "answers": {
+          "team": {
+            "type": "choice",
+            "choice": "billing",
+            "probabilities": {
+              "billing": 0.8,
+              "shipping": 0.1,
+              "account": 0.1
+            },
+            "confidence": 0.7000000000000002
+          },
+          "urgent": {
+            "type": "noul",
+            "noul": 0.75
+          },
+          "frustration": {
+            "type": "score",
+            "score": 1.5,
+            "legend": {
+              "0": "calm",
+              "1": "annoyed",
+              "2": "angry"
+            },
+            "probabilities": {
+              "0": 0.1,
+              "1": 0.3,
+              "2": 0.6
+            },
+            "confidence": 0.3999999999999999
+          }
+        },
+        "usage": {
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "x_engine": {
+          "id": "edge-one-fake"
+        }
+      }
+    },
+    {
+      "name": "moderation with structured instructions and criteria",
+      "request": {
+        "state": "Buy cheap watches at example dot com!!!",
+        "model": "edge-one-example",
+        "questions": {
+          "spam": {
+            "type": "noul",
+            "instructions": {
+              "task": "Is this unsolicited advertising?",
+              "context": ["forum reply"]
+            }
+          },
+          "action": {
+            "type": "choice",
+            "criteria": {
+              "allow": {
+                "examples": ["questions", "feedback"]
+              },
+              "review": {
+                "examples": ["links to unknown sites"]
+              },
+              "remove": {
+                "examples": ["scams", "malware"]
+              }
+            }
+          }
+        }
+      },
+      "fake_weights": {
+        "spam": {
+          "true": 9,
+          "false": 1
+        }
+      },
+      "fake_response": {
+        "model": "edge-one-example",
+        "answers": {
+          "spam": {
+            "type": "noul",
+            "noul": 0.9
+          },
+          "action": {
+            "type": "choice",
+            "choice": "allow",
+            "probabilities": {
+              "allow": 0.3333333333333333,
+              "review": 0.3333333333333333,
+              "remove": 0.3333333333333333
+            },
+            "confidence": 0.0
+          }
+        },
+        "usage": {
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "x_engine": {
+          "id": "edge-one-fake"
+        }
+      }
+    },
+    {
+      "name": "review quality with object levels",
+      "request": {
+        "state": {
+          "review": "Arrived late but works well.",
+          "stars": null
+        },
+        "model": "edge-one-example",
+        "questions": {
+          "quality": {
+            "type": "score",
+            "criteria": [
+              {
+                "label": "poor",
+                "stars": 1
+              },
+              {
+                "label": "fair"
+              },
+              {
+                "label": "good"
+              },
+              {
+                "label": "excellent",
+                "stars": 5
+              }
+            ]
+          },
+          "recommend": {
+            "type": "noul",
+            "criteria": {
+              "true": "Would recommend",
+              "false": null
+            }
+          }
+        }
+      },
+      "fake_weights": {
+        "quality": {
+          "2": 1
+        }
+      },
+      "fake_response": {
+        "model": "edge-one-example",
+        "answers": {
+          "quality": {
+            "type": "score",
+            "score": 2.0,
+            "legend": {
+              "0": {
+                "label": "poor",
+                "stars": 1
+              },
+              "1": {
+                "label": "fair"
+              },
+              "2": {
+                "label": "good"
+              },
+              "3": {
+                "label": "excellent",
+                "stars": 5
+              }
+            },
+            "probabilities": {
+              "0": 0.0,
+              "1": 0.0,
+              "2": 1.0,
+              "3": 0.0
+            },
+            "confidence": 1.0
+          },
+          "recommend": {
+            "type": "noul",
+            "noul": 0.5
+          }
+        },
+        "usage": {
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "x_engine": {
+          "id": "edge-one-fake"
+        }
+      }
+    },
+    {
+      "name": "array state with a tied choice",
+      "request": {
+        "state": ["order #1042", "status: delayed"],
+        "model": "edge-one-example",
+        "questions": {
+          "next_step": {
+            "type": "choice",
+            "instructions": [
+              "Pick the next step",
+              {
+                "policy": "refund after 7 days"
+              }
+            ],
+            "criteria": {
+              "refund": null,
+              "reship": null,
+              "wait": null
+            }
+          }
+        }
+      },
+      "fake_weights": {
+        "next_step": {
+          "reship": 1,
+          "wait": 1
+        }
+      },
+      "fake_response": {
+        "model": "edge-one-example",
+        "answers": {
+          "next_step": {
+            "type": "choice",
+            "choice": "reship",
+            "probabilities": {
+              "refund": 0.0,
+              "reship": 0.5,
+              "wait": 0.5
+            },
+            "confidence": 0.25
+          }
+        },
+        "usage": {
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "x_engine": {
+          "id": "edge-one-fake"
+        }
+      }
+    }
+  ]
+}

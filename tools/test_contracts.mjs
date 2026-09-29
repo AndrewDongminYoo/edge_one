@@ -159,4 +159,56 @@ for (const [definition, cases] of Object.entries(corpus)) {
     );
   }
 }
+// Representative requests, their FakeEngine answers, and the replay recording.
+const validateRequest = ajv.getSchema(
+  `${schema.$id}#/definitions/SystemOneRequest`,
+);
+const validateResponse = ajv.getSchema(
+  `${schema.$id}#/definitions/SystemOneResponse`,
+);
+const { examples } = JSON.parse(
+  readFileSync("schemas/examples/system-one-v1-examples.json", "utf8"),
+);
+for (const { name, request, fake_response: response } of examples) {
+  assert.equal(
+    validateRequest(request),
+    true,
+    `${name} request: ${JSON.stringify(validateRequest.errors)}`,
+  );
+  assert.equal(
+    validateResponse(response),
+    true,
+    `${name} response: ${JSON.stringify(validateResponse.errors)}`,
+  );
+}
+const recording = readFileSync(
+  "schemas/examples/system-one-v1-recording.jsonl",
+  "utf8",
+)
+  .split("\n")
+  .filter((text) => text.trim() !== "")
+  .map((text) => JSON.parse(text));
+assert.equal(recording.length, examples.length);
+for (const [index, line] of recording.entries()) {
+  const where = `recording line ${index + 1}`;
+  assert.deepEqual(Object.keys(line), [
+    "version",
+    "request_sha256",
+    "request",
+    "response",
+  ]);
+  assert.equal(line.version, 1, where);
+  assert.match(line.request_sha256, /^[0-9a-f]{64}$/, where);
+  assert.equal(line.request.state, "[redacted]", where);
+  assert.equal(
+    validateRequest(line.request),
+    true,
+    `${where} request: ${JSON.stringify(validateRequest.errors)}`,
+  );
+  assert.equal(
+    validateResponse(line.response),
+    true,
+    `${where} response: ${JSON.stringify(validateResponse.errors)}`,
+  );
+}
 console.log("System One schema fixtures passed");
