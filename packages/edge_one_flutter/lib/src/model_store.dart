@@ -7,6 +7,8 @@ import 'model_manifest.dart';
 
 typedef FreeBytes = Future<int> Function(Directory directory);
 typedef CommitModel = Future<void> Function(File partial, File destination);
+
+/// A throwing observer is detached without interrupting the shared download.
 typedef DownloadProgress = void Function(int received, int total);
 
 final class VerifiedModel {
@@ -106,15 +108,26 @@ final class ModelStore {
   final Duration idleTimeout;
   final CommitModel _commit;
   Future<VerifiedModel>? _pending;
+  final _progressCallbacks = <DownloadProgress>[];
 
   Future<VerifiedModel> ensure({DownloadProgress? onProgress}) async {
-    if (_pending != null) return _pending!;
-    final operation = _ensure(onProgress: onProgress);
-    _pending = operation;
+    if (onProgress != null) _progressCallbacks.add(onProgress);
+    final operation = _pending ??= _ensure(onProgress: _reportProgress);
     try {
       return await operation;
     } finally {
-      _pending = null;
+      if (onProgress != null) _progressCallbacks.remove(onProgress);
+      if (identical(_pending, operation)) _pending = null;
+    }
+  }
+
+  void _reportProgress(int received, int total) {
+    for (final callback in List.of(_progressCallbacks)) {
+      try {
+        callback(received, total);
+      } catch (_) {
+        _progressCallbacks.remove(callback);
+      }
     }
   }
 

@@ -138,6 +138,78 @@ void main() {
     expect(await File('${verified.file.path}.part').exists(), isFalse);
   });
 
+  test('coalesced ensure calls each receive download progress', () async {
+    final started = Completer<void>();
+    final body = StreamController<List<int>>();
+    final transport = FakeTransport((_, _) async {
+      started.complete();
+      return ModelResponse(statusCode: HttpStatus.ok, body: body.stream);
+    });
+    final store = ModelStore(
+      root: root,
+      manifest: fixtureManifest(),
+      transport: transport,
+      freeBytes: (_) async => 100,
+    );
+    final firstProgress = <(int, int)>[];
+    final secondProgress = <(int, int)>[];
+    final first = store.ensure(
+      onProgress: (received, total) => firstProgress.add((received, total)),
+    );
+    await started.future;
+    final second = store.ensure(
+      onProgress: (received, total) => secondProgress.add((received, total)),
+    );
+    body.add(modelBytes);
+    await body.close();
+    final verified = await Future.wait([first, second]);
+    expect(verified[0].file.path, verified[1].file.path);
+    expect(firstProgress, [(modelBytes.length, modelBytes.length)]);
+    expect(secondProgress, [(modelBytes.length, modelBytes.length)]);
+    expect(transport.requests, hasLength(1));
+  });
+
+  test(
+    'a failing progress observer does not abort a coalesced download',
+    () async {
+      final listening = Completer<void>();
+      final firstChunkSeen = Completer<void>();
+      final body = StreamController<List<int>>.broadcast(
+        onListen: listening.complete,
+      );
+      addTearDown(body.close);
+      final transport = FakeTransport(
+        (_, _) async =>
+            ModelResponse(statusCode: HttpStatus.ok, body: body.stream),
+      );
+      final store = ModelStore(
+        root: root,
+        manifest: fixtureManifest(),
+        transport: transport,
+        freeBytes: (_) async => 100,
+      );
+      final firstProgress = <(int, int)>[];
+      final first = store.ensure(
+        onProgress: (received, total) {
+          firstProgress.add((received, total));
+          if (received == 2) firstChunkSeen.complete();
+        },
+      );
+      final second = store.ensure(
+        onProgress: (_, _) => throw StateError('observer failed'),
+      );
+      await listening.future;
+      body.add(modelBytes.sublist(0, 2));
+      await firstChunkSeen.future;
+      body.add(modelBytes.sublist(2));
+      await body.close();
+      final verified = await Future.wait([first, second]);
+      expect(await verified[0].file.readAsBytes(), modelBytes);
+      expect(firstProgress, [(2, 4), (4, 4)]);
+      expect(transport.requests, hasLength(1));
+    },
+  );
+
   test(
     'truncated range leaves only a partial file and no verified path',
     () async {
