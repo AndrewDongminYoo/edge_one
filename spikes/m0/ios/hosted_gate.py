@@ -249,6 +249,7 @@ def run_gate(timeout):
     booted_here = False
     device_id = None
     status_file = None
+    single_file = None
 
     def mark(stage):
         summary["stage"] = stage
@@ -280,10 +281,19 @@ def run_gate(timeout):
         )
         output = container / "Documents/native-repro.txt"
         status_file = container / "Documents/native-repro-status.txt"
+        single_file = container / "Documents/native-repro-single.txt"
         output.unlink(missing_ok=True)
         status_file.unlink(missing_ok=True)
+        single_file.unlink(missing_ok=True)
         mark("launch")
-        launch_output = command("xcrun", "simctl", "launch", device_id, BUNDLE_ID)
+        launch_output = command(
+            "xcrun",
+            "simctl",
+            "launch",
+            device_id,
+            BUNDLE_ID,
+            "--single-slot-diagnostic",
+        )
         mark("wait_for_output")
         deadline = time.monotonic() + timeout
         while not output.is_file():
@@ -301,6 +311,11 @@ def run_gate(timeout):
             )
         raw = output.read_text()
         (EVIDENCE / "native-repro.txt").write_text(raw)
+        if single_file.is_file():
+            (EVIDENCE / "native-repro-single.txt").write_text(single_file.read_text())
+            summary["single_slot_diagnostic"] = "captured"
+        else:
+            summary["single_slot_diagnostic"] = "missing"
         fixture = json.loads((IOS_CACHE / "fixture.json").read_text())
         mark("compare")
         summary.update(summarize(raw, fixture))

@@ -53,7 +53,7 @@ static size_t metal_weight_bytes(const llama_model * model) {
 }
 
 // Direct llama.cpp reproduction: no Scorer, Swift, renderer or JSON path.
-static void decode_once(const char * model_path, bool gpu, std::ostream & out) {
+static void decode_once(const char * model_path, bool gpu, bool diagnostic, std::ostream & out, std::ostream & single) {
     llama_model_params mp = llama_model_default_params();
     mp.n_gpu_layers = gpu ? 999 : 0;
     std::unique_ptr<llama_model, decltype(&llama_model_free)> model(
@@ -77,29 +77,43 @@ static void decode_once(const char * model_path, bool gpu, std::ostream & out) {
     std::unique_ptr<llama_context, decltype(&llama_free)> ctx(
         llama_init_from_model(model.get(), cp), llama_free);
     if (!ctx) throw std::runtime_error("context init failed");
-    llama_memory_clear(llama_get_memory(ctx.get()), true);
-    llama_memory_clear(llama_get_memory(ctx.get()), true);
     const int count = sizeof(m0_tokens) / sizeof(m0_tokens[0]);
-    llama_batch batch = llama_batch_init(count, 0, 1);
-    batch.n_tokens = count;
-    for (int i = 0; i < count; ++i) {
-        batch.token[i] = m0_tokens[i];
-        batch.pos[i] = i;
-        batch.n_seq_id[i] = 1;
-        batch.seq_id[i][0] = 0;
-        batch.logits[i] = 0;
-    }
-    for (auto slot : m0_slots) batch.logits[slot] = 1;
-    const int rc = llama_decode(ctx.get(), batch);
-    llama_batch_free(batch);
-    if (rc != 0) throw std::runtime_error("llama_decode failed");
-    llama_synchronize(ctx.get());
+    const auto run_batch = [&](int single_slot) {
+        llama_memory_clear(llama_get_memory(ctx.get()), true);
+        llama_memory_clear(llama_get_memory(ctx.get()), true);
+        llama_batch batch = llama_batch_init(count, 0, 1);
+        batch.n_tokens = count;
+        for (int i = 0; i < count; ++i) {
+            batch.token[i] = m0_tokens[i];
+            batch.pos[i] = i;
+            batch.n_seq_id[i] = 1;
+            batch.seq_id[i][0] = 0;
+            batch.logits[i] = 0;
+        }
+        for (auto slot : m0_slots)
+            if (single_slot < 0 || single_slot == slot) batch.logits[slot] = 1;
+        const int rc = llama_decode(ctx.get(), batch);
+        llama_batch_free(batch);
+        if (rc != 0) throw std::runtime_error("llama_decode failed");
+        llama_synchronize(ctx.get());
+    };
+    run_batch(-1);
     for (size_t i = 0; i < sizeof(m0_slots) / sizeof(m0_slots[0]); ++i) {
         const float * logits = llama_get_logits_ith(ctx.get(), m0_slots[i]);
         if (!logits) throw std::runtime_error("missing logits");
         out << (gpu ? "metal" : "cpu") << ' ' << i;
         for (auto row : m0_rows) out << ' ' << logits[row];
         out << '\n';
+    }
+    if (diagnostic) {
+        for (size_t i = 0; i < sizeof(m0_slots) / sizeof(m0_slots[0]); ++i) {
+            run_batch(m0_slots[i]);
+            const float * logits = llama_get_logits_ith(ctx.get(), m0_slots[i]);
+            if (!logits) throw std::runtime_error("missing single-slot logits");
+            single << (gpu ? "single_metal" : "single_cpu") << ' ' << i << ' ' << m0_slots[i];
+            for (auto row : m0_rows) single << ' ' << logits[row];
+            single << '\n';
+        }
     }
 }
 
@@ -123,8 +137,11 @@ static void decode_once(const char * model_path, bool gpu, std::ostream & out) {
         write_repro_status(@"started");
         try {
             std::ostringstream out;
+            std::ostringstream single;
             out << std::setprecision(17) << "fixture_sha256 " << m0_fixture_hash << '\n';
+            single << std::setprecision(17);
             const bool invalidModel = [NSProcessInfo.processInfo.arguments containsObject:@"--invalid-model"];
+            const bool diagnostic = [NSProcessInfo.processInfo.arguments containsObject:@"--single-slot-diagnostic"];
             NSString * modelPath = invalidModel
                 ? [NSBundle.mainBundle pathForResource:@"fixture" ofType:@"json"]
                 : [NSBundle.mainBundle pathForResource:@"model" ofType:@"gguf"];
@@ -132,13 +149,18 @@ static void decode_once(const char * model_path, bool gpu, std::ostream & out) {
             verify_model_hash(modelPath.UTF8String);
             write_repro_status(@"model_verified");
             static NativeBackend backend;
-            decode_once(modelPath.UTF8String, false, out);
+            decode_once(modelPath.UTF8String, false, diagnostic, out, single);
             write_repro_status(@"cpu_complete");
-            decode_once(modelPath.UTF8String, true, out);
+            decode_once(modelPath.UTF8String, true, diagnostic, out, single);
             write_repro_status(@"metal_complete");
             NSURL * directory = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask].firstObject;
-            NSString * result = [NSString stringWithUTF8String:out.str().c_str()];
             NSError * error = nil;
+            if (diagnostic) {
+                NSString * singleResult = [NSString stringWithUTF8String:single.str().c_str()];
+                if (![singleResult writeToURL:[directory URLByAppendingPathComponent:@"native-repro-single.txt"] atomically:YES encoding:NSUTF8StringEncoding error:&error])
+                    throw std::runtime_error("single-slot output write failed");
+            }
+            NSString * result = [NSString stringWithUTF8String:out.str().c_str()];
             if (![result writeToURL:[directory URLByAppendingPathComponent:@"native-repro.txt"] atomically:YES encoding:NSUTF8StringEncoding error:&error])
                 throw std::runtime_error("repro output write failed");
             status = @"Native repro complete";

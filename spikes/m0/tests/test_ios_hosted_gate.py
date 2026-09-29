@@ -257,6 +257,9 @@ class HostedGateTests(unittest.TestCase):
                         "metal_complete"
                     )
                     (container / "Documents/native-repro.txt").write_text(self.raw)
+                    (container / "Documents/native-repro-single.txt").write_text(
+                        "single_cpu 0 100 18.0 15.0\n"
+                    )
                 return ""
 
             with (
@@ -268,6 +271,10 @@ class HostedGateTests(unittest.TestCase):
             ):
                 self.assertFalse(hosted_gate.run_gate(1))
             self.assertEqual((evidence / "native-repro.txt").read_text(), self.raw)
+            self.assertEqual(
+                (evidence / "native-repro-single.txt").read_text(),
+                "single_cpu 0 100 18.0 15.0\n",
+            )
             summary = json.loads((evidence / "summary.json").read_text())
             self.assertFalse(summary["passes_gate"])
             self.assertIn("strict CPU/Metal", summary["error"])
@@ -278,6 +285,20 @@ class HostedGateTests(unittest.TestCase):
             )
             self.assertIn(
                 (("xcrun", "simctl", "bootstatus", "phone", "-b"), {"timeout": 600}),
+                calls,
+            )
+            self.assertIn(
+                (
+                    (
+                        "xcrun",
+                        "simctl",
+                        "launch",
+                        "phone",
+                        hosted_gate.BUNDLE_ID,
+                        "--single-slot-diagnostic",
+                    ),
+                    {},
+                ),
                 calls,
             )
             self.assertNotIn(
