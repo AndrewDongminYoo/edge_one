@@ -72,7 +72,12 @@ final class HttpModelTransport implements ModelTransport {
       statusCode: response.statusCode,
       body: response,
       contentRange: response.headers.value(HttpHeaders.contentRangeHeader),
-      contentLength: response.contentLength < 0 ? null : response.contentLength,
+      contentLength:
+          response.compressionState ==
+                  HttpClientResponseCompressionState.decompressed ||
+              response.contentLength < 0
+          ? null
+          : response.contentLength,
     );
   }
 
@@ -191,30 +196,37 @@ final class ModelStore {
     }
     if (start == manifest.bytes) return true;
     final response = await transport.get(url, start: start);
-    if (response.statusCode == HttpStatus.ok) {
-      if (start > 0) {
-        await partial.delete();
-        start = 0;
+    late RandomAccessFile output;
+    try {
+      if (response.statusCode == HttpStatus.ok) {
+        if (start > 0) {
+          await partial.delete();
+          start = 0;
+        }
+      } else if (response.statusCode == HttpStatus.partialContent) {
+        final match = RegExp(
+          r'^bytes (\d+)-(\d+)/(\d+)$',
+        ).firstMatch(response.contentRange ?? '');
+        if (match == null ||
+            int.parse(match[1]!) != start ||
+            int.parse(match[2]!) != manifest.bytes - 1 ||
+            int.parse(match[3]!) != manifest.bytes) {
+          throw ModelDownloadException('Invalid range response from $url');
+        }
+      } else {
+        throw ModelDownloadException('HTTP ${response.statusCode} from $url');
       }
-    } else if (response.statusCode == HttpStatus.partialContent) {
-      final match = RegExp(
-        r'^bytes (\d+)-(\d+)/(\d+)$',
-      ).firstMatch(response.contentRange ?? '');
-      if (match == null ||
-          int.parse(match[1]!) != start ||
-          int.parse(match[2]!) != manifest.bytes - 1 ||
-          int.parse(match[3]!) != manifest.bytes) {
-        throw ModelDownloadException('Invalid range response from $url');
+      final expected = manifest.bytes - start;
+      if (response.contentLength != null &&
+          response.contentLength != expected) {
+        throw ModelDownloadException('Invalid content length from $url');
       }
-    } else {
-      throw ModelDownloadException('HTTP ${response.statusCode} from $url');
-    }
-    final expected = manifest.bytes - start;
-    if (response.contentLength != null && response.contentLength != expected) {
-      throw ModelDownloadException('Invalid content length from $url');
+      output = await partial.open(mode: FileMode.append);
+    } catch (_) {
+      await _discardResponse(response);
+      rethrow;
     }
     var received = start;
-    final output = await partial.open(mode: FileMode.append);
     try {
       await for (final chunk in response.body.timeout(idleTimeout)) {
         received += chunk.length;
@@ -232,6 +244,14 @@ final class ModelStore {
       throw ModelDownloadException('Truncated model response from $url');
     }
     return start > 0;
+  }
+
+  static Future<void> _discardResponse(ModelResponse response) async {
+    final subscription = response.body.listen(
+      (_) {},
+      onError: (Object _, StackTrace __) {},
+    );
+    await subscription.cancel();
   }
 
   Future<bool> _verified(File file) async {

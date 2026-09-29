@@ -390,6 +390,31 @@ void main() {
     },
   );
 
+  test(
+    'HTTP transport omits compressed length after auto-uncompress',
+    () async {
+      final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+      addTearDown(() => server.close(force: true));
+      server.autoCompress = false;
+      server.listen((request) {
+        final compressed = gzip.encode(modelBytes);
+        request.response.headers.set(HttpHeaders.contentEncodingHeader, 'gzip');
+        request.response.contentLength = compressed.length;
+        request.response.add(compressed);
+        unawaited(request.response.close());
+      });
+      final transport = HttpModelTransport();
+      addTearDown(transport.close);
+
+      final response = await transport.get(
+        Uri.http('127.0.0.1:${server.port}', '/model'),
+        start: 0,
+      );
+      expect(response.contentLength, isNull);
+      expect(await response.body.expand((chunk) => chunk).toList(), modelBytes);
+    },
+  );
+
   test('complete verified partial survives a terminal stream error', () async {
     Stream<List<int>> brokenBody() async* {
       yield modelBytes;
@@ -437,6 +462,34 @@ void main() {
     );
     await expectLater(store.ensure(), throwsA(isA<ModelDownloadException>()));
     expect(await partial.readAsBytes(), modelBytes.sublist(0, 2));
+  });
+
+  test('rejected range response cancels its unused body', () async {
+    var cancelled = false;
+    final controller = StreamController<List<int>>.broadcast(
+      onCancel: () => cancelled = true,
+    );
+    addTearDown(controller.close);
+    final manifest = fixtureManifest();
+    final partial = File(
+      '${root.path}/${manifest.id}-${manifest.revision}-${manifest.file}.part',
+    );
+    await partial.writeAsBytes(modelBytes.sublist(0, 2));
+    final transport = FakeTransport(
+      (_, _) async => ModelResponse(
+        statusCode: HttpStatus.partialContent,
+        body: controller.stream,
+        contentRange: 'bytes 1-3/4',
+      ),
+    );
+    final store = ModelStore(
+      root: root,
+      manifest: manifest,
+      transport: transport,
+      freeBytes: (_) async => 100,
+    );
+    await expectLater(store.ensure(), throwsA(isA<ModelDownloadException>()));
+    expect(cancelled, isTrue);
   });
 
   test('insufficient space stops before the network request', () async {
