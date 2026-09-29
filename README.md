@@ -13,6 +13,7 @@ Edit the schema and rerun generation instead of editing either output.
 The generated Dart classes are typed data shapes; `SystemOneJson` in `packages/edge_one` is their strict JSON codec, and no local or remote backend exists yet.
 `schemas/fixtures/system-one-v1-cases.json` is a shared corpus that Ajv and the Dart codec must both accept or reject identically.
 `DecisionClient` validates both sides of a `SystemOneBackend` call, and `Evaluation` turns answers into `Decided` or `Uncertain` results; see the [Dart API specification](docs/specs/2026-09-29-m1-dart-decision-api.md).
+`package:edge_one/testing.dart` provides a deterministic `FakeEngine` and a JSON Lines `RecordingBackend` for tests without a model or network; `schemas/examples/` holds representative requests, their fake answers, and a redacted recording (see the [test support specification](docs/specs/2026-09-29-m1-test-support.md)).
 
 From the repository root:
 

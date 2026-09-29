@@ -5,12 +5,15 @@ import 'package:edge_one/edge_one.dart';
 import 'package:test/test.dart';
 
 /// Reads a JSON file relative to the repository root.
-Object? readRepoJson(String path) {
+Object? readRepoJson(String path) => jsonDecode(readRepoText(path));
+
+/// Reads a text file relative to the repository root.
+String readRepoText(String path) {
   var directory = Directory.current.absolute;
   while (true) {
     final file = File('${directory.path}/$path');
     if (file.existsSync()) {
-      return jsonDecode(file.readAsStringSync());
+      return file.readAsStringSync();
     }
     final parent = directory.parent;
     if (parent.path == directory.path) {
