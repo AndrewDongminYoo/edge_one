@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -211,6 +212,154 @@ void main() {
     expect(transport.requests.single.$2, 2);
   });
 
+  test(
+    'corrupt complete partial retries the primary source immediately',
+    () async {
+      final manifest = fixtureManifest();
+      final partial = File(
+        '${root.path}/${manifest.id}-${manifest.revision}-${manifest.file}.part',
+      );
+      await partial.writeAsString('evil');
+      final transport = FakeTransport((_, _) async => response(modelBytes));
+      final store = ModelStore(
+        root: root,
+        manifest: manifest,
+        transport: transport,
+        freeBytes: (_) async => 100,
+      );
+      expect(await (await store.ensure()).file.readAsBytes(), modelBytes);
+      expect(transport.requests.single.$2, 0);
+    },
+  );
+
+  test(
+    'corrupt incomplete partial retries the primary from zero once',
+    () async {
+      final manifest = fixtureManifest();
+      final partial = File(
+        '${root.path}/${manifest.id}-${manifest.revision}-${manifest.file}.part',
+      );
+      await partial.writeAsString('ev');
+      final transport = FakeTransport(
+        (_, start) async => start == 2
+            ? response(
+                modelBytes.sublist(2),
+                status: HttpStatus.partialContent,
+                range: 'bytes 2-3/4',
+              )
+            : response(modelBytes),
+      );
+      final store = ModelStore(
+        root: root,
+        manifest: manifest,
+        transport: transport,
+        freeBytes: (_) async => 100,
+      );
+      expect(await (await store.ensure()).file.readAsBytes(), modelBytes);
+      expect(transport.requests.map((request) => request.$2), [2, 0]);
+    },
+  );
+
+  test('a source with a wrong digest is retried only once', () async {
+    final manifest = fixtureManifest();
+    final partial = File(
+      '${root.path}/${manifest.id}-${manifest.revision}-${manifest.file}.part',
+    );
+    await partial.writeAsString('ev');
+    final transport = FakeTransport(
+      (_, start) async => start == 2
+          ? response(
+              modelBytes.sublist(2),
+              status: HttpStatus.partialContent,
+              range: 'bytes 2-3/4',
+            )
+          : response(utf8.encode('evil')),
+    );
+    final store = ModelStore(
+      root: root,
+      manifest: manifest,
+      transport: transport,
+      freeBytes: (_) async => 100,
+    );
+    await expectLater(store.ensure(), throwsA(isA<ModelDownloadException>()));
+    expect(transport.requests.map((request) => request.$2), [2, 0]);
+  });
+
+  test('verified complete partial commits without a new download', () async {
+    final manifest = fixtureManifest();
+    final partial = File(
+      '${root.path}/${manifest.id}-${manifest.revision}-${manifest.file}.part',
+    );
+    await partial.writeAsBytes(modelBytes);
+    final transport = FakeTransport(
+      (_, _) async => throw StateError('network'),
+    );
+    final store = ModelStore(
+      root: root,
+      manifest: manifest,
+      transport: transport,
+      freeBytes: (_) async => 0,
+    );
+    expect(await (await store.ensure()).file.readAsBytes(), modelBytes);
+    expect(transport.requests, isEmpty);
+  });
+
+  test('oversized partial is removed before the space check', () async {
+    final manifest = fixtureManifest();
+    final partial = File(
+      '${root.path}/${manifest.id}-${manifest.revision}-${manifest.file}.part',
+    );
+    await partial.writeAsString('oversized');
+    final store = ModelStore(
+      root: root,
+      manifest: manifest,
+      transport: FakeTransport((_, _) async => throw StateError('network')),
+      freeBytes: (_) async => 0,
+    );
+    await expectLater(store.ensure(), throwsA(isA<ModelDownloadException>()));
+    expect(await partial.exists(), isFalse);
+  });
+
+  test('stalled response cancels and falls back to a mirror', () async {
+    final controller = StreamController<List<int>>();
+    controller.add(modelBytes.sublist(0, 2));
+    var cancelled = false;
+    controller.onCancel = () => cancelled = true;
+    addTearDown(controller.close);
+    final manifest = fixtureManifest(
+      mirrors: ['https://mirror.test/model.gguf'],
+    );
+    final transport = FakeTransport((url, _) async {
+      if (url.host == 'example.test') {
+        return ModelResponse(
+          statusCode: HttpStatus.ok,
+          body: controller.stream,
+        );
+      }
+      return response(
+        modelBytes.sublist(2),
+        status: HttpStatus.partialContent,
+        range: 'bytes 2-3/4',
+      );
+    });
+    final store = ModelStore(
+      root: root,
+      manifest: manifest,
+      transport: transport,
+      freeBytes: (_) async => 100,
+      idleTimeout: const Duration(milliseconds: 50),
+    );
+    expect(
+      await (await store.ensure().timeout(
+        const Duration(seconds: 1),
+      )).file.readAsBytes(),
+      modelBytes,
+    );
+    expect(cancelled, isTrue);
+    expect(transport.requests.length, 2);
+    expect(transport.requests.last.$2, 2);
+  });
+
   test('wrong content range cannot append to a partial file', () async {
     final manifest = fixtureManifest();
     final partial = File(
@@ -244,6 +393,24 @@ void main() {
     );
     await expectLater(store.ensure(), throwsA(isA<ModelDownloadException>()));
     expect(transport.requests, isEmpty);
+  });
+
+  test('resuming still enforces the full-model space reserve', () async {
+    final manifest = fixtureManifest();
+    final partial = File(
+      '${root.path}/${manifest.id}-${manifest.revision}-${manifest.file}.part',
+    );
+    await partial.writeAsBytes(modelBytes.sublist(0, 2));
+    final transport = FakeTransport((_, _) async => response(modelBytes));
+    final store = ModelStore(
+      root: root,
+      manifest: manifest,
+      transport: transport,
+      freeBytes: (_) async => modelBytes.length * 2 - 1,
+    );
+    await expectLater(store.ensure(), throwsA(isA<ModelDownloadException>()));
+    expect(transport.requests, isEmpty);
+    expect(await partial.length(), 2);
   });
 
   test('failed replacement preserves the previous revision', () async {

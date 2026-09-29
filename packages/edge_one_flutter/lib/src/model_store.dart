@@ -68,6 +68,7 @@ final class HttpModelTransport implements ModelTransport {
 ///
 /// [root] must be durable application storage. The platform layer supplies its
 /// free-space check and excludes this directory from backups where required.
+/// Use one store instance per destination; independent instances and isolates are not coordinated here.
 final class ModelStore {
   ModelStore({
     required this.root,
@@ -75,12 +76,14 @@ final class ModelStore {
     required this.transport,
     required this.freeBytes,
     CommitModel? commit,
+    this.idleTimeout = const Duration(seconds: 60),
   }) : _commit = commit ?? _rename;
 
   final Directory root;
   final ModelManifest manifest;
   final ModelTransport transport;
   final FreeBytes freeBytes;
+  final Duration idleTimeout;
   final CommitModel _commit;
   Future<VerifiedModel>? _pending;
 
@@ -103,35 +106,60 @@ final class ModelStore {
     if (await _verified(destination)) {
       return VerifiedModel(destination, manifest);
     }
+    final partial = File('${destination.path}.part');
+    if (await partial.exists()) {
+      final length = await partial.length();
+      if (length == manifest.bytes && await _verified(partial)) {
+        try {
+          await _commit(partial, destination);
+          if (await _verified(destination)) {
+            return VerifiedModel(destination, manifest);
+          }
+          throw ModelDownloadException('Committed model failed verification');
+        } catch (error) {
+          throw ModelDownloadException(
+            'Could not commit verified model: $error',
+          );
+        }
+      }
+      if (length >= manifest.bytes) await partial.delete();
+    }
     if (await freeBytes(root) < manifest.bytes * 2) {
       throw ModelDownloadException(
         'Insufficient free space for model download',
       );
     }
-    final partial = File('${destination.path}.part');
     Object? lastFailure;
     for (final url in manifest.downloadUrls) {
-      try {
-        await _download(url, partial, onProgress);
-        if (!await _verified(partial)) {
-          await partial.delete();
-          throw ModelDownloadException(
-            'Downloaded model digest or size mismatch',
-          );
+      var retriedFromZero = false;
+      while (true) {
+        try {
+          final resumed = await _download(url, partial, onProgress);
+          if (!await _verified(partial)) {
+            await partial.delete();
+            if (resumed && !retriedFromZero) {
+              retriedFromZero = true;
+              continue;
+            }
+            throw ModelDownloadException(
+              'Downloaded model digest or size mismatch',
+            );
+          }
+          await _commit(partial, destination);
+          if (!await _verified(destination)) {
+            throw ModelDownloadException('Committed model failed verification');
+          }
+          return VerifiedModel(destination, manifest);
+        } catch (error) {
+          lastFailure = error;
+          break;
         }
-        await _commit(partial, destination);
-        if (!await _verified(destination)) {
-          throw ModelDownloadException('Committed model failed verification');
-        }
-        return VerifiedModel(destination, manifest);
-      } catch (error) {
-        lastFailure = error;
       }
     }
     throw ModelDownloadException('All model sources failed: $lastFailure');
   }
 
-  Future<void> _download(
+  Future<bool> _download(
     Uri url,
     File partial,
     DownloadProgress? onProgress,
@@ -141,7 +169,7 @@ final class ModelStore {
       await partial.delete();
       start = 0;
     }
-    if (start == manifest.bytes) return;
+    if (start == manifest.bytes) return true;
     final response = await transport.get(url, start: start);
     if (response.statusCode == HttpStatus.ok) {
       if (start > 0) {
@@ -168,7 +196,7 @@ final class ModelStore {
     var received = start;
     final output = await partial.open(mode: FileMode.append);
     try {
-      await for (final chunk in response.body) {
+      await for (final chunk in response.body.timeout(idleTimeout)) {
         received += chunk.length;
         if (received > manifest.bytes) {
           throw ModelDownloadException('Model response exceeds expected size');
@@ -183,6 +211,7 @@ final class ModelStore {
     if (received != manifest.bytes) {
       throw ModelDownloadException('Truncated model response from $url');
     }
+    return start > 0;
   }
 
   Future<bool> _verified(File file) async {
