@@ -21,7 +21,7 @@ Generate Dart and TypeScript types with `python3 tools/generate_contracts.py`; c
 ## Build, Test, and Development Commands
 
 From the repository root, run `python3 -m unittest discover -s spikes/m0/tests -v` for unit tests and `python3 spikes/m0/check_report.py docs/notes/2026-09-27-m0-desktop.json` for archived numerical evidence.
-On hosted Linux, `bash setup.sh` creates the hash-locked Python environment; set `EDGE_ONE_FETCH_MODEL=1` only for native inference work.
+On hosted Linux, `bash setup.sh` creates the hash-locked Python environment; set `EDGE_ONE_FETCH_MODEL=1` only for native inference work and `EDGE_ONE_INSTALL_FLUTTER=1` only for Dart or Flutter work.
 See `README.md` for pinned model fetch, native build, and iOS commands.
 The following checks apply to the scaffolded contracts:
 
@@ -29,6 +29,7 @@ The following checks apply to the scaffolded contracts:
 - `pnpm run schema:test` and `pnpm run contracts:check`: validate fixtures and generated drift.
 - `pnpm run types:check`: compile the generated TypeScript contract.
 - `flutter pub get --enforce-lockfile`, `dart run tools/check_dart_contract.dart`, `dart analyze packages/edge_one`, and `flutter analyze packages/edge_one_flutter`: resolve the Dart workspace and check JSON-number assignability and analysis.
+- `dart test` from `packages/edge_one`: run the codec, schema-agreement, Decision, and client tests.
 
 The native target has no inference sources yet; see `README.md` for M0 build commands.
 
@@ -42,7 +43,8 @@ Preserve the System One JSON contract and isolate extension fields with `x_` pre
 ## Testing Guidelines
 
 M0 uses Python `unittest` and iOS XCTest; the contract schema uses Ajv fixtures. No coverage threshold is set.
-Use `test/*_test.dart` for Dart and Flutter tests when scaffolded.
+Use `test/*_test.dart` for Dart and Flutter tests.
+Add wire-format cases to `schemas/fixtures/system-one-v1-cases.json` so Ajv and the Dart codec check the same corpus.
 Prioritize contract fixtures, delimiter escaping, question-level routing, cancellation, and model integrity checks.
 Validate shared-prefix inference against separate prefill, targeting probability differences below `1e-3` as specified in the blueprint.
 Report benchmark device, model revision, and cold/warm/sustained conditions.

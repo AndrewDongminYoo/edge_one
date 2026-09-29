@@ -1,0 +1,1884 @@
+{
+  "SystemOneRequest": {
+    "valid": [
+      {
+        "name": "all question types with structured values",
+        "value": {
+          "state": {
+            "ticket": "Charged twice",
+            "customer": {
+              "tier": "pro"
+            },
+            "tags": ["refund", 2, true, null]
+          },
+          "model": "model-revision",
+          "questions": {
+            "team": {
+              "type": "choice",
+              "instructions": [
+                "Pick one",
+                {
+                  "locale": "en"
+                }
+              ],
+              "criteria": {
+                "billing": "payments",
+                "shipping": {
+                  "hint": "parcel"
+                },
+                "returns": null
+              }
+            },
+            "urgent": {
+              "type": "noul",
+              "instructions": "Is it urgent?",
+              "criteria": {
+                "true": "act now",
+                "false": ["routine"]
+              }
+            },
+            "impact": {
+              "type": "score",
+              "instructions": {
+                "scale": "impact"
+              },
+              "criteria": [
+                "low",
+                {
+                  "level": "medium"
+                },
+                ["high"]
+              ]
+            }
+          }
+        }
+      },
+      {
+        "name": "string state and null optional values",
+        "value": {
+          "state": "ticket",
+          "model": "m",
+          "questions": {
+            "q": {
+              "type": "noul",
+              "instructions": null,
+              "criteria": null
+            }
+          }
+        }
+      },
+      {
+        "name": "array state and minimal noul",
+        "value": {
+          "state": ["a", 1],
+          "model": "",
+          "questions": {
+            "q": {
+              "type": "noul"
+            }
+          }
+        }
+      },
+      {
+        "name": "noul criteria with one side",
+        "value": {
+          "state": "ticket",
+          "model": "m",
+          "questions": {
+            "q": {
+              "type": "noul",
+              "criteria": {
+                "true": null
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "choice criteria may be empty on the wire",
+        "value": {
+          "state": "ticket",
+          "model": "m",
+          "questions": {
+            "q": {
+              "type": "choice",
+              "criteria": {}
+            }
+          }
+        }
+      },
+      {
+        "name": "question keys may contain JSON Pointer characters",
+        "value": {
+          "state": "s",
+          "model": "m",
+          "questions": {
+            "a/b~c": {
+              "type": "noul"
+            }
+          }
+        }
+      }
+    ],
+    "invalid": [
+      {
+        "name": "array root",
+        "value": [
+          {
+            "state": {
+              "ticket": "Charged twice",
+              "customer": {
+                "tier": "pro"
+              },
+              "tags": ["refund", 2, true, null]
+            },
+            "model": "model-revision",
+            "questions": {
+              "team": {
+                "type": "choice",
+                "instructions": [
+                  "Pick one",
+                  {
+                    "locale": "en"
+                  }
+                ],
+                "criteria": {
+                  "billing": "payments",
+                  "shipping": {
+                    "hint": "parcel"
+                  },
+                  "returns": null
+                }
+              },
+              "urgent": {
+                "type": "noul",
+                "instructions": "Is it urgent?",
+                "criteria": {
+                  "true": "act now",
+                  "false": ["routine"]
+                }
+              },
+              "impact": {
+                "type": "score",
+                "instructions": {
+                  "scale": "impact"
+                },
+                "criteria": [
+                  "low",
+                  {
+                    "level": "medium"
+                  },
+                  ["high"]
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "missing state",
+        "value": {
+          "model": "model-revision",
+          "questions": {
+            "team": {
+              "type": "choice",
+              "instructions": [
+                "Pick one",
+                {
+                  "locale": "en"
+                }
+              ],
+              "criteria": {
+                "billing": "payments",
+                "shipping": {
+                  "hint": "parcel"
+                },
+                "returns": null
+              }
+            },
+            "urgent": {
+              "type": "noul",
+              "instructions": "Is it urgent?",
+              "criteria": {
+                "true": "act now",
+                "false": ["routine"]
+              }
+            },
+            "impact": {
+              "type": "score",
+              "instructions": {
+                "scale": "impact"
+              },
+              "criteria": [
+                "low",
+                {
+                  "level": "medium"
+                },
+                ["high"]
+              ]
+            }
+          }
+        }
+      },
+      {
+        "name": "missing model",
+        "value": {
+          "state": {
+            "ticket": "Charged twice",
+            "customer": {
+              "tier": "pro"
+            },
+            "tags": ["refund", 2, true, null]
+          },
+          "questions": {
+            "team": {
+              "type": "choice",
+              "instructions": [
+                "Pick one",
+                {
+                  "locale": "en"
+                }
+              ],
+              "criteria": {
+                "billing": "payments",
+                "shipping": {
+                  "hint": "parcel"
+                },
+                "returns": null
+              }
+            },
+            "urgent": {
+              "type": "noul",
+              "instructions": "Is it urgent?",
+              "criteria": {
+                "true": "act now",
+                "false": ["routine"]
+              }
+            },
+            "impact": {
+              "type": "score",
+              "instructions": {
+                "scale": "impact"
+              },
+              "criteria": [
+                "low",
+                {
+                  "level": "medium"
+                },
+                ["high"]
+              ]
+            }
+          }
+        }
+      },
+      {
+        "name": "missing questions",
+        "value": {
+          "state": {
+            "ticket": "Charged twice",
+            "customer": {
+              "tier": "pro"
+            },
+            "tags": ["refund", 2, true, null]
+          },
+          "model": "model-revision"
+        }
+      },
+      {
+        "name": "empty questions",
+        "value": {
+          "state": {
+            "ticket": "Charged twice",
+            "customer": {
+              "tier": "pro"
+            },
+            "tags": ["refund", 2, true, null]
+          },
+          "model": "model-revision",
+          "questions": {}
+        }
+      },
+      {
+        "name": "numeric state",
+        "value": {
+          "state": 42,
+          "model": "model-revision",
+          "questions": {
+            "team": {
+              "type": "choice",
+              "instructions": [
+                "Pick one",
+                {
+                  "locale": "en"
+                }
+              ],
+              "criteria": {
+                "billing": "payments",
+                "shipping": {
+                  "hint": "parcel"
+                },
+                "returns": null
+              }
+            },
+            "urgent": {
+              "type": "noul",
+              "instructions": "Is it urgent?",
+              "criteria": {
+                "true": "act now",
+                "false": ["routine"]
+              }
+            },
+            "impact": {
+              "type": "score",
+              "instructions": {
+                "scale": "impact"
+              },
+              "criteria": [
+                "low",
+                {
+                  "level": "medium"
+                },
+                ["high"]
+              ]
+            }
+          }
+        }
+      },
+      {
+        "name": "null state",
+        "value": {
+          "state": null,
+          "model": "model-revision",
+          "questions": {
+            "team": {
+              "type": "choice",
+              "instructions": [
+                "Pick one",
+                {
+                  "locale": "en"
+                }
+              ],
+              "criteria": {
+                "billing": "payments",
+                "shipping": {
+                  "hint": "parcel"
+                },
+                "returns": null
+              }
+            },
+            "urgent": {
+              "type": "noul",
+              "instructions": "Is it urgent?",
+              "criteria": {
+                "true": "act now",
+                "false": ["routine"]
+              }
+            },
+            "impact": {
+              "type": "score",
+              "instructions": {
+                "scale": "impact"
+              },
+              "criteria": [
+                "low",
+                {
+                  "level": "medium"
+                },
+                ["high"]
+              ]
+            }
+          }
+        }
+      },
+      {
+        "name": "boolean state",
+        "value": {
+          "state": true,
+          "model": "model-revision",
+          "questions": {
+            "team": {
+              "type": "choice",
+              "instructions": [
+                "Pick one",
+                {
+                  "locale": "en"
+                }
+              ],
+              "criteria": {
+                "billing": "payments",
+                "shipping": {
+                  "hint": "parcel"
+                },
+                "returns": null
+              }
+            },
+            "urgent": {
+              "type": "noul",
+              "instructions": "Is it urgent?",
+              "criteria": {
+                "true": "act now",
+                "false": ["routine"]
+              }
+            },
+            "impact": {
+              "type": "score",
+              "instructions": {
+                "scale": "impact"
+              },
+              "criteria": [
+                "low",
+                {
+                  "level": "medium"
+                },
+                ["high"]
+              ]
+            }
+          }
+        }
+      },
+      {
+        "name": "numeric model",
+        "value": {
+          "state": {
+            "ticket": "Charged twice",
+            "customer": {
+              "tier": "pro"
+            },
+            "tags": ["refund", 2, true, null]
+          },
+          "model": 1,
+          "questions": {
+            "team": {
+              "type": "choice",
+              "instructions": [
+                "Pick one",
+                {
+                  "locale": "en"
+                }
+              ],
+              "criteria": {
+                "billing": "payments",
+                "shipping": {
+                  "hint": "parcel"
+                },
+                "returns": null
+              }
+            },
+            "urgent": {
+              "type": "noul",
+              "instructions": "Is it urgent?",
+              "criteria": {
+                "true": "act now",
+                "false": ["routine"]
+              }
+            },
+            "impact": {
+              "type": "score",
+              "instructions": {
+                "scale": "impact"
+              },
+              "criteria": [
+                "low",
+                {
+                  "level": "medium"
+                },
+                ["high"]
+              ]
+            }
+          }
+        }
+      },
+      {
+        "name": "unknown request field",
+        "value": {
+          "state": {
+            "ticket": "Charged twice",
+            "customer": {
+              "tier": "pro"
+            },
+            "tags": ["refund", 2, true, null]
+          },
+          "model": "model-revision",
+          "questions": {
+            "team": {
+              "type": "choice",
+              "instructions": [
+                "Pick one",
+                {
+                  "locale": "en"
+                }
+              ],
+              "criteria": {
+                "billing": "payments",
+                "shipping": {
+                  "hint": "parcel"
+                },
+                "returns": null
+              }
+            },
+            "urgent": {
+              "type": "noul",
+              "instructions": "Is it urgent?",
+              "criteria": {
+                "true": "act now",
+                "false": ["routine"]
+              }
+            },
+            "impact": {
+              "type": "score",
+              "instructions": {
+                "scale": "impact"
+              },
+              "criteria": [
+                "low",
+                {
+                  "level": "medium"
+                },
+                ["high"]
+              ]
+            }
+          },
+          "x_route": "local"
+        }
+      },
+      {
+        "name": "question is an array",
+        "value": {
+          "state": {
+            "ticket": "Charged twice",
+            "customer": {
+              "tier": "pro"
+            },
+            "tags": ["refund", 2, true, null]
+          },
+          "model": "model-revision",
+          "questions": {
+            "q": []
+          }
+        }
+      },
+      {
+        "name": "question without type",
+        "value": {
+          "state": "ticket",
+          "model": "m",
+          "questions": {
+            "q": {
+              "criteria": {
+                "a": null
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "unknown question type",
+        "value": {
+          "state": "ticket",
+          "model": "m",
+          "questions": {
+            "q": {
+              "type": "rank",
+              "criteria": ["a"]
+            }
+          }
+        }
+      },
+      {
+        "name": "unknown question field",
+        "value": {
+          "state": "ticket",
+          "model": "m",
+          "questions": {
+            "q": {
+              "type": "noul",
+              "hint": "x"
+            }
+          }
+        }
+      },
+      {
+        "name": "numeric instructions",
+        "value": {
+          "state": "ticket",
+          "model": "m",
+          "questions": {
+            "q": {
+              "type": "noul",
+              "instructions": 3
+            }
+          }
+        }
+      },
+      {
+        "name": "boolean instructions",
+        "value": {
+          "state": "ticket",
+          "model": "m",
+          "questions": {
+            "q": {
+              "type": "noul",
+              "instructions": false
+            }
+          }
+        }
+      },
+      {
+        "name": "choice without criteria",
+        "value": {
+          "state": "ticket",
+          "model": "m",
+          "questions": {
+            "q": {
+              "type": "choice"
+            }
+          }
+        }
+      },
+      {
+        "name": "choice criteria array",
+        "value": {
+          "state": "ticket",
+          "model": "m",
+          "questions": {
+            "q": {
+              "type": "choice",
+              "criteria": ["a"]
+            }
+          }
+        }
+      },
+      {
+        "name": "choice description number",
+        "value": {
+          "state": "ticket",
+          "model": "m",
+          "questions": {
+            "q": {
+              "type": "choice",
+              "criteria": {
+                "a": 42
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "score without criteria",
+        "value": {
+          "state": "ticket",
+          "model": "m",
+          "questions": {
+            "q": {
+              "type": "score"
+            }
+          }
+        }
+      },
+      {
+        "name": "score criteria empty",
+        "value": {
+          "state": "ticket",
+          "model": "m",
+          "questions": {
+            "q": {
+              "type": "score",
+              "criteria": []
+            }
+          }
+        }
+      },
+      {
+        "name": "score criteria object",
+        "value": {
+          "state": "ticket",
+          "model": "m",
+          "questions": {
+            "q": {
+              "type": "score",
+              "criteria": {
+                "low": null
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "score level null",
+        "value": {
+          "state": "ticket",
+          "model": "m",
+          "questions": {
+            "q": {
+              "type": "score",
+              "criteria": [null]
+            }
+          }
+        }
+      },
+      {
+        "name": "score level number",
+        "value": {
+          "state": "ticket",
+          "model": "m",
+          "questions": {
+            "q": {
+              "type": "score",
+              "criteria": [1]
+            }
+          }
+        }
+      },
+      {
+        "name": "noul criteria unknown key",
+        "value": {
+          "state": "ticket",
+          "model": "m",
+          "questions": {
+            "q": {
+              "type": "noul",
+              "criteria": {
+                "maybe": "x"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "noul criteria array",
+        "value": {
+          "state": "ticket",
+          "model": "m",
+          "questions": {
+            "q": {
+              "type": "noul",
+              "criteria": ["true"]
+            }
+          }
+        }
+      },
+      {
+        "name": "noul description number",
+        "value": {
+          "state": "ticket",
+          "model": "m",
+          "questions": {
+            "q": {
+              "type": "noul",
+              "criteria": {
+                "true": 1
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "SystemOneResponse": {
+    "valid": [
+      {
+        "name": "all answer types with extensions",
+        "value": {
+          "model": "model-revision",
+          "answers": {
+            "team": {
+              "type": "choice",
+              "choice": "billing",
+              "probabilities": {
+                "billing": 0.7,
+                "shipping": 0.2,
+                "returns": 0.1
+              },
+              "confidence": 0.55
+            },
+            "urgent": {
+              "type": "noul",
+              "noul": 0.9
+            },
+            "impact": {
+              "type": "score",
+              "score": 1.4,
+              "legend": {
+                "0": "low",
+                "1": {
+                  "level": "medium"
+                },
+                "2": ["high"]
+              },
+              "probabilities": {
+                "0": 0.1,
+                "1": 0.4,
+                "2": 0.5
+              },
+              "confidence": 0.25
+            }
+          },
+          "usage": {
+            "input_tokens": 120,
+            "output_tokens": 0
+          },
+          "x_route": "local",
+          "x_latency_ms": 42.5,
+          "x_engine": {
+            "model": "jev-style-0.8b",
+            "quantization": "Q4_K_M"
+          },
+          "x_trace": ["render", "score"]
+        }
+      },
+      {
+        "name": "minimal noul response",
+        "value": {
+          "model": "m",
+          "answers": {
+            "a": {
+              "type": "noul",
+              "noul": 0
+            }
+          },
+          "usage": {
+            "input_tokens": 1,
+            "output_tokens": 0
+          }
+        }
+      },
+      {
+        "name": "null extension values",
+        "value": {
+          "model": "m",
+          "answers": {
+            "a": {
+              "type": "noul",
+              "noul": 1
+            }
+          },
+          "usage": {
+            "input_tokens": 1,
+            "output_tokens": 0
+          },
+          "x_engine": null,
+          "x_debug": null
+        }
+      },
+      {
+        "name": "probability bounds",
+        "value": {
+          "model": "m",
+          "answers": {
+            "a": {
+              "type": "choice",
+              "choice": "a",
+              "probabilities": {
+                "a": 1,
+                "b": 0
+              },
+              "confidence": 0
+            }
+          },
+          "usage": {
+            "input_tokens": 1,
+            "output_tokens": 0
+          }
+        }
+      },
+      {
+        "name": "zero latency and negative score",
+        "value": {
+          "model": "m",
+          "answers": {
+            "a": {
+              "type": "score",
+              "score": -2,
+              "legend": {
+                "0": "low"
+              },
+              "probabilities": {
+                "0": 1
+              },
+              "confidence": 1
+            }
+          },
+          "usage": {
+            "input_tokens": 1,
+            "output_tokens": 0
+          },
+          "x_latency_ms": 0
+        }
+      }
+    ],
+    "invalid": [
+      {
+        "name": "array root",
+        "value": [
+          {
+            "model": "model-revision",
+            "answers": {
+              "team": {
+                "type": "choice",
+                "choice": "billing",
+                "probabilities": {
+                  "billing": 0.7,
+                  "shipping": 0.2,
+                  "returns": 0.1
+                },
+                "confidence": 0.55
+              },
+              "urgent": {
+                "type": "noul",
+                "noul": 0.9
+              },
+              "impact": {
+                "type": "score",
+                "score": 1.4,
+                "legend": {
+                  "0": "low",
+                  "1": {
+                    "level": "medium"
+                  },
+                  "2": ["high"]
+                },
+                "probabilities": {
+                  "0": 0.1,
+                  "1": 0.4,
+                  "2": 0.5
+                },
+                "confidence": 0.25
+              }
+            },
+            "usage": {
+              "input_tokens": 120,
+              "output_tokens": 0
+            },
+            "x_route": "local",
+            "x_latency_ms": 42.5,
+            "x_engine": {
+              "model": "jev-style-0.8b",
+              "quantization": "Q4_K_M"
+            },
+            "x_trace": ["render", "score"]
+          }
+        ]
+      },
+      {
+        "name": "missing model",
+        "value": {
+          "answers": {
+            "team": {
+              "type": "choice",
+              "choice": "billing",
+              "probabilities": {
+                "billing": 0.7,
+                "shipping": 0.2,
+                "returns": 0.1
+              },
+              "confidence": 0.55
+            },
+            "urgent": {
+              "type": "noul",
+              "noul": 0.9
+            },
+            "impact": {
+              "type": "score",
+              "score": 1.4,
+              "legend": {
+                "0": "low",
+                "1": {
+                  "level": "medium"
+                },
+                "2": ["high"]
+              },
+              "probabilities": {
+                "0": 0.1,
+                "1": 0.4,
+                "2": 0.5
+              },
+              "confidence": 0.25
+            }
+          },
+          "usage": {
+            "input_tokens": 120,
+            "output_tokens": 0
+          },
+          "x_route": "local",
+          "x_latency_ms": 42.5,
+          "x_engine": {
+            "model": "jev-style-0.8b",
+            "quantization": "Q4_K_M"
+          },
+          "x_trace": ["render", "score"]
+        }
+      },
+      {
+        "name": "missing answers",
+        "value": {
+          "model": "model-revision",
+          "usage": {
+            "input_tokens": 120,
+            "output_tokens": 0
+          },
+          "x_route": "local",
+          "x_latency_ms": 42.5,
+          "x_engine": {
+            "model": "jev-style-0.8b",
+            "quantization": "Q4_K_M"
+          },
+          "x_trace": ["render", "score"]
+        }
+      },
+      {
+        "name": "missing usage",
+        "value": {
+          "model": "model-revision",
+          "answers": {
+            "team": {
+              "type": "choice",
+              "choice": "billing",
+              "probabilities": {
+                "billing": 0.7,
+                "shipping": 0.2,
+                "returns": 0.1
+              },
+              "confidence": 0.55
+            },
+            "urgent": {
+              "type": "noul",
+              "noul": 0.9
+            },
+            "impact": {
+              "type": "score",
+              "score": 1.4,
+              "legend": {
+                "0": "low",
+                "1": {
+                  "level": "medium"
+                },
+                "2": ["high"]
+              },
+              "probabilities": {
+                "0": 0.1,
+                "1": 0.4,
+                "2": 0.5
+              },
+              "confidence": 0.25
+            }
+          },
+          "x_route": "local",
+          "x_latency_ms": 42.5,
+          "x_engine": {
+            "model": "jev-style-0.8b",
+            "quantization": "Q4_K_M"
+          },
+          "x_trace": ["render", "score"]
+        }
+      },
+      {
+        "name": "empty answers",
+        "value": {
+          "model": "model-revision",
+          "answers": {},
+          "usage": {
+            "input_tokens": 120,
+            "output_tokens": 0
+          },
+          "x_route": "local",
+          "x_latency_ms": 42.5,
+          "x_engine": {
+            "model": "jev-style-0.8b",
+            "quantization": "Q4_K_M"
+          },
+          "x_trace": ["render", "score"]
+        }
+      },
+      {
+        "name": "non-extension field",
+        "value": {
+          "model": "model-revision",
+          "answers": {
+            "team": {
+              "type": "choice",
+              "choice": "billing",
+              "probabilities": {
+                "billing": 0.7,
+                "shipping": 0.2,
+                "returns": 0.1
+              },
+              "confidence": 0.55
+            },
+            "urgent": {
+              "type": "noul",
+              "noul": 0.9
+            },
+            "impact": {
+              "type": "score",
+              "score": 1.4,
+              "legend": {
+                "0": "low",
+                "1": {
+                  "level": "medium"
+                },
+                "2": ["high"]
+              },
+              "probabilities": {
+                "0": 0.1,
+                "1": 0.4,
+                "2": 0.5
+              },
+              "confidence": 0.25
+            }
+          },
+          "usage": {
+            "input_tokens": 120,
+            "output_tokens": 0
+          },
+          "x_route": "local",
+          "x_latency_ms": 42.5,
+          "x_engine": {
+            "model": "jev-style-0.8b",
+            "quantization": "Q4_K_M"
+          },
+          "x_trace": ["render", "score"],
+          "unrelated": true
+        }
+      },
+      {
+        "name": "unknown route",
+        "value": {
+          "model": "model-revision",
+          "answers": {
+            "team": {
+              "type": "choice",
+              "choice": "billing",
+              "probabilities": {
+                "billing": 0.7,
+                "shipping": 0.2,
+                "returns": 0.1
+              },
+              "confidence": 0.55
+            },
+            "urgent": {
+              "type": "noul",
+              "noul": 0.9
+            },
+            "impact": {
+              "type": "score",
+              "score": 1.4,
+              "legend": {
+                "0": "low",
+                "1": {
+                  "level": "medium"
+                },
+                "2": ["high"]
+              },
+              "probabilities": {
+                "0": 0.1,
+                "1": 0.4,
+                "2": 0.5
+              },
+              "confidence": 0.25
+            }
+          },
+          "usage": {
+            "input_tokens": 120,
+            "output_tokens": 0
+          },
+          "x_route": "edge",
+          "x_latency_ms": 42.5,
+          "x_engine": {
+            "model": "jev-style-0.8b",
+            "quantization": "Q4_K_M"
+          },
+          "x_trace": ["render", "score"]
+        }
+      },
+      {
+        "name": "null route",
+        "value": {
+          "model": "model-revision",
+          "answers": {
+            "team": {
+              "type": "choice",
+              "choice": "billing",
+              "probabilities": {
+                "billing": 0.7,
+                "shipping": 0.2,
+                "returns": 0.1
+              },
+              "confidence": 0.55
+            },
+            "urgent": {
+              "type": "noul",
+              "noul": 0.9
+            },
+            "impact": {
+              "type": "score",
+              "score": 1.4,
+              "legend": {
+                "0": "low",
+                "1": {
+                  "level": "medium"
+                },
+                "2": ["high"]
+              },
+              "probabilities": {
+                "0": 0.1,
+                "1": 0.4,
+                "2": 0.5
+              },
+              "confidence": 0.25
+            }
+          },
+          "usage": {
+            "input_tokens": 120,
+            "output_tokens": 0
+          },
+          "x_route": null,
+          "x_latency_ms": 42.5,
+          "x_engine": {
+            "model": "jev-style-0.8b",
+            "quantization": "Q4_K_M"
+          },
+          "x_trace": ["render", "score"]
+        }
+      },
+      {
+        "name": "negative latency",
+        "value": {
+          "model": "model-revision",
+          "answers": {
+            "team": {
+              "type": "choice",
+              "choice": "billing",
+              "probabilities": {
+                "billing": 0.7,
+                "shipping": 0.2,
+                "returns": 0.1
+              },
+              "confidence": 0.55
+            },
+            "urgent": {
+              "type": "noul",
+              "noul": 0.9
+            },
+            "impact": {
+              "type": "score",
+              "score": 1.4,
+              "legend": {
+                "0": "low",
+                "1": {
+                  "level": "medium"
+                },
+                "2": ["high"]
+              },
+              "probabilities": {
+                "0": 0.1,
+                "1": 0.4,
+                "2": 0.5
+              },
+              "confidence": 0.25
+            }
+          },
+          "usage": {
+            "input_tokens": 120,
+            "output_tokens": 0
+          },
+          "x_route": "local",
+          "x_latency_ms": -1,
+          "x_engine": {
+            "model": "jev-style-0.8b",
+            "quantization": "Q4_K_M"
+          },
+          "x_trace": ["render", "score"]
+        }
+      },
+      {
+        "name": "string latency",
+        "value": {
+          "model": "model-revision",
+          "answers": {
+            "team": {
+              "type": "choice",
+              "choice": "billing",
+              "probabilities": {
+                "billing": 0.7,
+                "shipping": 0.2,
+                "returns": 0.1
+              },
+              "confidence": 0.55
+            },
+            "urgent": {
+              "type": "noul",
+              "noul": 0.9
+            },
+            "impact": {
+              "type": "score",
+              "score": 1.4,
+              "legend": {
+                "0": "low",
+                "1": {
+                  "level": "medium"
+                },
+                "2": ["high"]
+              },
+              "probabilities": {
+                "0": 0.1,
+                "1": 0.4,
+                "2": 0.5
+              },
+              "confidence": 0.25
+            }
+          },
+          "usage": {
+            "input_tokens": 120,
+            "output_tokens": 0
+          },
+          "x_route": "local",
+          "x_latency_ms": "42",
+          "x_engine": {
+            "model": "jev-style-0.8b",
+            "quantization": "Q4_K_M"
+          },
+          "x_trace": ["render", "score"]
+        }
+      },
+      {
+        "name": "answer without type",
+        "value": {
+          "model": "m",
+          "answers": {
+            "a": {
+              "noul": 0.5
+            }
+          },
+          "usage": {
+            "input_tokens": 1,
+            "output_tokens": 0
+          }
+        }
+      },
+      {
+        "name": "unknown answer type",
+        "value": {
+          "model": "m",
+          "answers": {
+            "a": {
+              "type": "rank",
+              "noul": 0.5
+            }
+          },
+          "usage": {
+            "input_tokens": 1,
+            "output_tokens": 0
+          }
+        }
+      },
+      {
+        "name": "choice without confidence",
+        "value": {
+          "model": "m",
+          "answers": {
+            "a": {
+              "type": "choice",
+              "choice": "a",
+              "probabilities": {
+                "a": 1
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 1,
+            "output_tokens": 0
+          }
+        }
+      },
+      {
+        "name": "choice empty probabilities",
+        "value": {
+          "model": "m",
+          "answers": {
+            "a": {
+              "type": "choice",
+              "choice": "a",
+              "probabilities": {},
+              "confidence": 1
+            }
+          },
+          "usage": {
+            "input_tokens": 1,
+            "output_tokens": 0
+          }
+        }
+      },
+      {
+        "name": "probability above one",
+        "value": {
+          "model": "m",
+          "answers": {
+            "a": {
+              "type": "choice",
+              "choice": "a",
+              "probabilities": {
+                "a": 1.5
+              },
+              "confidence": 1
+            }
+          },
+          "usage": {
+            "input_tokens": 1,
+            "output_tokens": 0
+          }
+        }
+      },
+      {
+        "name": "negative probability",
+        "value": {
+          "model": "m",
+          "answers": {
+            "a": {
+              "type": "choice",
+              "choice": "a",
+              "probabilities": {
+                "a": -0.1
+              },
+              "confidence": 1
+            }
+          },
+          "usage": {
+            "input_tokens": 1,
+            "output_tokens": 0
+          }
+        }
+      },
+      {
+        "name": "confidence above one",
+        "value": {
+          "model": "m",
+          "answers": {
+            "a": {
+              "type": "choice",
+              "choice": "a",
+              "probabilities": {
+                "a": 1
+              },
+              "confidence": 1.2
+            }
+          },
+          "usage": {
+            "input_tokens": 1,
+            "output_tokens": 0
+          }
+        }
+      },
+      {
+        "name": "numeric choice",
+        "value": {
+          "model": "m",
+          "answers": {
+            "a": {
+              "type": "choice",
+              "choice": 1,
+              "probabilities": {
+                "a": 1
+              },
+              "confidence": 1
+            }
+          },
+          "usage": {
+            "input_tokens": 1,
+            "output_tokens": 0
+          }
+        }
+      },
+      {
+        "name": "unknown choice answer field",
+        "value": {
+          "model": "m",
+          "answers": {
+            "a": {
+              "type": "choice",
+              "choice": "a",
+              "probabilities": {
+                "a": 1
+              },
+              "confidence": 1,
+              "x_note": "x"
+            }
+          },
+          "usage": {
+            "input_tokens": 1,
+            "output_tokens": 0
+          }
+        }
+      },
+      {
+        "name": "score without legend",
+        "value": {
+          "model": "m",
+          "answers": {
+            "a": {
+              "type": "score",
+              "score": 0,
+              "probabilities": {
+                "0": 1
+              },
+              "confidence": 1
+            }
+          },
+          "usage": {
+            "input_tokens": 1,
+            "output_tokens": 0
+          }
+        }
+      },
+      {
+        "name": "score empty legend",
+        "value": {
+          "model": "m",
+          "answers": {
+            "a": {
+              "type": "score",
+              "score": 0,
+              "legend": {},
+              "probabilities": {
+                "0": 1
+              },
+              "confidence": 1
+            }
+          },
+          "usage": {
+            "input_tokens": 1,
+            "output_tokens": 0
+          }
+        }
+      },
+      {
+        "name": "score legend null",
+        "value": {
+          "model": "m",
+          "answers": {
+            "a": {
+              "type": "score",
+              "score": 0,
+              "legend": {
+                "0": null
+              },
+              "probabilities": {
+                "0": 1
+              },
+              "confidence": 1
+            }
+          },
+          "usage": {
+            "input_tokens": 1,
+            "output_tokens": 0
+          }
+        }
+      },
+      {
+        "name": "score string",
+        "value": {
+          "model": "m",
+          "answers": {
+            "a": {
+              "type": "score",
+              "score": "1",
+              "legend": {
+                "0": "low"
+              },
+              "probabilities": {
+                "0": 1
+              },
+              "confidence": 1
+            }
+          },
+          "usage": {
+            "input_tokens": 1,
+            "output_tokens": 0
+          }
+        }
+      },
+      {
+        "name": "noul above one",
+        "value": {
+          "model": "m",
+          "answers": {
+            "a": {
+              "type": "noul",
+              "noul": 1.5
+            }
+          },
+          "usage": {
+            "input_tokens": 1,
+            "output_tokens": 0
+          }
+        }
+      },
+      {
+        "name": "noul with confidence",
+        "value": {
+          "model": "m",
+          "answers": {
+            "a": {
+              "type": "noul",
+              "noul": 0.5,
+              "confidence": 1
+            }
+          },
+          "usage": {
+            "input_tokens": 1,
+            "output_tokens": 0
+          }
+        }
+      },
+      {
+        "name": "usage without output tokens",
+        "value": {
+          "model": "model-revision",
+          "answers": {
+            "team": {
+              "type": "choice",
+              "choice": "billing",
+              "probabilities": {
+                "billing": 0.7,
+                "shipping": 0.2,
+                "returns": 0.1
+              },
+              "confidence": 0.55
+            },
+            "urgent": {
+              "type": "noul",
+              "noul": 0.9
+            },
+            "impact": {
+              "type": "score",
+              "score": 1.4,
+              "legend": {
+                "0": "low",
+                "1": {
+                  "level": "medium"
+                },
+                "2": ["high"]
+              },
+              "probabilities": {
+                "0": 0.1,
+                "1": 0.4,
+                "2": 0.5
+              },
+              "confidence": 0.25
+            }
+          },
+          "usage": {
+            "input_tokens": 1
+          },
+          "x_route": "local",
+          "x_latency_ms": 42.5,
+          "x_engine": {
+            "model": "jev-style-0.8b",
+            "quantization": "Q4_K_M"
+          },
+          "x_trace": ["render", "score"]
+        }
+      },
+      {
+        "name": "usage extra field",
+        "value": {
+          "model": "model-revision",
+          "answers": {
+            "team": {
+              "type": "choice",
+              "choice": "billing",
+              "probabilities": {
+                "billing": 0.7,
+                "shipping": 0.2,
+                "returns": 0.1
+              },
+              "confidence": 0.55
+            },
+            "urgent": {
+              "type": "noul",
+              "noul": 0.9
+            },
+            "impact": {
+              "type": "score",
+              "score": 1.4,
+              "legend": {
+                "0": "low",
+                "1": {
+                  "level": "medium"
+                },
+                "2": ["high"]
+              },
+              "probabilities": {
+                "0": 0.1,
+                "1": 0.4,
+                "2": 0.5
+              },
+              "confidence": 0.25
+            }
+          },
+          "usage": {
+            "input_tokens": 1,
+            "output_tokens": 0,
+            "debug": true
+          },
+          "x_route": "local",
+          "x_latency_ms": 42.5,
+          "x_engine": {
+            "model": "jev-style-0.8b",
+            "quantization": "Q4_K_M"
+          },
+          "x_trace": ["render", "score"]
+        }
+      },
+      {
+        "name": "fractional token count",
+        "value": {
+          "model": "model-revision",
+          "answers": {
+            "team": {
+              "type": "choice",
+              "choice": "billing",
+              "probabilities": {
+                "billing": 0.7,
+                "shipping": 0.2,
+                "returns": 0.1
+              },
+              "confidence": 0.55
+            },
+            "urgent": {
+              "type": "noul",
+              "noul": 0.9
+            },
+            "impact": {
+              "type": "score",
+              "score": 1.4,
+              "legend": {
+                "0": "low",
+                "1": {
+                  "level": "medium"
+                },
+                "2": ["high"]
+              },
+              "probabilities": {
+                "0": 0.1,
+                "1": 0.4,
+                "2": 0.5
+              },
+              "confidence": 0.25
+            }
+          },
+          "usage": {
+            "input_tokens": 1.5,
+            "output_tokens": 0
+          },
+          "x_route": "local",
+          "x_latency_ms": 42.5,
+          "x_engine": {
+            "model": "jev-style-0.8b",
+            "quantization": "Q4_K_M"
+          },
+          "x_trace": ["render", "score"]
+        }
+      },
+      {
+        "name": "negative token count",
+        "value": {
+          "model": "model-revision",
+          "answers": {
+            "team": {
+              "type": "choice",
+              "choice": "billing",
+              "probabilities": {
+                "billing": 0.7,
+                "shipping": 0.2,
+                "returns": 0.1
+              },
+              "confidence": 0.55
+            },
+            "urgent": {
+              "type": "noul",
+              "noul": 0.9
+            },
+            "impact": {
+              "type": "score",
+              "score": 1.4,
+              "legend": {
+                "0": "low",
+                "1": {
+                  "level": "medium"
+                },
+                "2": ["high"]
+              },
+              "probabilities": {
+                "0": 0.1,
+                "1": 0.4,
+                "2": 0.5
+              },
+              "confidence": 0.25
+            }
+          },
+          "usage": {
+            "input_tokens": -1,
+            "output_tokens": 0
+          },
+          "x_route": "local",
+          "x_latency_ms": 42.5,
+          "x_engine": {
+            "model": "jev-style-0.8b",
+            "quantization": "Q4_K_M"
+          },
+          "x_trace": ["render", "score"]
+        }
+      },
+      {
+        "name": "string token count",
+        "value": {
+          "model": "model-revision",
+          "answers": {
+            "team": {
+              "type": "choice",
+              "choice": "billing",
+              "probabilities": {
+                "billing": 0.7,
+                "shipping": 0.2,
+                "returns": 0.1
+              },
+              "confidence": 0.55
+            },
+            "urgent": {
+              "type": "noul",
+              "noul": 0.9
+            },
+            "impact": {
+              "type": "score",
+              "score": 1.4,
+              "legend": {
+                "0": "low",
+                "1": {
+                  "level": "medium"
+                },
+                "2": ["high"]
+              },
+              "probabilities": {
+                "0": 0.1,
+                "1": 0.4,
+                "2": 0.5
+              },
+              "confidence": 0.25
+            }
+          },
+          "usage": {
+            "input_tokens": "1",
+            "output_tokens": 0
+          },
+          "x_route": "local",
+          "x_latency_ms": 42.5,
+          "x_engine": {
+            "model": "jev-style-0.8b",
+            "quantization": "Q4_K_M"
+          },
+          "x_trace": ["render", "score"]
+        }
+      }
+    ]
+  }
+}

@@ -10,7 +10,9 @@ The repository contains the M0 feasibility experiment and M1 contract scaffoldin
 Its base fields were checked against [TypeSafe OpenAPI 0.2.0](https://api.typesafe.ai/openapi.json); runtime interoperability and release readiness remain unverified.
 Generated Dart types live in `packages/edge_one/lib/src/generated/`; generated TypeScript types live in `packages/react-native-edge-one/src/generated/`.
 Edit the schema and rerun generation instead of editing either output.
-The generated Dart classes are typed data shapes, not JSON codecs or a running backend yet; validate wire data against the schema at a boundary.
+The generated Dart classes are typed data shapes; `SystemOneJson` in `packages/edge_one` is their strict JSON codec, and no local or remote backend exists yet.
+`schemas/fixtures/system-one-v1-cases.json` is a shared corpus that Ajv and the Dart codec must both accept or reject identically.
+`DecisionClient` validates both sides of a `SystemOneBackend` call, and `Evaluation` turns answers into `Decided` or `Uncertain` results; see the [Dart API specification](docs/specs/2026-09-29-m1-dart-decision-api.md).
 
 From the repository root:
 
@@ -24,11 +26,12 @@ flutter pub get --enforce-lockfile
 dart run tools/check_dart_contract.dart
 dart analyze packages/edge_one
 flutter analyze packages/edge_one_flutter
+(cd packages/edge_one && dart test)
 ```
 
 The pnpm workspace contains the planned React Native package; the Melos/Pub workspace contains `edge_one`, `edge_one_flutter`, and `edge_one_calibrate`.
 `packages/edge_one_core/` has a C++17 CMake target without inference sources yet.
-GitHub's Linux contract job validates schema fixtures, generated drift, TypeScript, and the Dart workspace.
+GitHub's Linux contract job validates schema fixtures, generated drift, TypeScript, and the Dart workspace, then runs the `edge_one` tests.
 See the [contract specification](docs/specs/2026-09-29-m1-system-one-contract.md) for current limits.
 
 ## M0 Desktop Spike
@@ -111,6 +114,8 @@ It also installs the Trunk launcher to `/usr/local/bin/trunk`, downloads the CLI
 It is safe to run again after a cached environment resumes.
 The setup phase has network access, while agent-phase access depends on the cloud environment setting.
 For a native task that needs the pinned 0.53 GB model, set `EDGE_ONE_FETCH_MODEL=1` in that environment so the setup phase runs the repository's verified fetcher; leave it unset for contract, documentation, and unit-test tasks.
+For Dart or Flutter tasks, set `EDGE_ONE_INSTALL_FLUTTER=1`: setup downloads the CI-pinned Flutter 3.47.5 Linux x64 archive (1.58 GB, Dart 3.13.4), checks its SHA-256, and unpacks it under ignored `.cache/flutter/`.
+It links `flutter` and `dart` into `/usr/local/bin` unless they are already on `PATH`, then resolves the workspace with `flutter pub get --enforce-lockfile`.
 The cloud environment must invoke the repository command explicitly; the universal image's own initialization is separate.
 The local Docker daemon was unavailable when this setup was added, so the GitHub Ubuntu job is the Linux execution check and an actual Codex Cloud run remains to be observed.
 
