@@ -195,5 +195,6 @@ jobs:
           path: |
             .cache/m0/ios/hosted/preflight.json
             .cache/m0/ios/hosted/native-repro.txt
+            .cache/m0/ios/hosted/native-repro-status.txt
             .cache/m0/ios/hosted/summary.json
             .cache/m0/ios/iphonesimulator/build-receipt.json

@@ -25,6 +25,11 @@ static void verify_model_hash(const char * model_path) {
     if (actual.str() != m0_model_hash) throw std::runtime_error("model hash mismatch");
 }
 
+static void write_repro_status(NSString * status) {
+    NSURL * directory = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask].firstObject;
+    [status writeToURL:[directory URLByAppendingPathComponent:@"native-repro-status.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
+}
+
 struct NativeBackend {
     NativeBackend() { llama_backend_init(); }
     ~NativeBackend() { llama_backend_free(); }
@@ -92,6 +97,7 @@ static void decode_once(const char * model_path, bool gpu, std::ostream & out) {
     [self.window makeKeyAndVisible];
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
         NSString * status;
+        write_repro_status(@"started");
         try {
             std::ostringstream out;
             out << std::setprecision(17) << "fixture_sha256 " << m0_fixture_hash << '\n';
@@ -101,9 +107,12 @@ static void decode_once(const char * model_path, bool gpu, std::ostream & out) {
                 : [NSBundle.mainBundle pathForResource:@"model" ofType:@"gguf"];
             if (!modelPath) throw std::runtime_error("model resource missing");
             verify_model_hash(modelPath.UTF8String);
+            write_repro_status(@"model_verified");
             static NativeBackend backend;
             decode_once(modelPath.UTF8String, false, out);
+            write_repro_status(@"cpu_complete");
             decode_once(modelPath.UTF8String, true, out);
+            write_repro_status(@"metal_complete");
             NSURL * directory = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask].firstObject;
             NSString * result = [NSString stringWithUTF8String:out.str().c_str()];
             NSError * error = nil;
@@ -113,6 +122,7 @@ static void decode_once(const char * model_path, bool gpu, std::ostream & out) {
         } catch (const std::exception & error) {
             status = [NSString stringWithFormat:@"Repro failed: %s", error.what()];
         }
+        write_repro_status(status);
         dispatch_async(dispatch_get_main_queue(), ^{ label.text = status; });
     });
     return YES;

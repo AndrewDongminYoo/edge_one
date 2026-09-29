@@ -1,6 +1,7 @@
 import copy
 import hashlib
 import json
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -171,6 +172,9 @@ class HostedGateTests(unittest.TestCase):
                 if args[2:3] == ("get_app_container",):
                     return str(container)
                 if args[2:3] == ("launch",):
+                    (container / "Documents/native-repro-status.txt").write_text(
+                        "metal_complete"
+                    )
                     (container / "Documents/native-repro.txt").write_text(self.raw)
                 return ""
 
@@ -186,6 +190,60 @@ class HostedGateTests(unittest.TestCase):
             summary = json.loads((evidence / "summary.json").read_text())
             self.assertFalse(summary["passes_gate"])
             self.assertIn("strict CPU/Metal", summary["error"])
+            self.assertEqual(summary["stage"], "compare")
+            self.assertEqual(summary["native_status"], "metal_complete")
+            self.assertEqual(
+                (evidence / "native-repro-status.txt").read_text(), "metal_complete"
+            )
+
+    def test_run_gate_records_app_failure_without_plaintext(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            evidence = root / "hosted"
+            evidence.mkdir()
+            (evidence / "preflight.json").write_text(
+                json.dumps(
+                    {"supported": True, "device": {"udid": "phone", "state": "Booted"}}
+                )
+            )
+            app = root / "NativeRepro.app"
+            app.mkdir()
+            container = root / "container"
+            (container / "Documents").mkdir(parents=True)
+
+            def fake_command(*args):
+                if args[2:3] == ("get_app_container",):
+                    return str(container)
+                if args[2:3] == ("launch",):
+                    (container / "Documents/native-repro-status.txt").write_text(
+                        "Repro failed: model hash mismatch"
+                    )
+                return ""
+
+            with (
+                mock.patch.object(hosted_gate, "EVIDENCE", evidence),
+                mock.patch.object(hosted_gate, "APP", app),
+                mock.patch.object(hosted_gate, "command", side_effect=fake_command),
+            ):
+                self.assertFalse(hosted_gate.run_gate(0))
+            summary = json.loads((evidence / "summary.json").read_text())
+            self.assertIn("model hash mismatch", summary["error"])
+            self.assertEqual(
+                (evidence / "native-repro-status.txt").read_text(),
+                "Repro failed: model hash mismatch",
+            )
+
+    def test_simctl_command_has_bounded_timeout(self):
+        with mock.patch.object(
+            hosted_gate.subprocess,
+            "run",
+            side_effect=subprocess.TimeoutExpired(
+                ["xcrun", "simctl", "bootstatus"], 180
+            ),
+        ) as run:
+            with self.assertRaisesRegex(RuntimeError, "timed out after 180s"):
+                hosted_gate.command("xcrun", "simctl", "bootstatus")
+        self.assertEqual(run.call_args.kwargs["timeout"], 180)
 
 
 if __name__ == "__main__":

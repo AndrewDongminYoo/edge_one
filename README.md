@@ -99,7 +99,7 @@ Preserve the upstream model's LICENSE and NOTICE with downloaded artifacts.
 GitHub Actions runs the unit tests and validates archived measurements against current fixture and model pins.
 It also builds the pinned native scorer on Ubuntu, requires exact-prefix numerical parity with one warm sample, and builds unsigned iPhone and simulator apps on a hosted macOS runner.
 The `ios-27-numerical` job checks Xcode 27, the iOS 27 simulator and a Metal shader compile before building and running `NativeRepro` on a hosted iPhone simulator; it tries the Xcode Metal Toolchain component download once if compilation fails.
-It compares direct CPU and Metal logits against the fixed desktop reference with a strict probability difference below `1e-3`; missing runner support or failed parity fails the job, with preflight, raw logits and summary uploaded when available.
+It compares direct CPU and Metal logits against the fixed desktop reference with a strict probability difference below `1e-3`; missing runner support or failed parity fails the job, with preflight, native progress status, raw logits and summary uploaded when available.
 The Linux run still records batched-prefix results, but batched sharing remains experimental and is not a required production gate.
 Each new gate summary identifies its worst fixture, phase, sample, and question; see the [Linux batched-drift investigation](docs/notes/2026-09-28-m0-linux-batched-drift.md) for the observed failures and promotion criteria.
 The report checker recomputes probability gates, native sharing observations, and timing summaries from stored records.

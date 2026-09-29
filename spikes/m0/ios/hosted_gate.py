@@ -104,7 +104,13 @@ def summarize(raw, fixture):
 
 def command(*args):
     try:
-        result = subprocess.run(args, capture_output=True, text=True, check=True)
+        result = subprocess.run(
+            args, capture_output=True, text=True, check=True, timeout=180
+        )
+    except subprocess.TimeoutExpired as error:
+        raise RuntimeError(
+            f"{' '.join(args)} timed out after {error.timeout}s"
+        ) from error
     except subprocess.CalledProcessError as error:
         detail = (error.stderr or error.stdout or "").strip()
         raise RuntimeError(f"{' '.join(args)} failed: {detail}") from error
@@ -174,7 +180,14 @@ def run_gate(timeout):
     summary = {"passes_gate": False}
     booted_here = False
     device_id = None
+    status_file = None
+
+    def mark(stage):
+        summary["stage"] = stage
+        write_json(EVIDENCE / "summary.json", summary)
+
     try:
+        mark("preflight")
         preflight_result = json.loads((EVIDENCE / "preflight.json").read_text())
         if not preflight_result["supported"]:
             raise ValueError("hosted simulator preflight failed")
@@ -184,20 +197,34 @@ def run_gate(timeout):
         if not APP.is_dir():
             raise FileNotFoundError(f"NativeRepro app missing: {APP}")
         if device["state"] == "Shutdown":
+            mark("boot")
             command("xcrun", "simctl", "boot", device_id)
             booted_here = True
+        mark("bootstatus")
         command("xcrun", "simctl", "bootstatus", device_id, "-b")
+        mark("install")
         command("xcrun", "simctl", "install", device_id, str(APP))
+        mark("get_app_container")
         container = Path(
             command(
                 "xcrun", "simctl", "get_app_container", device_id, BUNDLE_ID, "data"
             )
         )
         output = container / "Documents/native-repro.txt"
+        status_file = container / "Documents/native-repro-status.txt"
         output.unlink(missing_ok=True)
+        status_file.unlink(missing_ok=True)
+        mark("launch")
         command("xcrun", "simctl", "launch", device_id, BUNDLE_ID)
+        mark("wait_for_output")
         deadline = time.monotonic() + timeout
-        while not output.is_file() and time.monotonic() < deadline:
+        while not output.is_file():
+            if status_file.is_file():
+                native_status = status_file.read_text().strip()
+                if native_status.startswith("Repro failed:"):
+                    raise RuntimeError(native_status)
+            if time.monotonic() >= deadline:
+                break
             time.sleep(2)
         if not output.is_file():
             raise TimeoutError(
@@ -206,18 +233,27 @@ def run_gate(timeout):
         raw = output.read_text()
         (EVIDENCE / "native-repro.txt").write_text(raw)
         fixture = json.loads((IOS_CACHE / "fixture.json").read_text())
+        mark("compare")
         summary.update(summarize(raw, fixture))
         if not summary["passes_gate"]:
             summary["error"] = "strict CPU/Metal probability gate failed"
     except (OSError, RuntimeError, ValueError, KeyError, TimeoutError) as error:
         summary["error"] = str(error)
     finally:
+        if status_file and status_file.is_file():
+            native_status = status_file.read_text().strip()
+            summary["native_status"] = native_status
+            (EVIDENCE / "native-repro-status.txt").write_text(native_status)
         if booted_here and device_id:
-            subprocess.run(
-                ["xcrun", "simctl", "shutdown", device_id],
-                capture_output=True,
-                text=True,
-            )
+            try:
+                subprocess.run(
+                    ["xcrun", "simctl", "shutdown", device_id],
+                    capture_output=True,
+                    text=True,
+                    timeout=30,
+                )
+            except (OSError, subprocess.TimeoutExpired) as error:
+                summary["shutdown_error"] = str(error)
         write_json(EVIDENCE / "summary.json", summary)
         print(json.dumps(summary, indent=2), flush=True)
     return summary["passes_gate"]
