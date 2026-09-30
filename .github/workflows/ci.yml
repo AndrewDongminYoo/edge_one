@@ -1,4 +1,4 @@
-name: M0 checks
+name: Repository checks
 
 on:
   pull_request:
@@ -50,6 +50,9 @@ jobs:
       - name: Test pure Dart contract and Decision API
         working-directory: packages/edge_one
         run: dart test
+      - name: Test verified model download state machine
+        working-directory: packages/edge_one_flutter
+        run: dart test test/model_store_test.dart
       - name: Test pinned model manifest and legal assets
         working-directory: packages/edge_one_flutter
         run: |
