@@ -1,6 +1,7 @@
 {
   "version": 1,
   "model_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "target_error": 0.05,
   "dataset_sha256": "7e143419e217bbb34a217acabcb0fbfaa918ae010acbaa93767b869e42644263",
   "seed": 0,
   "split": {

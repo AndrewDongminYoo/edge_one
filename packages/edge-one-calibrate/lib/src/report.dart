@@ -23,7 +23,7 @@ List<String> checkRegression(
   }
   final before = _report(baseline);
   final after = _report(candidate);
-  for (final key in ['dataset_sha256', 'seed', 'split']) {
+  for (final key in ['dataset_sha256', 'seed', 'split', 'target_error']) {
     if (canonicalJson(before[key]) != canonicalJson(after[key])) {
       throw FormatException('incompatible reports: $key differs');
     }
@@ -85,6 +85,7 @@ Map<String, Object?> _report(Object? json) {
   final report = _map(json, {
     'version',
     'model_sha256',
+    'target_error',
     'dataset_sha256',
     'seed',
     'split',
@@ -94,6 +95,7 @@ Map<String, Object?> _report(Object? json) {
     throw const FormatException('invalid report version or seed');
   checkHash(report['model_sha256'], 'model_sha256');
   checkHash(report['dataset_sha256'], 'dataset_sha256');
+  final selectedTarget = _fraction(report['target_error']);
   final split = _map(report['split'], {'fitting', 'validation'});
   final fitting = _digests(split['fitting']);
   final validation = _digests(split['validation']);
@@ -119,12 +121,24 @@ Map<String, Object?> _report(Object? json) {
     );
     if (fitCount > fitting.length || validationCount > validation.length)
       throw const FormatException('question count exceeds split size');
-    _fraction(question['validation_accuracy']);
+    final impliedCorrect =
+        _fraction(question['validation_accuracy']) * validationCount;
+    final totalCorrect = impliedCorrect.round();
+    if ((impliedCorrect - totalCorrect).abs() > 1e-9) {
+      throw const FormatException(
+        'validation accuracy does not describe an integer correct count',
+      );
+    }
     for (final key in ['fit_nll_before', 'fit_nll_after']) {
       if (_number(question[key]) < 0)
         throw const FormatException('NLL must not be negative');
     }
     final targets = _targets(question['targets']);
+    if (!targets.containsKey(selectedTarget)) {
+      throw const FormatException(
+        'report is missing the selected target_error',
+      );
+    }
     if (!targets.keys.toSet().containsAll([.01, .05, .1]))
       throw const FormatException('report is missing default targets');
     for (final entry in targets.entries) {
@@ -136,9 +150,22 @@ Map<String, Object?> _report(Object? json) {
       });
       final fit = _metrics(target['fitting'], fitCount);
       final heldOut = _metrics(target['validation'], validationCount);
+      final acceptedCorrect =
+          (heldOut['accepted'] as int) - (heldOut['errors'] as int);
+      if (acceptedCorrect > totalCorrect ||
+          (heldOut['errors'] as int) > validationCount - totalCorrect) {
+        throw const FormatException(
+          'accepted validation outcomes exceed total correct/errors',
+        );
+      }
       if (target['threshold'] == null &&
           (fit['accepted'] != 0 || heldOut['accepted'] != 0)) {
         throw const FormatException('null threshold must reject all samples');
+      }
+      if (target['threshold'] == 0 &&
+          (fit['accepted'] != fitCount ||
+              heldOut['accepted'] != validationCount)) {
+        throw const FormatException('zero threshold must accept all samples');
       }
       if (target['threshold'] != null && fit['accepted'] == 0)
         throw const FormatException('non-null threshold needs fitting support');

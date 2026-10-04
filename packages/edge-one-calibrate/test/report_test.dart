@@ -21,7 +21,7 @@ void main() {
     final baseline = report();
     final candidate = copy(baseline);
     final question = (candidate['questions'] as Map)['topic'] as Map;
-    question['validation_accuracy'] = 0.5;
+    question['validation_accuracy'] = 0.75;
     expect(
       checkRegression(baseline, candidate, maxAccuracyDrop: .01),
       contains(contains('accuracy')),
@@ -135,4 +135,58 @@ void main() {
       throwsArgumentError,
     );
   });
+
+  test('impossible validation accuracy and accepted subsets are rejected', () {
+    final baseline = report();
+    for (final mutate in <void Function(Map<String, Object?>)>[
+      (question) => question['validation_accuracy'] = .999999,
+      (question) => question['validation_accuracy'] = .5,
+      (question) {
+        final target = (question['targets'] as List).first as Map;
+        final metrics = target['validation'] as Map;
+        metrics['errors'] = 11;
+        metrics['error_rate'] = 11 / (metrics['accepted'] as int);
+      },
+    ]) {
+      final candidate = copy(baseline);
+      mutate((candidate['questions'] as Map)['topic'] as Map<String, Object?>);
+      expect(() => checkRegression(baseline, candidate), throwsFormatException);
+    }
+  });
+
+  test('zero threshold requires full fitting and validation acceptance', () {
+    final baseline = report();
+    final candidate = copy(baseline);
+    for (final target
+        in ((candidate['questions'] as Map)['topic'] as Map)['targets']
+            as List) {
+      (target as Map)['threshold'] = 0;
+    }
+    expect(() => checkRegression(baseline, candidate), throwsFormatException);
+  });
+
+  test(
+    'selected deployment target changes fail even with the same report rows',
+    () {
+      final rows = [for (var i = 0; i < 120; i++) record(i)];
+      CalibrationDataset parse() =>
+          CalibrationDataset.parse(jsonl(rows), modelSha256: modelHash);
+      final errors = splitDataset(
+        parse(),
+      ).fitting.take(3).map((r) => r.requestSha256).toSet();
+      for (final row in rows) {
+        if (errors.contains(row['request_sha256'])) {
+          row['labels'] = {'topic': 'b', 'flag': false, 'level': 'low'};
+        }
+      }
+      final baseline = fitCalibration(parse(), targetError: .01);
+      final candidate = fitCalibration(parse(), targetError: .1);
+      expect(baseline.profile.questions['topic']!.threshold, isNull);
+      expect(candidate.profile.questions['topic']!.threshold, isNotNull);
+      expect(
+        () => checkRegression(baseline.report, candidate.report),
+        throwsFormatException,
+      );
+    },
+  );
 }

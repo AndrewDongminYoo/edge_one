@@ -66,7 +66,8 @@ calibration; changing a question requires recalibration even with the same model
 
 ## Regression gate
 
-The report records data/split identity, per-question counts and unfiltered
+The report records the selected artifact target error, data/split identity,
+per-question counts and unfiltered
 validation accuracy, and fit/validation accepted count, coverage, and error for
 every target. Zero accepted items have null error. The check command compares
 compatible reports and fails on accuracy loss, absolute coverage drift, or accepted

@@ -105,8 +105,9 @@ used in calibration, and recalibrate when they change. See the
 
 ## Regression checks
 
-`check` requires the same dataset identity, split, question types, counts, and
-targets. Dataset identity covers requests, labels, original digests, and Score
+`check` requires the same dataset identity, split, question types, counts, reported
+targets, and selected deployment `target_error`. Dataset identity covers requests,
+labels, original digests, and Score
 legend meanings; it excludes predicted probabilities and the model hash, enabling
 comparison of model revisions on the same input records.
 

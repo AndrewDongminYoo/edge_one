@@ -68,10 +68,18 @@ and `.github/workflows/calibration.yml`.
 - Shared API tests failed on missing symbols before implementation, then passed;
   full `edge_one` suite: 230 passed. Shared contract commit: `88138d7`.
 - Offline fitting tests failed on missing implementation; CLI tests observed the
-  missing executable before implementation. Calibration package suite: 20 passed.
+  missing executable before implementation. Calibration package suite: 23 passed.
 - Independent review found unbound Score legend semantics. Two regression tests
   reproduced the issue, then passed after canonical legend validation and dataset
   identity binding. No change to the runtime artifact schema was needed.
+- Final review reproduced impossible aggregate/subset validation counts and a
+  zero threshold claiming partial acceptance. Two new failing tests now pass
+  after strict report consistency checks, without changing the report schema.
+- Review also found that changing the selected deployment target could keep all
+  report rows unchanged while switching from reject-all to accept-all. A test
+  using actual fitted outputs reproduced it; reports now bind the selected
+  `target_error`, and comparison rejects a change. The baseline gained only this
+  metadata; recorded metric values remain unchanged.
 - Both Dart analyses, formatting, lockfile enforcement, generated contract checks,
   and actual fixture CLI fit/check with zero drift tolerance pass on Linux using
   Flutter 3.47.5 / Dart 3.13.4.

@@ -107,6 +107,7 @@ CalibrationRun fitCalibration(
     {
       'version': 1,
       'model_sha256': dataset.modelSha256,
+      'target_error': targetError,
       'dataset_sha256': dataset.sha256,
       'seed': seed,
       'split': {
