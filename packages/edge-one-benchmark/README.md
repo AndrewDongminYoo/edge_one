@@ -151,7 +151,9 @@ unchanged. Empirical fitting targets do not guarantee evaluation error.
 
 Latency is the sum of entered **synthetic exchange durations**, not replay wall
 clock or measured inference. Unknown timing remains null. Success and failure
-samples stay separate; nearest-rank p50/p95 uses `ceil(q*N)-1`.
+samples stay separate; nearest-rank p50/p95 uses `ceil(q*N)-1`. A known aggregate
+above `2^53-1` microseconds rejects replay with `FormatException` before report
+creation; the exact limit remains valid. Durations are never rounded or clamped.
 
 Cost unit is `application_microcredits`, basis
 `conservative_fixture_reservation`. Entered remote calls count even on failure;

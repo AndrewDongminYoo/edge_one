@@ -413,10 +413,7 @@ final class BenchmarkCapture {
   final SystemOneResponse? response;
   final String? errorCode, failureOrigin;
   final List<BackendExchange> exchanges;
-  int? get elapsedUs =>
-      exchanges.isEmpty || exchanges.any((e) => e.elapsedUs == null)
-      ? null
-      : exchanges.fold(0, (sum, e) => sum! + e.elapsedUs!);
+  int? get elapsedUs => _checkedElapsedUs(exchanges);
   Map<String, Object?> toJson(BenchmarkCase source) => {
     'version': 1,
     'run_id': runId,
@@ -445,6 +442,21 @@ final class BenchmarkCapture {
         },
     ],
   };
+}
+
+int? _checkedElapsedUs(List<BackendExchange> exchanges) {
+  if (exchanges.isEmpty || exchanges.any((e) => e.elapsedUs == null))
+    return null;
+  var total = 0;
+  for (final exchange in exchanges) {
+    final next = exchange.elapsedUs!;
+    if (total > 9007199254740991 - next)
+      throw const FormatException(
+        'aggregate elapsed_us exceeds JSON-safe integer range',
+      );
+    total += next;
+  }
+  return total;
 }
 
 /// Checks capture structure and evidence association. This does not establish
@@ -500,6 +512,8 @@ void validateCaptures(BenchmarkBundle bundle, List<BenchmarkCapture> captures) {
         throw const FormatException('capture exchange not in fixture');
     }
     _validateCaptureBinding(bundle, runs[capture.runId]!, source, capture);
+    // Reject unsafe fixture timing before replay can mint a trusted result.
+    _checkedElapsedUs(capture.exchanges);
   }
   if (expected.isNotEmpty) throw const FormatException('missing captures');
 }
