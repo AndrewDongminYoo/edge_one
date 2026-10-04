@@ -9,10 +9,11 @@ Future<void> main(List<String> arguments) async {
       throw const FormatException('use validate or report');
     final command = arguments.first;
     final parser = ArgParser()..addOption('suite', mandatory: true);
-    if (command == 'report') parser.addOption('output', mandatory: true);
     final args = parser.parse(arguments.skip(1));
     if (args.rest.isNotEmpty)
       throw const FormatException('unexpected positional arguments');
+    if (!args.wasParsed('suite'))
+      throw const FormatException('missing --suite');
     final suite = File(args['suite'] as String);
     final files = {
       'suite.json': suite.readAsStringSync(),
@@ -26,37 +27,11 @@ Future<void> main(List<String> arguments) async {
       );
       return;
     }
-    final output = File(args['output'] as String);
-    String resolved(File file) => file.existsSync()
-        ? file.resolveSymbolicLinksSync()
-        : '${file.parent.resolveSymbolicLinksSync()}/${file.uri.pathSegments.last}';
-    final protected = {
-      resolved(suite),
-      for (final name in {...fixtureFiles, 'expected-report.json'})
-        resolved(File('${suite.parent.path}/$name')),
-    };
-    if (protected.contains(resolved(output)) ||
-        (output.existsSync() &&
-            protected.any(
-              (path) =>
-                  File(path).existsSync() &&
-                  FileSystemEntity.identicalSync(output.path, path),
-            )))
-      throw const FormatException(
-        'output must not overwrite fixture inputs or reviewed baseline',
-      );
     final report = benchmarkReport(bundle, await replayBenchmark(bundle));
-    final staging = output.parent.createTempSync('.edge-one-benchmark-');
-    try {
-      final staged = File('${staging.path}/report.json');
-      staged.writeAsStringSync(
-        '${const JsonEncoder.withIndent('  ').convert(report)}\n',
-      );
-      staged.renameSync(output.path);
-    } finally {
-      staging.deleteSync(recursive: true);
-    }
-    stdout.writeln('Wrote synthetic fixture report to ${output.path}.');
+    final serialized =
+        '${const JsonEncoder.withIndent('  ').convert(report)}\n';
+    stdout.add(utf8.encode(serialized));
+    await stdout.flush();
   } on FormatException catch (error) {
     stderr.writeln('benchmark: ${error.message}');
     exitCode = 64;

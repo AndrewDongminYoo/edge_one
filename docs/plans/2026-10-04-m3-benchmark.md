@@ -42,7 +42,8 @@ Source design: [specification](../specs/2026-10-04-m3-benchmark.md).
 
 ## Task 4: CLI, fixtures, docs and checks
 
-- [x] Add validate/report CLI; prohibit fixture/baseline overwrite and live options.
+- [x] Add validate/report CLI; emit report JSON to stdout and reject output-path
+      and live options. Callers own any shell redirection.
 - [x] Generate 11 invented requests across five shapes and four runs (three modes
       plus explicit denied hybrid); preserve producer provenance and raw evidence.
 - [x] Red/green CLI baseline determinism and failure-path tests.
@@ -64,6 +65,13 @@ for the exact parsed bundle. Regressions cover stripped failed-dispatch evidence
 altered fallback refusal metadata, copied/spoofed lists, cross-bundle reuse and
 nested mutation. Structural validation remains separate from this provenance
 precondition; v1 does not import arbitrary capture artifacts.
+
+The report CLI now has no filesystem writer. A deterministic parent-symlink
+retarget reproduced a fixture overwrite during replay; path canonicalization
+cannot guarantee directory identity with Dart's path-based I/O APIs. Regressions
+require exact JSON stdout, empty stdout on input/usage failure and rejection of
+the former `--output` option before reading fixtures. CI redirects stdout to its
+temporary directory and retains the unchanged expected-report comparison.
 
 No commit or publication is authorized before root review. Root owns integration
 onto the latest calibration/router stack and the focused stacked PR. Native

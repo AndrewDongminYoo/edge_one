@@ -76,6 +76,9 @@ answers, and forced mixed-request failures all preserve complete accounting.
 
 Six fixed input filenames and exact byte hashes keep the loader small. A separate
 explicit generator authors fixtures; tests/CI never overwrite them. CLI reports
-include full capture evidence and fixture provenance; Linux CI compares the
-complete result to the reviewed expected JSON. Runtime checkout identity belongs
+include full capture evidence and fixture provenance and are emitted as JSON to
+stdout only. There is no CLI output-path writer; `--output` is rejected. Shell
+redirection and destination protection belong to the caller. Linux CI redirects
+to its temporary directory and compares the complete result to the reviewed
+expected JSON. Runtime checkout identity belongs
 in CI/operator execution logs, not a self-referential committed baseline.

@@ -55,7 +55,7 @@ jobs:
           dart analyze .
           dart test
           dart run bin/edge_one_benchmark.dart validate --suite test/fixtures/v1/suite.json
-          dart run bin/edge_one_benchmark.dart report --suite test/fixtures/v1/suite.json --output "$RUNNER_TEMP/benchmark-report.json"
+          dart run bin/edge_one_benchmark.dart report --suite test/fixtures/v1/suite.json > "$RUNNER_TEMP/benchmark-report.json"
           cmp test/fixtures/v1/expected-report.json "$RUNNER_TEMP/benchmark-report.json"
       - name: Test verified model download state machine
         working-directory: packages/edge_one_flutter

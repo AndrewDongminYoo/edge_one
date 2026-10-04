@@ -18,7 +18,7 @@ dart --suppress-analytics run packages/edge-one-benchmark/bin/edge_one_benchmark
   --suite packages/edge-one-benchmark/test/fixtures/v1/suite.json
 dart --suppress-analytics run packages/edge-one-benchmark/bin/edge_one_benchmark.dart report \
   --suite packages/edge-one-benchmark/test/fixtures/v1/suite.json \
-  --output /tmp/edge-one-benchmark-report.json
+  > /tmp/edge-one-benchmark-report.json
 cmp packages/edge-one-benchmark/test/fixtures/v1/expected-report.json \
   /tmp/edge-one-benchmark-report.json
 ```
@@ -27,7 +27,13 @@ Run `dart --suppress-analytics test` from this package directory. Tests and CI
 never regenerate the expected report. A maintainer may deliberately run
 `dart --suppress-analytics run tool/update_fixture.dart` here and review the full
 diff. The generator rejects conflicting exchanges for an identical backend and
-request digest. The CLI refuses to overwrite any fixture input or baseline.
+request digest.
+
+`report` emits only the complete JSON report and a trailing newline to stdout;
+diagnostics go to stderr. It reads fixture inputs and has no output-path writer.
+The `--output` option is unsupported. Shell redirection is caller-owned:
+choose a separate report destination, never a fixture input or baseline.
+`validate` retains its short status line on stdout.
 
 ## Fixture contract
 
