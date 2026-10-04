@@ -116,3 +116,45 @@ Ruling: custom-redactor support is an explicit whole-input option, preserving th
 six-field JSONL contract. Producers must supply trustworthy pre-redaction digests
 and deduplicate originals before redaction. Enabling it for unredacted or mixed
 inputs weakens canonical duplicate detection, so the default remains false.
+
+## Task 4: approved versioned comparison identity sidecar
+
+Files: new `lib/src/identity.dart` and `test/identity_test.dart`; dataset, fitting,
+report, CLI, exports, README and separate v2 synthetic fixtures in calibration.
+
+Interfaces: `comparisonRequestSha256(SystemOneRequest)`;
+`CalibrationIdentitySidecar.fromRequests(Iterable<SystemOneRequest>)`,
+`.parse(Object?)`, `.toJson()`; parser options `identitySidecar`,
+`originalRequests: Map<String, SystemOneRequest>?`, `trustIdentitySidecar: false`.
+CLI: `--identity-sidecar`, `--original-requests`, `--trust-identity-sidecar`.
+
+- [x] Add real RecordingBackend recapture/refit regression across logical and
+      physical model changes, and observe existing v1 incompatibility first.
+- [x] Add digest golden/order/type/content, exact coverage, conflicts, semantic
+      duplicates, mixed models, redacted collision/trust and raw integrity tests.
+- [x] Implement producer and strict sidecar parser; verify originals in memory;
+      bind v2 dataset identity and split to semantic digests with raw provenance.
+- [x] Test v2 schema/split compatibility, v1 separation and CLI sidecar ingestion;
+      implement report version validation and CLI options without tolerance edits.
+- [x] Add a separate v2 baseline and documentation; retain v1 fixture bytes.
+- [x] Run complete calibration/core suites, analyzers, format, lock/contracts,
+      baseline CLI checks and Trunk; commit locally and report red/green evidence.
+
+Review focus: hidden-original trust cannot prove content; order changes must
+remain visible; duplicate raw/semantic associations fail closed; original hash
+verification must precede migration; legacy reports cannot silently gain v2
+semantics. The user approved this design and delegated native execution; no
+additional design approval or subagent dispatch is required.
+
+Task 4 execution evidence: actual RecordingBackend logical/physical recapture
+failed first with `incompatible reports: dataset_sha256 differs`; expanded API
+tests then failed on missing sidecar symbols. A separate v2 split-tampering test
+failed by accepting swapped members before deterministic validation was added.
+All 67 calibration and 230 core tests now pass, including real CLI recapture/refit
+for unredacted and redacted recordings. Both analyzers, format, enforced lock,
+schema/TypeScript/generated/Dart contract checks pass. Actual v1 CLI output/report
+are byte-identical to the committed baseline and thresholds; v2 CLI matches its
+separate reviewed baseline. The v2 fixture has 24 requests, 12 per partition,
+10/12 accepted per question on validation at each target, zero accepted errors.
+These synthetic figures demonstrate software behavior only. Hidden-original
+producer trust remains an explicit assertion, never authentication.

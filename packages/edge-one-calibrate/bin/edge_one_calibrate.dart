@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/args.dart';
+import 'package:edge_one/edge_one.dart';
+import 'package:edge_one/testing.dart' show RecordingBackend;
 import 'package:edge_one_calibrate/edge_one_calibrate.dart';
 import 'package:edge_one_calibrate/src/output_pair.dart';
 
@@ -16,6 +18,19 @@ void main(List<String> arguments) {
       help:
           'Treat the whole input as redacted; use trusted original request_sha256 values. '
           'Producers must deduplicate requests before redaction.',
+    )
+    ..addOption(
+      'identity-sidecar',
+      help: 'Versioned comparison identity sidecar JSON.',
+    )
+    ..addOption(
+      'original-requests',
+      help: 'Local JSON array of original requests; never persisted.',
+    )
+    ..addFlag(
+      'trust-identity-sidecar',
+      negatable: false,
+      help: 'Explicitly trust producer digests for hidden originals.',
     )
     ..addOption('model-sha256', help: 'Expected lowercase model SHA-256.')
     ..addOption('output', defaultsTo: 'thresholds.json')
@@ -58,13 +73,40 @@ void main(List<String> arguments) {
       final seed = int.tryParse(_required(command, 'seed'));
       if (seed == null) throw ArgumentError('--seed must be an integer');
       final target = _rate(command, 'target-error');
-      final paths = [input, output, report].map(_canonicalPath).toSet();
-      if (paths.length != 3)
-        throw ArgumentError('input, output and report paths must differ');
+      final sidecarPath = command.option('identity-sidecar');
+      final originalsPath = command.option('original-requests');
+      final allPaths = [input, output, report, ?sidecarPath, ?originalsPath];
+      if (allPaths.map(_canonicalPath).toSet().length != allPaths.length) {
+        throw ArgumentError(
+          'input, sidecar, originals, output and report paths must differ',
+        );
+      }
+      final sidecar = sidecarPath == null
+          ? null
+          : CalibrationIdentitySidecar.parse(
+              jsonDecode(File(sidecarPath).readAsStringSync()),
+            );
+      Map<String, SystemOneRequest>? originals;
+      if (originalsPath != null) {
+        final values = jsonDecode(File(originalsPath).readAsStringSync());
+        if (values is! List)
+          throw const FormatException('original requests must be a JSON array');
+        originals = {};
+        for (final value in values) {
+          final request = SystemOneJson.decodeRequest(value);
+          final digest = RecordingBackend.requestSha256(request);
+          if (originals.containsKey(digest))
+            throw const FormatException('duplicate original request');
+          originals[digest] = request;
+        }
+      }
       final dataset = CalibrationDataset.parse(
         File(input).readAsStringSync(),
         modelSha256: hash,
         redactedRequests: command.flag('redacted-requests'),
+        identitySidecar: sidecar,
+        originalRequests: originals,
+        trustIdentitySidecar: command.flag('trust-identity-sidecar'),
       );
       final result = fitCalibration(dataset, seed: seed, targetError: target);
       final warnings = writeCalibrationOutputs(
