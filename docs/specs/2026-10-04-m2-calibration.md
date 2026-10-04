@@ -87,3 +87,18 @@ No acceptance cannot masquerade as improved accuracy.
 
 CI runs deterministic synthetic tests and the CLI against a committed baseline.
 Tests explicitly prove failure on degraded accuracy and automation drift.
+
+## Output publication
+
+Keep the separate artifact and report paths. Serialize and stage both before
+replacing either; require existing parent directories and reject directory or
+special-file destinations, including links to directories. Back up existing
+file/link entries by rename so link
+targets are never copied or overwritten. On synchronous publication failure,
+attempt restoration of every prior entry and remove newly published outputs.
+Retain backups and report recovery directories if any restoration fails.
+
+After both outputs are published, cleanup failures produce warnings with paths
+and preserve the installed pair with exit 0. Never roll back after cleanup has
+started deleting backups. These guarantees require exclusive path ownership;
+crash atomicity and concurrent filesystem mutation are out of scope.

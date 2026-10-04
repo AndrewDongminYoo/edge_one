@@ -32,6 +32,18 @@ request stay together. `--target-error 0.05` selects the artifact's gate; the re
 also includes all three default targets. A nondefault target adds a report row.
 Changing validation labels never changes fitted temperatures or thresholds.
 
+Both output parents must already exist. `fit` serializes and stages the artifact
+and report before replacing either destination. Only regular files, non-directory
+links, or absent destinations are accepted. Existing links are replaced as
+entries; their targets are not overwritten. On a synchronous publication failure, the command
+restores prior entries and removes newly created outputs. If restoration fails,
+the file error identifies retained recovery directories containing backups.
+
+Once both outputs are published, a cleanup failure prints a warning with the
+remaining directory path and leaves the installed pair in place (exit 0). This
+is not a crash-atomic transaction. Use exclusive destination paths: concurrent
+writers or directory changes are outside the rollback guarantee.
+
 ## Labeled cache format
 
 Each JSONL object extends a version 1 `RecordingBackend` line with `model_sha256`
