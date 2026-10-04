@@ -65,6 +65,16 @@ and `.github/workflows/calibration.yml`.
 
 ## Execution evidence
 
+- Paired output review reproduced partial publication on a missing report parent
+  and an existing report directory. Four actual CLI regressions failed first for
+  absent/existing artifact cases. Deterministic I/O fault tests also reproduced
+  replacement, symlink restoration, rollback, cleanup, and FIFO rejection gaps.
+  The internal helper now stages both files, backs up prior entries, restores on
+  synchronous failure, retains failed-recovery backups, and reports cleanup
+  warnings after successful publication. Flags and numerical fixtures stay fixed.
+  Follow-up review reproduced a directory-target link replacing another output's
+  parent. CLI and helper regressions now reject directory links before mutation.
+
 - Shared API tests failed on missing symbols before implementation, then passed;
   full `edge_one` suite: 230 passed. Shared contract commit: `88138d7`.
 - Offline fitting tests failed on missing implementation; CLI tests observed the

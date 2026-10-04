@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:edge_one_calibrate/edge_one_calibrate.dart';
+import 'package:edge_one_calibrate/src/output_pair.dart';
 
 void main(List<String> arguments) {
   final parser = ArgParser()..addFlag('help', abbr: 'h', negatable: false);
@@ -66,8 +67,15 @@ void main(List<String> arguments) {
         redactedRequests: command.flag('redacted-requests'),
       );
       final result = fitCalibration(dataset, seed: seed, targetError: target);
-      _writeJson(output, result.profile.toJson());
-      _writeJson(report, result.report);
+      final warnings = writeCalibrationOutputs(
+        artifactPath: output,
+        artifact: result.profile.toJson(),
+        reportPath: report,
+        report: result.report,
+      );
+      for (final warning in warnings) {
+        stderr.writeln('Warning: $warning');
+      }
       stdout.writeln(
         'Wrote $output and $report. Held-out validation coverage:',
       );
@@ -144,19 +152,4 @@ String _canonicalPath(String path) {
   if (parent.existsSync())
     return '${parent.resolveSymbolicLinksSync()}/${file.uri.pathSegments.last}';
   return file.uri.normalizePath().toFilePath();
-}
-
-void _writeJson(String path, Object? value) {
-  final destination = File(path);
-  final temporary = destination.parent.createTempSync('.edge-one-calibrate-');
-  try {
-    final staged = File('${temporary.path}/output.json');
-    staged.writeAsStringSync(
-      '${const JsonEncoder.withIndent('  ').convert(value)}\n',
-      flush: true,
-    );
-    staged.renameSync(destination.path);
-  } finally {
-    temporary.deleteSync(recursive: true);
-  }
 }

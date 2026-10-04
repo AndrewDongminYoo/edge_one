@@ -111,6 +111,66 @@ void main() {
     expect(File('${temporary.path}/thresholds.json').existsSync(), isFalse);
   });
 
+  for (final existingArtifact in [false, true]) {
+    for (final directoryReport in [false, true]) {
+      test(
+        'report ${directoryReport ? 'directory' : 'missing parent'} preserves '
+        '${existingArtifact ? 'existing' : 'absent'} artifact',
+        () async {
+          final artifact = File('${temporary.path}/thresholds.json');
+          if (existingArtifact) artifact.writeAsStringSync('old artifact');
+          final report = directoryReport
+              ? '${temporary.path}/report.json'
+              : '${temporary.path}/missing/report.json';
+          if (directoryReport) Directory(report).createSync();
+          final result = await run([...fitArgs(), '--report', report]);
+          expect(result.exitCode, 74, reason: '${result.stderr}');
+          expect(result.stderr, contains('File error:'));
+          expect(result.stdout, isNot(contains('Wrote')));
+          expect(artifact.existsSync(), existingArtifact);
+          if (existingArtifact)
+            expect(artifact.readAsStringSync(), 'old artifact');
+          if (directoryReport) expect(Directory(report).existsSync(), isTrue);
+          expect(
+            temporary.listSync().where(
+              (entry) => entry.path.contains('.edge-one-calibrate-'),
+            ),
+            isEmpty,
+          );
+        },
+      );
+    }
+  }
+
+  for (final reportIsParent in [false, true]) {
+    test('directory link destination cannot replace the other output parent '
+        '(report: $reportIsParent)', () async {
+      final physical = Directory('${temporary.path}/physical')..createSync();
+      final old = File('${physical.path}/old.json')
+        ..writeAsStringSync('prior output');
+      final parent = Link('${temporary.path}/outputs')..createSync('physical');
+      final child = '${parent.path}/old.json';
+      final result = await run([
+        ...fitArgs(),
+        '--output',
+        reportIsParent ? child : parent.path,
+        '--report',
+        reportIsParent ? parent.path : child,
+      ]);
+      expect(result.exitCode, 74, reason: '${result.stdout}\n${result.stderr}');
+      expect(result.stdout, isNot(contains('Wrote')));
+      expect(parent.targetSync(), 'physical');
+      expect(old.readAsStringSync(), 'prior output');
+      expect(File(child).readAsStringSync(), 'prior output');
+      expect(
+        temporary
+            .listSync(recursive: true, followLinks: false)
+            .where((entry) => entry.path.contains('.edge-one-calibrate-')),
+        isEmpty,
+      );
+    });
+  }
+
   test('custom-redacted cached input requires the CLI opt-in flag', () async {
     input.writeAsStringSync(jsonl(await customRedactedRecords()));
     final strict = await run(fitArgs());
