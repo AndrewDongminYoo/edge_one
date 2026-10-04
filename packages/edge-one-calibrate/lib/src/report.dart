@@ -37,6 +37,24 @@ List<String> checkRegression(
       throw FormatException('incompatible reports: $key differs');
     }
   }
+  if (before['version'] == 2) {
+    final associations = <String, Object?>{
+      for (final pair in before['provenance']! as List)
+        _map(pair)['request_sha256']! as String: _map(
+          pair,
+        )['comparison_sha256'],
+    };
+    for (final value in after['provenance']! as List) {
+      final pair = _map(value);
+      final raw = pair['request_sha256']! as String;
+      if (associations.containsKey(raw) &&
+          associations[raw] != pair['comparison_sha256']) {
+        throw const FormatException(
+          'incompatible reports: shared raw request has conflicting comparison identity',
+        );
+      }
+    }
+  }
   final beforeQuestions = _map(before['questions']);
   final afterQuestions = _map(after['questions']);
   if (beforeQuestions.length != afterQuestions.length ||

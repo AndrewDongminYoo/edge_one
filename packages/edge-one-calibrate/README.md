@@ -232,7 +232,11 @@ V2 reports explicitly declare `identity_scheme` and
 labels and Score legends in dataset identity, rank semantic digests by
 SHA-256 of UTF-8 `seed:digest`, and put those digests in the split lists. Raw
 associations remain in `provenance` for inspection and are excluded from report
-comparison equality. Parsing checks exact provenance coverage and seeded split
+comparison equality; any raw digest shared across compared reports must still
+map to the same semantic digest. Label keys alone are sorted when assembling v2
+dataset identity, so label insertion order does not change identity. Ordered
+request content and Score legends remain significant. Parsing checks exact
+provenance coverage and seeded split
 membership. The runtime thresholds artifact remains version 1 and strictly bound
 to the physical model hash. Thresholds and drift tolerances are unchanged.
 

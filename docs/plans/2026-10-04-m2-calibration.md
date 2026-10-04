@@ -158,3 +158,18 @@ separate reviewed baseline. The v2 fixture has 24 requests, 12 per partition,
 10/12 accepted per question on validation at each target, zero accepted errors.
 These synthetic figures demonstrate software behavior only. Hidden-original
 producer trust remains an explicit assertion, never authentication.
+
+Task 4 scoped review correction evidence (one grouped correction wave): two new
+regressions failed before the fixes: shared raw digests could map to contradictory
+semantic identities across individually valid reports, and reordering only label
+keys changed dataset identity. V2 comparison now checks shared raw associations;
+v2 dataset assembly sorts only label keys. Ordered request and Score legend
+content remains unchanged. Both regressions and the real Recorder changed-model
+positive path pass; the complete calibration suite now passes 69 tests.
+The v2 baseline changes only `dataset_sha256` from
+`eb2d102378f8e3166428d649b25de60fcf96756e16daa9e19fe6f7d50c757824` to
+`830738e3161a1f409ed9c54231da129aabb642d4f33841bfe7c16c0aeb197c51`.
+Split, metrics, provenance and threshold artifact bytes remain identical. Legacy
+v1 CLI outputs still match their committed report and thresholds byte-for-byte.
+Both analyzers, format, lock and contract checks pass; no additional review round
+or changes to tolerances, runtime, or RecordingBackend are included.

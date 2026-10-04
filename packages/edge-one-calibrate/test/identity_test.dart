@@ -651,4 +651,45 @@ void main() {
       }
     },
   );
+  test(
+    'v2 rejects contradictory shared raw provenance across reports',
+    () async {
+      final baseline = fitCalibration(
+        dataset(await capture('one', modelHash)),
+      ).report;
+      final candidate = copy(baseline);
+      final pairs = candidate['provenance']! as List;
+      final first = pairs[0]['request_sha256'];
+      pairs[0]['request_sha256'] = pairs[1]['request_sha256'];
+      pairs[1]['request_sha256'] = first;
+      // Each report remains structurally valid; only the shared raw associations
+      // contradict each other. Report-local validation cannot detect this.
+      expect(checkRegression(candidate, candidate), isEmpty);
+      expect(() => checkRegression(baseline, candidate), throwsFormatException);
+      expect(() => checkRegression(candidate, baseline), throwsFormatException);
+    },
+  );
+
+  test(
+    'v2 label insertion order preserves dataset identity and fitted reports',
+    () async {
+      final rows = await capture('one', modelHash);
+      final sidecar = CalibrationIdentitySidecar.fromRequests(originals(rows));
+      final reordered = rows.map(copy).toList();
+      for (final row in reordered) {
+        final labels = row['labels']! as Map<String, Object?>;
+        row['labels'] = {
+          for (final key in labels.keys.toList().reversed) key: labels[key],
+        };
+      }
+      final before = dataset(rows, sidecar: sidecar);
+      final after = dataset(reordered, sidecar: sidecar);
+      expect(after.sha256, before.sha256);
+      final baseline = fitCalibration(before);
+      final candidate = fitCalibration(after);
+      expect(candidate.profile.toJson(), baseline.profile.toJson());
+      expect(candidate.report, baseline.report);
+      expect(checkRegression(baseline.report, candidate.report), isEmpty);
+    },
+  );
 }

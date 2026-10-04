@@ -195,7 +195,12 @@ final class CalibrationDataset {
               'request_sha256': digest,
               'request': requestJson,
             },
-            'labels': labels,
+            'labels': comparison == null
+                ? labels
+                : {
+                    for (final key in labels.keys.toList()..sort())
+                      key: labels[key],
+                  },
             'score_legends': scoreLegends,
           }),
         );

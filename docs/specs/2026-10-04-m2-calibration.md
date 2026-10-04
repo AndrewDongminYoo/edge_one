@@ -127,7 +127,10 @@ V2 reports declare `identity_scheme` and
 `split_scheme: "sha256-seed-comparison-v1"`; ordered dataset identity binds
 comparison digests, labels and Score legends, excluding predictions and model
 names. Rank and split on semantic digests. Keep raw-to-semantic associations in
-`provenance`, outside compared identity. V1 reports retain their existing raw
+`provenance`, outside compared identity. Shared raw digests across two reports
+must retain the same comparison digest. Label mappings use sorted question keys
+in v2 dataset identity because label insertion order has no fitting meaning;
+request and Score legend order remain significant. V1 reports retain their existing raw
 request/stored-body identity and raw split semantics. Reject cross-version or
 cross-scheme comparisons. Redacted v1 without originals or a trusted sidecar
 cannot compare changed logical names. Thresholds and tolerances are unchanged.
