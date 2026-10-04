@@ -60,7 +60,9 @@ final class CalibrationDataset {
   /// Available unredacted bodies and [originalRequests] always verify both raw
   /// and semantic digests. Supplied originals must cover the dataset exactly.
   /// Only hidden originals may rely on [trustIdentitySidecar], an explicit
-  /// producer assertion that cannot authenticate their content.
+  /// producer assertion that cannot authenticate their content. This attests
+  /// that the producer validated stable ordered original question definitions,
+  /// original digest correctness and uniqueness before redaction.
   factory CalibrationDataset.parse(
     String jsonl, {
     required String modelSha256,
@@ -115,6 +117,9 @@ final class CalibrationDataset {
           throw const FormatException('request/response model mismatch');
         final requestJson = SystemOneJson.encodeRequest(request);
         final hidden = redactedRequests || request.state == redactedState;
+        if (!hidden && RecordingBackend.requestSha256(request) != digest) {
+          throw const FormatException('raw request digest mismatch');
+        }
         String? comparison;
         SystemOneRequest? verifiedOriginal;
         if (identitySidecar != null) {

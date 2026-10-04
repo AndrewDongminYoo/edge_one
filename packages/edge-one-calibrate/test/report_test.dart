@@ -184,8 +184,14 @@ void main() {
       (question) {
         final target = (question['targets'] as List).first as Map;
         final metrics = target['validation'] as Map;
-        metrics['errors'] = 11;
-        metrics['error_rate'] = 11 / (metrics['accepted'] as int);
+        final totalErrors =
+            ((question['validation_count'] as int) *
+                    (1 - (question['validation_accuracy'] as num)))
+                .round();
+        final impossibleErrors = totalErrors + 1;
+        expect(impossibleErrors, lessThanOrEqualTo(metrics['accepted'] as int));
+        metrics['errors'] = impossibleErrors;
+        metrics['error_rate'] = impossibleErrors / (metrics['accepted'] as int);
       },
     ]) {
       final candidate = copy(baseline);

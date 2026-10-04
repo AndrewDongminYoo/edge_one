@@ -75,6 +75,7 @@ names, Score labels are legend keys, and Noul labels are booleans. Every questio
 needs exactly one label and observations in both partitions. Each question key
 must keep the same instructions, criteria, and Score legend meanings.
 
+Every unredacted request must match its original RecordingBackend digest.
 Duplicate original digests are rejected, as are canonical duplicate unredacted
 requests under different digests. Redacted states cannot identify original
 requests: the producer must preserve trustworthy original request digests.
@@ -202,7 +203,13 @@ A dataset must use one logical model name and one physical model hash.
 Unredacted input verifies both digests. For redacted input either supply
 `originalRequests: {rawDigest: originalRequest}` in memory (exact coverage,
 verifying both digests), or explicitly assert trusted producer provenance with
-`trustIdentitySidecar: true`. The latter cannot authenticate hidden originals.
+`trustIdentitySidecar: true`. This explicitly attests that the producer verified
+original digests and uniqueness **and stable ordered original question definitions**.
+`CalibrationIdentitySidecar.fromRequests` performs these checks before emitting
+the sidecar. Third-party producers must enforce the same invariant, including
+instructions and criterion meanings that a custom redactor may hide. The consumer
+cannot authenticate hidden originals or independently establish their definitions
+from digest pairs alone.
 Custom redactors additionally require `redactedRequests: true`; default state
 redaction is detected automatically. Trust never skips verification of available
 originals or unredacted bodies. CLI equivalents are:
@@ -248,3 +255,8 @@ identity without originals or a trusted producer sidecar. V1/v2 comparisons and
 unknown schemes fail closed. The original fixture and baseline are unchanged;
 `tool/update_fixture.dart --comparison` regenerates only the separate 24-request
 synthetic comparison input and sidecar. Baselines still require manual review.
+
+The legacy synthetic fixture was migrated from invalid placeholder hashes to
+verified RecordingBackend hashes under the approved integrity correction. See
+[the exact migration evidence](../../docs/notes/2026-10-04-calibration-integrity-migration.md)
+for file hashes, split/metric changes and the unchanged v2 fixtures.

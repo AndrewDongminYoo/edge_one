@@ -37,15 +37,30 @@ final class CalibrationIdentitySidecar {
     : associations = Map.unmodifiable(associations);
 
   /// Produce before redaction, using the same originals passed to the recorder.
+  /// Shared question keys must retain identical ordered original definitions.
+  /// This validates the producer obligation asserted when consumers explicitly
+  /// trust hidden originals; digest pairs alone cannot prove that obligation.
   factory CalibrationIdentitySidecar.fromRequests(
     Iterable<SystemOneRequest> originals,
   ) {
     String? model;
     final entries = <Map<String, Object?>>[];
+    final definitions = <String, String>{};
     for (final original in originals) {
       model ??= original.model;
       if (model != original.model) {
         throw const FormatException('mixed logical models in originals');
+      }
+      final request = SystemOneJson.encodeRequest(original);
+      final questions = request['questions']! as Map<String, Object?>;
+      for (final entry in questions.entries) {
+        final definition = jsonEncode(entry.value);
+        final previous = definitions.putIfAbsent(entry.key, () => definition);
+        if (previous != definition) {
+          throw FormatException(
+            'original question "${entry.key}" changes definition',
+          );
+        }
       }
       entries.add({
         'request_sha256': RecordingBackend.requestSha256(original),

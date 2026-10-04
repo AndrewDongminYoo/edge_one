@@ -100,8 +100,22 @@ void main() {
     () {
       final a = record(1);
       expect(() => dataset([a, a]), throwsFormatException);
-      final duplicate = record(2)..['request'] = a['request'];
-      expect(() => dataset([a, duplicate]), throwsFormatException);
+      (a['request'] as Map)['state'] = {'first': 1, 'second': 2};
+      rehashRequest(a);
+      final duplicate = copy(a);
+      (duplicate['request'] as Map)['state'] = {'second': 2, 'first': 1};
+      rehashRequest(duplicate);
+      expect(duplicate['request_sha256'], isNot(a['request_sha256']));
+      expect(
+        () => dataset([a, duplicate]),
+        throwsA(
+          isA<FormatException>().having(
+            (e) => e.message,
+            'message',
+            contains('duplicate canonical request'),
+          ),
+        ),
+      );
       final redactedA = record(1);
       final redactedB = record(2);
       (redactedA['request'] as Map)['state'] = '[redacted]';
@@ -125,10 +139,6 @@ void main() {
         (j) => (j['response'] as Map)['answers'] = {},
         (j) => (j['response'] as Map)['model'] = 'other',
         (j) =>
-            (((j['request'] as Map)['questions'] as Map)['topic']
-                    as Map)['instructions'] =
-                'Changed',
-        (j) =>
             (((j['response'] as Map)['answers'] as Map)['topic']
                     as Map)['choice'] =
                 'b',
@@ -146,6 +156,27 @@ void main() {
     },
   );
 
+  test(
+    'unredacted definition drift fails after genuine raw hash verification',
+    () {
+      final rows = [record(1), record(2)];
+      (((rows.last['request'] as Map)['questions'] as Map)['topic']
+              as Map)['instructions'] =
+          'Changed';
+      rehashRequest(rows.last);
+      expect(
+        () => dataset(rows),
+        throwsA(
+          isA<FormatException>().having(
+            (e) => e.message,
+            'message',
+            contains('changes definition'),
+          ),
+        ),
+      );
+    },
+  );
+
   test('each question must have observations in both partitions', () {
     final rows = [record(1), record(2)];
     (rows.last['request'] as Map)['questions'] = {
@@ -155,7 +186,17 @@ void main() {
       'topic': ((rows.last['response'] as Map)['answers'] as Map)['topic'],
     };
     rows.last['labels'] = {'topic': 'a'};
-    expect(() => fitCalibration(dataset(rows)), throwsFormatException);
+    rehashRequest(rows.last);
+    expect(
+      () => fitCalibration(dataset(rows)),
+      throwsA(
+        isA<FormatException>().having(
+          (e) => e.message,
+          'message',
+          contains('both fitting and validation'),
+        ),
+      ),
+    );
   });
 
   test('Score legend keys and meanings cannot change within a dataset', () {

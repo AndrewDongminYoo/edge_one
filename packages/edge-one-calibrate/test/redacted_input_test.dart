@@ -30,7 +30,7 @@ void main() {
           isA<FormatException>().having(
             (e) => e.message,
             'message',
-            contains('duplicate canonical request'),
+            contains('raw request digest mismatch'),
           ),
         ),
       );
