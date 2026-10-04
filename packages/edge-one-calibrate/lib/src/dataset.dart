@@ -31,9 +31,18 @@ final class CalibrationSample {
 final class CalibrationDataset {
   CalibrationDataset._(this.modelSha256, this.records, this.sha256);
 
+  /// [redactedRequests] asserts that the whole input contains redacted requests
+  /// with trustworthy original, pre-redaction digests. It skips deduplication of
+  /// stored request bodies, which can coincide after a custom redactor runs.
+  /// Duplicate original digests and all other validation remain enforced.
+  /// Producers must deduplicate original requests before redaction; hidden
+  /// originals cannot be verified or canonically deduplicated here.
+  ///
+  /// Defaults to false; the built-in [redactedState] marker is always recognized.
   factory CalibrationDataset.parse(
     String jsonl, {
     required String modelSha256,
+    bool redactedRequests = false,
   }) {
     checkHash(modelSha256, 'model_sha256');
     final records = <CalibrationRecord>[];
@@ -73,7 +82,8 @@ final class CalibrationDataset {
         if (request.model != response.model)
           throw const FormatException('request/response model mismatch');
         final requestJson = SystemOneJson.encodeRequest(request);
-        if (request.state != redactedState &&
+        if (!redactedRequests &&
+            request.state != redactedState &&
             !requests.add(canonicalJson(requestJson))) {
           throw const FormatException('duplicate canonical request');
         }
