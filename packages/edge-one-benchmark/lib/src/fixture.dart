@@ -447,6 +447,9 @@ final class BenchmarkCapture {
   };
 }
 
+/// Checks capture structure and evidence association. This does not establish
+/// execution provenance for caller-authored captures; benchmarkReport requires
+/// the unchanged result returned by replayBenchmark for the same bundle.
 void validateCaptures(BenchmarkBundle bundle, List<BenchmarkCapture> captures) {
   final expected = {
     for (final run in bundle.runs)

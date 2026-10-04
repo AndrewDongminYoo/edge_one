@@ -77,6 +77,13 @@ A nonmodal Choice or invalid categorical label is a per-attempt
 `invalidBenchmarkResponse`, with raw body retained. Wire-invalid remote bodies
 and non-2xx bodies are also retained. There is no partial successful recording.
 
+The Dart report API requires the unchanged immutable list returned by
+`replayBenchmark(bundle)`, with that exact parsed bundle object. Passing a copied,
+wrapped, reconstructed or imported capture list, or another bundle, fails with
+`FormatException`. The public `List<BenchmarkCapture>` signatures remain the
+same; arbitrary capture import is outside v1. `validateCaptures` checks structure
+and evidence associations only; it does not certify execution provenance.
+
 Remote raw evidence scope is `decoded_transport_body`: the object supplied to
 `RemoteTransportResponse` before library parsing. It is not HTTP bytes. Local
 bodies use `decoded_backend_response`. Both are immutable snapshots.

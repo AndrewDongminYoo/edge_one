@@ -3,6 +3,7 @@ import 'package:edge_one/edge_one.dart';
 import 'case.dart';
 import 'fixture.dart';
 import 'metrics.dart';
+import 'replay.dart' show validateReplayProvenance;
 
 Map<String, int> _counts(Iterable<BenchmarkCapture> captures) {
   final rows = captures.toList();
@@ -13,12 +14,15 @@ Map<String, int> _counts(Iterable<BenchmarkCapture> captures) {
   };
 }
 
-/// Pure report over a complete capture grid. Only each run's selected quality
-/// trial contributes labels; all trials contribute synthetic duration and cost.
+/// Pure report over the unchanged list returned by replayBenchmark for this exact
+/// [bundle]. Caller-assembled, copied or imported captures are not accepted.
+/// Only each run's selected quality trial contributes labels; all trials
+/// contribute synthetic duration and cost.
 Map<String, Object?> benchmarkReport(
   BenchmarkBundle bundle,
   List<BenchmarkCapture> captures,
 ) {
+  validateReplayProvenance(bundle, captures);
   validateCaptures(bundle, captures);
   final cases = {for (final source in bundle.cases) source.id: source};
   final datasets = bundle.cases.map((c) => c.datasetId).toSet().toList()

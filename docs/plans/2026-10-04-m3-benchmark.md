@@ -59,6 +59,12 @@ gate parity; nonfinite JSON; valid 201 Score legends; forced mixed-failure local
 coverage/escalation keys; local failure origin; semantic-invalid answers. These
 changes stay inside the benchmark package and preserve #9/#16/#17 public APIs.
 
+The report API now requires the unchanged immutable list minted by fixture replay
+for the exact parsed bundle. Regressions cover stripped failed-dispatch evidence,
+altered fallback refusal metadata, copied/spoofed lists, cross-bundle reuse and
+nested mutation. Structural validation remains separate from this provenance
+precondition; v1 does not import arbitrary capture artifacts.
+
 No commit or publication is authorized before root review. Root owns integration
 onto the latest calibration/router stack and the focused stacked PR. Native
 parity, actual data rights, model measurements and billing remain unclaimed.

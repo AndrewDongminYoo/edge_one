@@ -23,6 +23,10 @@ records. The implemented format and metric conventions are documented in
   hybrid forces remote, and denied forced requests are complete errors.
 - Every case/run/trial has exactly one capture, including unsupported and error.
   Repeated trials contribute timing and cost but do not duplicate quality labels.
+- Reports accept only the unchanged immutable result from `replayBenchmark` for
+  the exact parsed bundle object. Copied or caller-assembled captures are rejected;
+  importing external capture artifacts is outside v1. Structural validation alone
+  does not establish execution provenance.
 - Raw decoded local/remote bodies, source request digests, model strings, fixture
   build metadata, errors and failure origins survive into the report.
 - Accuracy, max-probability ECE10, unscaled categorical Brier, fixed local-gate

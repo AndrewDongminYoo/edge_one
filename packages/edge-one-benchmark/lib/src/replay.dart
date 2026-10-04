@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'package:edge_one/edge_one.dart';
 import 'package:edge_one/testing.dart';
@@ -5,6 +6,28 @@ import 'fixture.dart';
 import 'case.dart';
 
 export 'case.dart' show exceedsLocalOptions;
+
+// Only this library can mint a result after the full replay and validation.
+// Copy the backing list so even its producer cannot change a minted result.
+final class _ReplayCaptures extends UnmodifiableListView<BenchmarkCapture> {
+  _ReplayCaptures(this._bundle, List<BenchmarkCapture> captures)
+    : super(List<BenchmarkCapture>.unmodifiable(captures));
+
+  final BenchmarkBundle _bundle;
+}
+
+/// Internal report precondition; structural capture validation cannot establish
+/// whether arbitrary caller-authored evidence records what actually executed.
+void validateReplayProvenance(
+  BenchmarkBundle bundle,
+  List<BenchmarkCapture> captures,
+) {
+  if (captures is! _ReplayCaptures || !identical(captures._bundle, bundle)) {
+    throw const FormatException(
+      'report requires the unchanged replayBenchmark result for this bundle',
+    );
+  }
+}
 
 final class _FixtureFailure implements Exception {
   const _FixtureFailure(this.code, {this.unsupported = false});
@@ -50,6 +73,8 @@ final class _LocalReplay implements SystemOneBackend {
 
 /// Replays fixtures through the real guarded remote backend and hybrid router.
 /// There is no process, FFI, network fallback or replay wall-clock measurement.
+/// The returned immutable list is bound to this exact [bundle]. Pass it directly
+/// to benchmarkReport; copying or rebuilding it discards replay provenance.
 Future<List<BenchmarkCapture>> replayBenchmark(BenchmarkBundle bundle) async {
   final captures = <BenchmarkCapture>[];
   for (final run in bundle.runs) {
@@ -165,5 +190,5 @@ Future<List<BenchmarkCapture>> replayBenchmark(BenchmarkBundle bundle) async {
       );
   }
   validateCaptures(bundle, captures);
-  return List.unmodifiable(captures);
+  return _ReplayCaptures(bundle, captures);
 }
