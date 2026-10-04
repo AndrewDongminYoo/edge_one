@@ -124,6 +124,19 @@ jobs:
         run: .cache/m0/.venv/bin/python spikes/m0/setup.py build --jobs 2
       - name: Check native probability parity
         run: .cache/m0/.venv/bin/python spikes/m0/run.py --output .cache/m0/linux-ci.json --repetitions 1 --threads 2 --required-parity exact
+      - name: Build production native parity driver
+        run: |
+          source_dir="$PWD/.cache/m0/llama.cpp-$(python3 -c 'import json; print(json.load(open("spikes/m0/pins.json"))["llama_cpp_commit"])')"
+          cmake -S packages/edge_one_core -B "$RUNNER_TEMP/edge-one-production" \
+            -DCMAKE_BUILD_TYPE=Release -DEDGE_ONE_BUILD_PARITY_DRIVER=ON \
+            -DFETCHCONTENT_SOURCE_DIR_LLAMA_CPP="$source_dir"
+          cmake --build "$RUNNER_TEMP/edge-one-production" --parallel 2
+          ctest --test-dir "$RUNNER_TEMP/edge-one-production" --output-on-failure
+      - name: Compare production individual and exact scoring with pinned reference
+        run: |
+          .cache/m0/.venv/bin/python tools/check_native_parity.py \
+            --driver "$RUNNER_TEMP/edge-one-production/edge_one_score_driver" \
+            --output .cache/m0/production-linux-ci.json --repetitions 1
       - name: Upload compact Linux evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -137,6 +150,9 @@ jobs:
             .cache/m0/llama.cpp-*/build/bin/*.so*
             .cache/m0/linux-ci.json
             .cache/m0/linux-ci.json.partial
+            .cache/m0/production-linux-ci.json
+            .cache/m0/production-linux-ci.json.partial
+            .cache/m0/production-linux-ci.json.stderr
 
   apple-build:
     name: Unsigned iOS and simulator builds

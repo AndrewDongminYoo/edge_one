@@ -37,9 +37,9 @@ The pnpm workspace contains the planned React Native package; the Melos/Pub work
 `edge_one_flutter` ships an app-pinned model manifest and a Dart model store that verifies resumed downloads before returning a path.
 The host app must supply durable storage and a free-space check; platform background transfers and storage policy are separate integration work.
 `packages/edge_one_core/` implements the C++17 C ABI, request validation, escaped
-renderer, model loading, cancellation and owned response memory. Production
-scoring is staged: a valid request returns status **503** until issue #9 adds the
-verified verdict scorer; no synthetic probabilities are returned in production.
+renderer, model integrity checks, verdict scoring, cancellation and owned response
+memory. It uses per-request exact prefix sharing and the pinned global readout
+temperature. Real-model parity is checked separately from model-free unit tests.
 See the [native core README](packages/edge_one_core/README.md) for the ABI contract
 and model-free Linux build/test commands.
 GitHub's Linux contract job validates schema fixtures, generated drift, TypeScript, and the Dart workspace, then runs the Dart and Flutter package tests with their respective runners.

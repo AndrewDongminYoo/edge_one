@@ -11,7 +11,7 @@
 namespace edge_one {
 using Distributions = std::vector<std::vector<double>>;
 
-// Private C++ seam, not part of the exported C ABI. #9 supplies probabilities
+// Private C++ seam, not part of the exported C ABI. The backend supplies probabilities
 // from verdict logits; test implementations are linked only into test binaries.
 class Backend {
 public:

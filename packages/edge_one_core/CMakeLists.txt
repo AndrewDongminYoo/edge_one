@@ -17,6 +17,11 @@ FetchContent_Declare(llama_cpp
   DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
 FetchContent_MakeAvailable(llama_cpp)
 
+set(EDGE_ONE_MANIFEST "${CMAKE_CURRENT_SOURCE_DIR}/../edge_one_flutter/assets/model_manifest.json")
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${EDGE_ONE_MANIFEST}")
+file(READ "${EDGE_ONE_MANIFEST}" EDGE_ONE_PINNED_MANIFEST)
+configure_file(src/pinned_manifest.hpp.in generated/pinned_manifest.hpp @ONLY)
+
 add_library(edge_one_request STATIC src/request.cpp src/renderer.cpp)
 target_compile_features(edge_one_request PUBLIC cxx_std_17)
 target_include_directories(edge_one_request PUBLIC src)
@@ -24,11 +29,20 @@ target_include_directories(edge_one_request SYSTEM PUBLIC "${llama_cpp_SOURCE_DI
 set_target_properties(edge_one_request PROPERTIES POSITION_INDEPENDENT_CODE ON
   CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN ON)
 
+add_library(edge_one_scoring STATIC src/integrity.cpp src/scorer.cpp
+  "${llama_cpp_SOURCE_DIR}/vendor/hash/sha256/sha256.c")
+target_link_libraries(edge_one_scoring PUBLIC edge_one_request)
+target_include_directories(edge_one_scoring PUBLIC include)
+target_include_directories(edge_one_scoring PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/generated"
+  "${llama_cpp_SOURCE_DIR}/vendor/hash")
+set_target_properties(edge_one_scoring PROPERTIES POSITION_INDEPENDENT_CODE ON
+  CXX_VISIBILITY_PRESET hidden C_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN ON)
+
 add_library(edge_one_core SHARED src/api.cpp src/response.cpp src/llama_backend.cpp)
 target_compile_features(edge_one_core PUBLIC cxx_std_17)
 target_include_directories(edge_one_core PUBLIC include)
 target_compile_definitions(edge_one_core PRIVATE EDGE_ONE_BUILD)
-target_link_libraries(edge_one_core PRIVATE edge_one_request llama Threads::Threads)
+target_link_libraries(edge_one_core PRIVATE edge_one_scoring llama Threads::Threads)
 set_target_properties(edge_one_core PROPERTIES
   CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN ON
   VERSION ${PROJECT_VERSION} SOVERSION 0)
@@ -40,7 +54,20 @@ if(UNIX AND NOT APPLE)
     "${CMAKE_CURRENT_SOURCE_DIR}/src/exports.map")
 endif()
 
+option(EDGE_ONE_BUILD_PARITY_DRIVER "Build the private real-model parity executable" OFF)
+if(EDGE_ONE_BUILD_PARITY_DRIVER)
+  add_executable(edge_one_score_driver tests/score_driver.cpp src/llama_backend.cpp src/response.cpp)
+  target_link_libraries(edge_one_score_driver PRIVATE edge_one_scoring llama Threads::Threads)
+endif()
+
 if(BUILD_TESTING)
+  add_executable(edge_one_scorer_test tests/scorer_test.cpp)
+  target_link_libraries(edge_one_scorer_test PRIVATE edge_one_scoring Threads::Threads)
+  add_test(NAME edge_one_scorer COMMAND edge_one_scorer_test "${EDGE_ONE_MANIFEST}")
+  add_executable(edge_one_integrity_test tests/integrity_test.cpp)
+  target_link_libraries(edge_one_integrity_test PRIVATE edge_one_scoring)
+  add_test(NAME edge_one_integrity COMMAND edge_one_integrity_test
+    "${EDGE_ONE_MANIFEST}" "${CMAKE_CURRENT_BINARY_DIR}")
   add_executable(edge_one_request_test tests/request_test.cpp)
   target_link_libraries(edge_one_request_test PRIVATE edge_one_request)
   add_test(NAME edge_one_request COMMAND edge_one_request_test
@@ -55,7 +82,7 @@ if(BUILD_TESTING)
   add_executable(edge_one_api_test tests/api_test.cpp src/api.cpp src/response.cpp src/llama_backend.cpp)
   target_include_directories(edge_one_api_test PRIVATE include)
   target_compile_definitions(edge_one_api_test PRIVATE EDGE_ONE_BUILD)
-  target_link_libraries(edge_one_api_test PRIVATE edge_one_request llama Threads::Threads)
+  target_link_libraries(edge_one_api_test PRIVATE edge_one_scoring llama Threads::Threads)
   add_test(NAME edge_one_api COMMAND edge_one_api_test
     "${CMAKE_CURRENT_SOURCE_DIR}/../edge_one_flutter/assets/model_manifest.json")
   if(UNIX AND NOT APPLE)

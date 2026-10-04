@@ -29,8 +29,8 @@ enum eo_status {
   EO_STATUS_UNAVAILABLE = 503
 };
 
-/* model_path and manifest_json are NUL-terminated UTF-8. The caller must verify
- * model bytes and manifest integrity before opening. On failure returns NULL;
+/* model_path and manifest_json are NUL-terminated UTF-8. Native opening checks
+ * pinned model/readout identity and verifies model bytes. On failure returns NULL;
  * if err is non-NULL, *err is an owned error string (or NULL on allocation
  * failure). On success *err is NULL. Release error strings using eo_free. */
 EO_API eo_engine *eo_open(const char *model_path, const char *manifest_json,
@@ -39,8 +39,9 @@ EO_API eo_engine *eo_open(const char *model_path, const char *manifest_json,
 /* Blocking; run off the UI thread. Returns owned JSON, released with eo_free.
  * On failure returns an error object; allocation failure can return NULL.
  * status is optional. One evaluation per engine; competing calls return BUSY.
- * In this staged #8 implementation valid production requests return UNAVAILABLE
- * until #9 supplies the scorer. Validation and token budgets are still checked. */
+ * Valid requests use pinned verdict scoring with exact sharing within the request.
+ * Invalid requests or token budgets return INVALID_REQUEST; unavailable models return UNAVAILABLE.
+ */
 EO_API char *eo_evaluate(eo_engine *engine, const char *request_json, int32_t *status) EO_NOEXCEPT;
 
 /* Thread-safe against an active evaluation. Idle cancellation has no effect on
