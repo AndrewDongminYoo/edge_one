@@ -57,3 +57,9 @@ String requiredText(Object? value) {
     throw const FormatException('expected nonempty text');
   return value;
 }
+
+bool exceedsLocalOptions(SystemOneQuestion question) => switch (question) {
+  ChoiceQuestion(:final criteria) => criteria.length > 26,
+  ScoreQuestion(:final criteria) => criteria.length > 26,
+  NoulQuestion() => false,
+};

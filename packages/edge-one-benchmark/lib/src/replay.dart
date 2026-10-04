@@ -2,12 +2,9 @@ import 'dart:convert';
 import 'package:edge_one/edge_one.dart';
 import 'package:edge_one/testing.dart';
 import 'fixture.dart';
+import 'case.dart';
 
-bool exceedsLocalOptions(SystemOneQuestion question) => switch (question) {
-  ChoiceQuestion(:final criteria) => criteria.length > 26,
-  ScoreQuestion(:final criteria) => criteria.length > 26,
-  NoulQuestion() => false,
-};
+export 'case.dart' show exceedsLocalOptions;
 
 final class _FixtureFailure implements Exception {
   const _FixtureFailure(this.code, {this.unsupported = false});

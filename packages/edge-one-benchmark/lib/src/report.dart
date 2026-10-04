@@ -3,7 +3,6 @@ import 'package:edge_one/edge_one.dart';
 import 'case.dart';
 import 'fixture.dart';
 import 'metrics.dart';
-import 'replay.dart' show exceedsLocalOptions;
 
 Map<String, int> _counts(Iterable<BenchmarkCapture> captures) {
   final rows = captures.toList();

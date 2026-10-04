@@ -454,6 +454,7 @@ void validateCaptures(BenchmarkBundle bundle, List<BenchmarkCapture> captures) {
         for (var trial = 0; trial < run.trialCount; trial++)
           (run.id, source.id, trial): source,
   };
+  final runs = {for (final run in bundle.runs) run.id: run};
   for (final capture in captures) {
     final source = expected.remove((
       capture.runId,
@@ -495,6 +496,7 @@ void validateCaptures(BenchmarkBundle bundle, List<BenchmarkCapture> captures) {
           canonicalJson(original.json) != canonicalJson(exchange.json))
         throw const FormatException('capture exchange not in fixture');
     }
+    _validateCaptureBinding(bundle, runs[capture.runId]!, source, capture);
   }
   if (expected.isNotEmpty) throw const FormatException('missing captures');
 }
@@ -518,5 +520,201 @@ void validateBenchmarkAnswerSemantics(
     }
   } on FormatException catch (error) {
     throw BenchmarkAnswerException(error.message);
+  }
+}
+
+// This validates the evidence association, not a second router/budget machine.
+// A fixture may be reused by separate captures after masking, but each capture
+// can contain only the primary calls that its source and mode permit.
+void _validateCaptureBinding(
+  BenchmarkBundle bundle,
+  BenchmarkRun run,
+  BenchmarkCase source,
+  BenchmarkCapture capture,
+) {
+  void require(bool valid) {
+    if (!valid)
+      throw const FormatException(
+        'capture exchanges do not match source, mode or routing',
+      );
+  }
+
+  final locals = capture.exchanges.where((e) => e.backend == 'local').toList();
+  final remotes = capture.exchanges
+      .where((e) => e.backend == 'remote')
+      .toList();
+  require(locals.length <= 1 && remotes.length <= 1);
+  require(run.mode != 'local' || remotes.isEmpty);
+  require(run.mode != 'remote' || locals.isEmpty);
+  require(
+    capture.exchanges.length < 2 || capture.exchanges.first.backend == 'local',
+  );
+  final local = locals.firstOrNull, remote = remotes.firstOrNull;
+  final original = source.request;
+  final forced = {
+    for (final entry in original.questions.entries)
+      if (exceedsLocalOptions(entry.value)) entry.key,
+  };
+  final localKeys = {
+    for (final key in original.questions.keys)
+      if (run.mode != 'hybrid' || !forced.contains(key)) key,
+  };
+  SystemOneRequest subset(Set<String> keys, {bool masked = false}) =>
+      SystemOneRequest(
+        state: masked ? '[masked]' : original.state,
+        model: original.model,
+        questions: {
+          for (final entry in original.questions.entries)
+            if (keys.contains(entry.key)) entry.key: entry.value,
+        },
+      );
+  if (local != null) {
+    require(localKeys.isNotEmpty && (run.mode == 'hybrid' || forced.isEmpty));
+    require(local.digest == RecordingBackend.requestSha256(subset(localKeys)));
+  }
+  SystemOneResponse? pairedBody(
+    BackendExchange? exchange, {
+    bool local = false,
+  }) {
+    if (exchange == null ||
+        exchange.error != null ||
+        exchange.status < 200 ||
+        exchange.status >= 300)
+      return null;
+    try {
+      final response = SystemOneJson.decodeResponse(exchange.body);
+      SystemOneJson.checkAnswers(exchange.request.questions, response);
+      if (local)
+        validateBenchmarkAnswerSemantics(bundle, source.labels, response);
+      return response;
+    } on FormatException {
+      return null;
+    }
+  }
+
+  final localResponse = pairedBody(local, local: true);
+  final gates = <String, String>{for (final key in forced) key: 'forced'};
+  if (localResponse != null) {
+    for (final entry in localResponse.answers.entries) {
+      final gate = bundle.profiles[.05]!.forQuestion(
+        entry.key,
+        modelSha256: bundle.modelSha256,
+      );
+      final observation = CategoricalObservation.fromAnswer(
+        entry.value,
+        source.labels[entry.key],
+      );
+      gates[entry.key] =
+          gate != null &&
+              gate.accepts(
+                distributionConfidence(
+                  calibrateProbabilities(
+                    observation.gateProbabilities,
+                    gate.temperature,
+                  ),
+                ),
+              )
+          ? 'accepted'
+          : 'rejected';
+    }
+  }
+  final remoteKeys = run.mode == 'remote'
+      ? original.questions.keys.toSet()
+      : {
+          for (final key in original.questions.keys)
+            if (gates[key] != null && gates[key] != 'accepted') key,
+        };
+  if (remote != null) {
+    // Policy and masking refusals happen before the transport is entered.
+    bool predispatchRefusal(Object? code) =>
+        code == 'maskingFailed' ||
+        RemotePolicyReason.values.any((reason) => reason.name == code);
+    require(!predispatchRefusal(capture.errorCode));
+    final routing = capture.response?.xExtensions['x_routing'];
+    if (run.mode == 'hybrid' && routing is Map) {
+      require(
+        routing.values.every(
+          (route) =>
+              route is! Map || !predispatchRefusal(route['remote_error']),
+        ),
+      );
+    }
+    require(
+      run.consent &&
+          run.networkAvailable &&
+          capture.failureOrigin != 'local' &&
+          capture.outcome != 'unsupported',
+    );
+    require(run.mode != 'hybrid' || localKeys.isEmpty || localResponse != null);
+    require(
+      remoteKeys.isNotEmpty &&
+          remote.digest ==
+              RecordingBackend.requestSha256(subset(remoteKeys, masked: true)),
+    );
+  }
+  if (capture.outcome != 'answered') return;
+  final response = capture.response!;
+  final actualWire = SystemOneJson.encodeResponse(response);
+  if (run.mode == 'local') {
+    require(
+      localResponse != null &&
+          jsonEncode(actualWire) ==
+              jsonEncode(SystemOneJson.encodeResponse(localResponse)),
+    );
+    return;
+  }
+  final remoteResponse = pairedBody(remote);
+  if (run.mode == 'remote') {
+    require(remoteResponse != null);
+    final expectedWire = {
+      ...SystemOneJson.encodeResponse(remoteResponse!),
+      'x_route': 'remote',
+    };
+    require(
+      jsonEncode(actualWire) ==
+          jsonEncode(
+            SystemOneJson.encodeResponse(
+              SystemOneJson.decodeResponse(expectedWire),
+            ),
+          ),
+    );
+    return;
+  }
+  require(localKeys.isEmpty || localResponse != null);
+  // A wire-valid remote body whose combined usage overflows is rejected by
+  // HybridRouter. Preserve its entered exchange while validating local fallback.
+  final usableRemote =
+      remoteResponse != null &&
+      (localResponse?.usage.inputTokens ?? 0) +
+              remoteResponse.usage.inputTokens <=
+          9007199254740991 &&
+      (localResponse?.usage.outputTokens ?? 0) +
+              remoteResponse.usage.outputTokens <=
+          9007199254740991;
+  require(forced.isEmpty || usableRemote);
+  final routing = response.xExtensions['x_routing'];
+  require(
+    routing is Map<String, Object?> &&
+        routing.length == original.questions.length &&
+        original.questions.keys.every(routing.containsKey),
+  );
+  final routes = routing as Map<String, Object?>;
+  for (final key in original.questions.keys) {
+    final fromRemote = usableRemote && remoteKeys.contains(key);
+    final expectedSource = fromRemote ? remoteResponse : localResponse;
+    require(expectedSource != null);
+    final route = routes[key];
+    require(
+      route is Map<String, Object?> &&
+          route['gate'] == gates[key] &&
+          route['route'] == (fromRemote ? 'remote' : 'local') &&
+          route['model'] == expectedSource!.model,
+    );
+    final expectedAnswers =
+        SystemOneJson.encodeResponse(expectedSource!)['answers'] as Map;
+    require(
+      jsonEncode((actualWire['answers'] as Map)[key]) ==
+          jsonEncode(expectedAnswers[key]),
+    );
   }
 }
