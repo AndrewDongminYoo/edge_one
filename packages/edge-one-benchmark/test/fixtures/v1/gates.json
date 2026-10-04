@@ -1,0 +1,120 @@
+{
+  "version": 1,
+  "seed": 0,
+  "profiles": [
+    {
+      "version": 1,
+      "model_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "target_error": 0.01,
+      "confidence": "normalized_max_probability",
+      "questions": {
+        "nli_relation": {
+          "type": "choice",
+          "temperature": 0.05,
+          "threshold": 1.0
+        },
+        "positive": {
+          "type": "noul",
+          "temperature": 0.05,
+          "threshold": 1.0
+        },
+        "ticket_refund": {
+          "type": "noul",
+          "temperature": 0.05,
+          "threshold": 1.0
+        },
+        "ticket_topic": {
+          "type": "choice",
+          "temperature": 0.05,
+          "threshold": 1.0
+        },
+        "ticket_urgency": {
+          "type": "score",
+          "temperature": 0.05,
+          "threshold": 1.0
+        },
+        "ynat_topic": {
+          "type": "choice",
+          "temperature": 0.05,
+          "threshold": 1.0
+        }
+      }
+    },
+    {
+      "version": 1,
+      "model_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "target_error": 0.05,
+      "confidence": "normalized_max_probability",
+      "questions": {
+        "nli_relation": {
+          "type": "choice",
+          "temperature": 0.05,
+          "threshold": 1.0
+        },
+        "positive": {
+          "type": "noul",
+          "temperature": 0.05,
+          "threshold": 1.0
+        },
+        "ticket_refund": {
+          "type": "noul",
+          "temperature": 0.05,
+          "threshold": 1.0
+        },
+        "ticket_topic": {
+          "type": "choice",
+          "temperature": 0.05,
+          "threshold": 1.0
+        },
+        "ticket_urgency": {
+          "type": "score",
+          "temperature": 0.05,
+          "threshold": 1.0
+        },
+        "ynat_topic": {
+          "type": "choice",
+          "temperature": 0.05,
+          "threshold": 1.0
+        }
+      }
+    },
+    {
+      "version": 1,
+      "model_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "target_error": 0.1,
+      "confidence": "normalized_max_probability",
+      "questions": {
+        "nli_relation": {
+          "type": "choice",
+          "temperature": 0.05,
+          "threshold": 1.0
+        },
+        "positive": {
+          "type": "noul",
+          "temperature": 0.05,
+          "threshold": 1.0
+        },
+        "ticket_refund": {
+          "type": "noul",
+          "temperature": 0.05,
+          "threshold": 1.0
+        },
+        "ticket_topic": {
+          "type": "choice",
+          "temperature": 0.05,
+          "threshold": 1.0
+        },
+        "ticket_urgency": {
+          "type": "score",
+          "temperature": 0.05,
+          "threshold": 1.0
+        },
+        "ynat_topic": {
+          "type": "choice",
+          "temperature": 0.05,
+          "threshold": 1.0
+        }
+      }
+    }
+  ]
+}

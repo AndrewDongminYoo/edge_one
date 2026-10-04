@@ -48,6 +48,15 @@ jobs:
       - name: Test pure Dart contract and Decision API
         working-directory: packages/edge_one
         run: dart test
+      - name: Validate offline benchmark fixtures and exact report
+        working-directory: packages/edge-one-benchmark
+        run: |
+          dart format --output=none --set-exit-if-changed .
+          dart analyze .
+          dart test
+          dart run bin/edge_one_benchmark.dart validate --suite test/fixtures/v1/suite.json
+          dart run bin/edge_one_benchmark.dart report --suite test/fixtures/v1/suite.json --output "$RUNNER_TEMP/benchmark-report.json"
+          cmp test/fixtures/v1/expected-report.json "$RUNNER_TEMP/benchmark-report.json"
       - name: Test verified model download state machine
         working-directory: packages/edge_one_flutter
         run: dart test test/model_store_test.dart
