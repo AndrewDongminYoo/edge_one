@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:test/test.dart';
 
+import 'redacted_support.dart';
 import 'support.dart';
 
 void main() {
@@ -109,6 +110,33 @@ void main() {
     expect(malformed.stderr, contains('line 1'));
     expect(File('${temporary.path}/thresholds.json').existsSync(), isFalse);
   });
+
+  test('custom-redacted cached input requires the CLI opt-in flag', () async {
+    input.writeAsStringSync(jsonl(await customRedactedRecords()));
+    final strict = await run(fitArgs());
+    expect(strict.exitCode, 65, reason: '${strict.stderr}');
+    expect(strict.stderr, contains('duplicate canonical request'));
+    expect(File('${temporary.path}/thresholds.json').existsSync(), isFalse);
+    final optedIn = await run([...fitArgs(), '--redacted-requests']);
+    expect(optedIn.exitCode, 0, reason: '${optedIn.stderr}');
+    final report =
+        jsonDecode(File('${temporary.path}/report.json').readAsStringSync())
+            as Map;
+    expect((report['split'] as Map)['fitting'], hasLength(4));
+    expect((report['split'] as Map)['validation'], hasLength(4));
+  });
+
+  test(
+    'fit help explains whole-input scope and trusted original digests',
+    () async {
+      final help = await run(['fit', '--help']);
+      expect(help.exitCode, 0);
+      final text = (help.stdout as String).replaceAll(RegExp(r'\s+'), ' ');
+      expect(text, contains('--redacted-requests'));
+      expect(text, contains('whole input'));
+      expect(text, contains('trusted original request_sha256'));
+    },
+  );
 
   test(
     'invalid flags and paths return actionable errors without clobbering input',

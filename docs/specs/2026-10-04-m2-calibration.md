@@ -18,6 +18,15 @@ unredacted requests, including inconsistent labels. Redacted recordings require
 trustworthy original request digests; identical redacted states do not identify
 identical original requests.
 
+The default recognizes the built-in `"[redacted]"` state marker. Custom redactors
+use the explicit whole-input `redactedRequests: true` parser option or
+`fit --redacted-requests` CLI flag. This skips stored-body canonical deduplication
+while retaining original-digest uniqueness and every other validation. Producers
+must preserve trustworthy pre-redaction digests and deduplicate originals before
+redaction; the consumer cannot verify or deduplicate hidden originals. The strict
+six-field JSONL format and report/artifact schemas remain unchanged. The option
+changes which inputs are admitted, not the meaning or identity of admitted rows.
+
 Sort request groups by SHA-256 of the seed and original request digest, then use
 the first floor(N/2) requests for fitting and the remainder for validation. Never
 split questions from one request across partitions. Require observations of every
