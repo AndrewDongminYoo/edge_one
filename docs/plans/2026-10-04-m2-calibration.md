@@ -116,3 +116,60 @@ Ruling: custom-redactor support is an explicit whole-input option, preserving th
 six-field JSONL contract. Producers must supply trustworthy pre-redaction digests
 and deduplicate originals before redaction. Enabling it for unredacted or mixed
 inputs weakens canonical duplicate detection, so the default remains false.
+
+## Task 4: approved versioned comparison identity sidecar
+
+Files: new `lib/src/identity.dart` and `test/identity_test.dart`; dataset, fitting,
+report, CLI, exports, README and separate v2 synthetic fixtures in calibration.
+
+Interfaces: `comparisonRequestSha256(SystemOneRequest)`;
+`CalibrationIdentitySidecar.fromRequests(Iterable<SystemOneRequest>)`,
+`.parse(Object?)`, `.toJson()`; parser options `identitySidecar`,
+`originalRequests: Map<String, SystemOneRequest>?`, `trustIdentitySidecar: false`.
+CLI: `--identity-sidecar`, `--original-requests`, `--trust-identity-sidecar`.
+
+- [x] Add real RecordingBackend recapture/refit regression across logical and
+      physical model changes, and observe existing v1 incompatibility first.
+- [x] Add digest golden/order/type/content, exact coverage, conflicts, semantic
+      duplicates, mixed models, redacted collision/trust and raw integrity tests.
+- [x] Implement producer and strict sidecar parser; verify originals in memory;
+      bind v2 dataset identity and split to semantic digests with raw provenance.
+- [x] Test v2 schema/split compatibility, v1 separation and CLI sidecar ingestion;
+      implement report version validation and CLI options without tolerance edits.
+- [x] Add a separate v2 baseline and documentation; retain v1 fixture bytes.
+- [x] Run complete calibration/core suites, analyzers, format, lock/contracts,
+      baseline CLI checks and Trunk; commit locally and report red/green evidence.
+
+Review focus: hidden-original trust cannot prove content; order changes must
+remain visible; duplicate raw/semantic associations fail closed; original hash
+verification must precede migration; legacy reports cannot silently gain v2
+semantics. The user approved this design and delegated native execution; no
+additional design approval or subagent dispatch is required.
+
+Task 4 execution evidence: actual RecordingBackend logical/physical recapture
+failed first with `incompatible reports: dataset_sha256 differs`; expanded API
+tests then failed on missing sidecar symbols. A separate v2 split-tampering test
+failed by accepting swapped members before deterministic validation was added.
+All 67 calibration and 230 core tests now pass, including real CLI recapture/refit
+for unredacted and redacted recordings. Both analyzers, format, enforced lock,
+schema/TypeScript/generated/Dart contract checks pass. Actual v1 CLI output/report
+are byte-identical to the committed baseline and thresholds; v2 CLI matches its
+separate reviewed baseline. The v2 fixture has 24 requests, 12 per partition,
+10/12 accepted per question on validation at each target, zero accepted errors.
+These synthetic figures demonstrate software behavior only. Hidden-original
+producer trust remains an explicit assertion, never authentication.
+
+Task 4 scoped review correction evidence (one grouped correction wave): two new
+regressions failed before the fixes: shared raw digests could map to contradictory
+semantic identities across individually valid reports, and reordering only label
+keys changed dataset identity. V2 comparison now checks shared raw associations;
+v2 dataset assembly sorts only label keys. Ordered request and Score legend
+content remains unchanged. Both regressions and the real Recorder changed-model
+positive path pass; the complete calibration suite now passes 69 tests.
+The v2 baseline changes only `dataset_sha256` from
+`eb2d102378f8e3166428d649b25de60fcf96756e16daa9e19fe6f7d50c757824` to
+`830738e3161a1f409ed9c54231da129aabb642d4f33841bfe7c16c0aeb197c51`.
+Split, metrics, provenance and threshold artifact bytes remain identical. Legacy
+v1 CLI outputs still match their committed report and thresholds byte-for-byte.
+Both analyzers, format, lock and contract checks pass; no additional review round
+or changes to tolerances, runtime, or RecordingBackend are included.
