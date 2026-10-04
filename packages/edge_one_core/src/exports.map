@@ -1,0 +1,4 @@
+{
+  global: eo_open; eo_evaluate; eo_cancel; eo_close; eo_free;
+  local: *;
+};
