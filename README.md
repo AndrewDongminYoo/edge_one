@@ -36,7 +36,12 @@ flutter analyze packages/edge_one_flutter
 The pnpm workspace contains the planned React Native package; the Melos/Pub workspace contains `edge_one`, `edge_one_flutter`, and `edge_one_calibrate`.
 `edge_one_flutter` ships an app-pinned model manifest and a Dart model store that verifies resumed downloads before returning a path.
 The host app must supply durable storage and a free-space check; platform background transfers and storage policy are separate integration work.
-`packages/edge_one_core/` has a C++17 CMake target without inference sources yet.
+`packages/edge_one_core/` implements the C++17 C ABI, request validation, escaped
+renderer, model loading, cancellation and owned response memory. Production
+scoring is staged: a valid request returns status **503** until issue #9 adds the
+verified verdict scorer; no synthetic probabilities are returned in production.
+See the [native core README](packages/edge_one_core/README.md) for the ABI contract
+and model-free Linux build/test commands.
 GitHub's Linux contract job validates schema fixtures, generated drift, TypeScript, and the Dart workspace, then runs the Dart and Flutter package tests with their respective runners.
 See the [contract specification](docs/specs/2026-09-29-m1-system-one-contract.md) for current limits.
 
