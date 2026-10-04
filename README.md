@@ -2,7 +2,7 @@
 
 An on-device decision runtime planned for Flutter and React Native, with optional remote escalation.
 The production API and architecture are described in [BLUEPRINT.md](BLUEPRINT.md).
-The repository contains the M0 feasibility experiment and M1 contract scaffolding; production inference and mobile bindings are not available yet.
+The repository contains the M0 feasibility experiment, M1 contracts, and a pure Dart hybrid router; production inference and mobile bindings are not available yet.
 
 ## System One contracts
 
@@ -10,7 +10,8 @@ The repository contains the M0 feasibility experiment and M1 contract scaffoldin
 Its base fields were checked against [TypeSafe OpenAPI 0.2.0](https://api.typesafe.ai/openapi.json); runtime interoperability and release readiness remain unverified.
 Generated Dart types live in `packages/edge_one/lib/src/generated/`; generated TypeScript types live in `packages/react-native-edge-one/src/generated/`.
 Edit the schema and rerun generation instead of editing either output.
-The generated Dart classes are typed data shapes; `SystemOneJson` in `packages/edge_one` is their strict JSON codec, and no local or remote backend exists yet.
+The generated Dart classes are typed data shapes; `SystemOneJson` in `packages/edge_one` is their strict JSON codec.
+`RemoteBackend` accepts an injected transport; production local inference remains separate work.
 `schemas/fixtures/system-one-v1-cases.json` is a shared corpus that Ajv and the Dart codec must both accept or reject identically.
 `DecisionClient` validates both sides of a `SystemOneBackend` call, and `Evaluation` turns answers into `Decided` or `Uncertain` results; see the [Dart API specification](docs/specs/2026-09-29-m1-dart-decision-api.md).
 `package:edge_one/testing.dart` provides a deterministic `FakeEngine` and a JSON Lines `RecordingBackend` for tests without a model or network; `schemas/examples/` holds representative requests, their fake answers, and a redacted recording (see the [test support specification](docs/specs/2026-09-29-m1-test-support.md)).
@@ -44,6 +45,42 @@ See the [native core README](packages/edge_one_core/README.md) for the ABI contr
 and model-free Linux build/test commands.
 GitHub's Linux contract job validates schema fixtures, generated drift, TypeScript, and the Dart workspace, then runs the Dart and Flutter package tests with their respective runners.
 See the [contract specification](docs/specs/2026-09-29-m1-system-one-contract.md) for current limits.
+
+## Hybrid routing
+
+`HybridRouter` escalates only uncertain or application-forced question keys and
+merges validated answers in the original order. `RemoteBackend` defaults to
+local-only and requires explicit consent, network availability, full-request
+`beforeRemote` masking, and a shared `RemoteBudget` before any transport call.
+The package supplies no HTTP client or credential handling. Daily costs are
+application-defined integer microcredits, conservatively charged per dispatched
+attempt; accounting is in memory within one Dart isolate.
+
+Load `thresholds.json` with `CalibrationProfile.fromJson`. Missing profiles,
+model-hash mismatches, and unknown or changed question types use a reject-all
+routing gate with warnings in `x_routing`. Ordinary denied or failed escalation
+returns the complete local answer with failure metadata; forced-remote failures
+throw a typed `RemoteException`. `x_route` is `auto` for mixed answers.
+**Calibration only changes routing: returned probabilities remain raw, and
+`DecisionClient.minConfidence` still independently controls `Decided` versus
+`Uncertain`.**
+
+Opt-in `ShadowMode` accepts a deterministic sampler and observer. It compares
+locally returned keys through the same masking, consent, network, and budget
+checks without changing the primary response. Shadow work is awaited; transport
+adapters should set their own timeouts. Applications provide native preflight
+adapters and forced keys outside request JSON; native tokenizer and engine limit
+integration is a separate dependency.
+
+Run the entirely synthetic [hybrid example](packages/edge_one/example/hybrid.dart):
+
+```bash
+cd packages/edge_one
+dart --suppress-analytics run example/hybrid.dart
+```
+
+See the [routing specification](docs/specs/2026-10-04-m2-hybrid-routing.md) for
+masking constraints, error and budget semantics, metadata, and shadow behavior.
 
 ## M0 Desktop Spike
 
