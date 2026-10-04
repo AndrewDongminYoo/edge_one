@@ -113,9 +113,10 @@ comparison of model revisions on the same input records.
 
 Tolerances are absolute fractions: `0.01` is one percentage point. The command
 fails on validation accuracy loss, coverage drift in either direction, or accepted
-error increase. Newly accepted observations without an accepted baseline fail
-closed; zero acceptance is not perfect accuracy. Invalid or incompatible reports
-also fail rather than skipping questions. Exit codes: 0 pass, 1 regression,
+error increase. Changing between zero and nonzero acceptance fails closed even
+within the coverage allowance; two unchanged empty accepted sets remain comparable
+with unknown error. Invalid or incompatible reports also fail rather than skipping
+questions. Exit codes: 0 pass, 1 regression,
 64 usage, 65 invalid data, 74 file error.
 
 ## Synthetic CI evidence

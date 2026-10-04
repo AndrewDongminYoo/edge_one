@@ -78,6 +78,46 @@ void main() {
     expect(newlyAccepted, contains(contains('no accepted baseline')));
   });
 
+  test('losing all accepted samples fails within the coverage allowance', () {
+    final baseline = report();
+    final question = (baseline['questions'] as Map)['topic'] as Map;
+    for (final target in question['targets'] as List) {
+      final metrics = (target as Map)['validation'] as Map;
+      metrics['accepted'] = 1;
+      metrics['errors'] = 0;
+      metrics['coverage'] = 1 / (metrics['count'] as int);
+      metrics['error_rate'] = 0.0;
+    }
+    final candidate = copy(baseline);
+    final changed = (candidate['questions'] as Map)['topic'] as Map;
+    for (final target in changed['targets'] as List) {
+      final metrics = (target as Map)['validation'] as Map;
+      metrics['accepted'] = 0;
+      metrics['coverage'] = 0.0;
+      metrics['error_rate'] = null;
+    }
+    final failures = checkRegression(baseline, candidate);
+    expect(failures, hasLength(3));
+    expect(failures, everyElement(contains('no accepted candidate')));
+    expect(failures, isNot(contains(contains('coverage'))));
+  });
+
+  test(
+    'unchanged empty accepted sets remain comparable with unknown error',
+    () {
+      final baseline = report();
+      final question = (baseline['questions'] as Map)['topic'] as Map;
+      for (final target in question['targets'] as List) {
+        final metrics = (target as Map)['validation'] as Map;
+        metrics['accepted'] = 0;
+        metrics['errors'] = 0;
+        metrics['coverage'] = 0.0;
+        metrics['error_rate'] = null;
+      }
+      expect(checkRegression(baseline, copy(baseline)), isEmpty);
+    },
+  );
+
   test(
     'incompatible data, split, question or target identity fails closed',
     () {

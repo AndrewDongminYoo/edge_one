@@ -69,6 +69,10 @@ List<String> checkRegression(
         failures.add(
           '$key @ $target: no accepted baseline for error comparison',
         );
+      } else if (oldError != null && newError == null) {
+        failures.add(
+          '$key @ $target: no accepted candidate for error comparison',
+        );
       } else if (oldError != null &&
           newError != null &&
           _number(newError) - _number(oldError) > maxErrorIncrease + 1e-12) {
