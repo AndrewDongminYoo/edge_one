@@ -30,7 +30,8 @@ void main(List<String> arguments) {
     ..addFlag(
       'trust-identity-sidecar',
       negatable: false,
-      help: 'Explicitly trust producer digests for hidden originals.',
+      help:
+          'Trust producer verification of hidden original digests and stable question definitions.',
     )
     ..addOption('model-sha256', help: 'Expected lowercase model SHA-256.')
     ..addOption('output', defaultsTo: 'thresholds.json')

@@ -6,18 +6,18 @@
   "questions": {
     "flag": {
       "type": "noul",
-      "temperature": 0.5517981149045462,
-      "threshold": 0.917307078898747
+      "temperature": 0.485838174690041,
+      "threshold": 0.9452477839521018
     },
     "level": {
       "type": "score",
-      "temperature": 0.5517981149045462,
-      "threshold": 0.917307078898747
+      "temperature": 0.4858381746900412,
+      "threshold": 0.9452477839521016
     },
     "topic": {
       "type": "choice",
-      "temperature": 0.5517981149045462,
-      "threshold": 0.917307078898747
+      "temperature": 0.4858381746900412,
+      "threshold": 0.9452477839521016
     }
   }
 }

@@ -175,7 +175,7 @@ void main() {
     input.writeAsStringSync(jsonl(await customRedactedRecords()));
     final strict = await run(fitArgs());
     expect(strict.exitCode, 65, reason: '${strict.stderr}');
-    expect(strict.stderr, contains('duplicate canonical request'));
+    expect(strict.stderr, contains('raw request digest mismatch'));
     expect(File('${temporary.path}/thresholds.json').existsSync(), isFalse);
     final optedIn = await run([...fitArgs(), '--redacted-requests']);
     expect(optedIn.exitCode, 0, reason: '${optedIn.stderr}');
@@ -195,6 +195,8 @@ void main() {
       expect(text, contains('--redacted-requests'));
       expect(text, contains('whole input'));
       expect(text, contains('trusted original request_sha256'));
+      expect(text, contains('--trust-identity-sidecar'));
+      expect(text, contains('stable question definitions'));
     },
   );
 
