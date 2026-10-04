@@ -9,6 +9,13 @@ void main(List<String> arguments) {
   final fit = ArgParser()
     ..addFlag('help', abbr: 'h', negatable: false)
     ..addOption('input', help: 'Labeled cached System One JSONL.')
+    ..addFlag(
+      'redacted-requests',
+      negatable: false,
+      help:
+          'Treat the whole input as redacted; use trusted original request_sha256 values. '
+          'Producers must deduplicate requests before redaction.',
+    )
     ..addOption('model-sha256', help: 'Expected lowercase model SHA-256.')
     ..addOption('output', defaultsTo: 'thresholds.json')
     ..addOption('report', defaultsTo: 'calibration-report.json')
@@ -56,6 +63,7 @@ void main(List<String> arguments) {
       final dataset = CalibrationDataset.parse(
         File(input).readAsStringSync(),
         modelSha256: hash,
+        redactedRequests: command.flag('redacted-requests'),
       );
       final result = fitCalibration(dataset, seed: seed, targetError: target);
       _writeJson(output, result.profile.toJson());

@@ -68,7 +68,7 @@ and `.github/workflows/calibration.yml`.
 - Shared API tests failed on missing symbols before implementation, then passed;
   full `edge_one` suite: 230 passed. Shared contract commit: `88138d7`.
 - Offline fitting tests failed on missing implementation; CLI tests observed the
-  missing executable before implementation. Calibration package suite: 25 passed.
+  missing executable before implementation. Calibration package suite: 33 passed.
 - Independent review found unbound Score legend semantics. Two regression tests
   reproduced the issue, then passed after canonical legend validation and dataset
   identity binding. No change to the runtime artifact schema was needed.
@@ -83,6 +83,13 @@ and `.github/workflows/calibration.yml`.
 - PR review reproduced acceptance disappearing within the coverage allowance
   (1/60 to zero with the default 0.02 tolerance). The regression now fails
   explicitly on missing candidate error evidence; unchanged empty sets still pass.
+- PR review reproduced legitimate custom redactors collapsing distinct original
+  requests to identical stored JSON. The real recorder regression and CLI opt-in
+  tests failed first, then passed with `redactedRequests: true` / the
+  `--redacted-requests` flag. Default canonical duplicate rejection, original
+  digest uniqueness and all other validation remain in place. Tests cover the
+  input option, deterministic reordering and unchanged identity of admitted rows;
+  the committed fixture report and thresholds remain byte-identical.
 - Both Dart analyses, formatting, lockfile enforcement, generated contract checks,
   and actual fixture CLI fit/check with zero drift tolerance pass on Linux using
   Flutter 3.47.5 / Dart 3.13.4.
@@ -94,3 +101,8 @@ Ruling: the runtime artifact identifies a question by name; it does not add a
 question-definition fingerprint in this version. Callers must reuse the calibrated
 question definition and recalibrate if it changes. The CLI rejects definition
 drift and report comparisons bind Score legend meanings.
+
+Ruling: custom-redactor support is an explicit whole-input option, preserving the
+six-field JSONL contract. Producers must supply trustworthy pre-redaction digests
+and deduplicate originals before redaction. Enabling it for unredacted or mixed
+inputs weakens canonical duplicate detection, so the default remains false.

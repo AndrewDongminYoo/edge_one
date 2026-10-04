@@ -69,6 +69,20 @@ requests: the producer must preserve trustworthy original request digests.
 Recording a redacted state is not complete anonymization. Commit synthetic data
 only; keep sensitive production recordings out of Git.
 
+The built-in `"[redacted]"` state marker is recognized by default. For a custom
+`RecordingBackend` redactor, opt in with `fit --redacted-requests` or
+`CalibrationDataset.parse(..., redactedRequests: true)`. This is a producer
+assertion for the **whole input**, allowing identical stored requests under
+distinct trusted pre-redaction `request_sha256` values. It does not add fields to
+the six-field JSONL format or change the report/artifact schema.
+
+The option skips canonical deduplication of stored request bodies. Duplicate
+original digests and model, schema, label, question, legend, and split checks still
+apply. The producer must deduplicate original requests before redaction: hidden
+originals cannot be verified or canonically deduplicated by this tool. Use the
+default for unredacted inputs; enabling this option for unredacted or mixed inputs
+weakens their duplicate checks.
+
 ## Temperature and thresholds
 
 Temperature minimizes fitting negative log likelihood over `[0.05, 20]` using
