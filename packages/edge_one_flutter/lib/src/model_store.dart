@@ -222,8 +222,9 @@ final class ModelStore {
           start = 0;
         }
       } else if (response.statusCode == HttpStatus.partialContent) {
-        final match = RegExp(r'^bytes (\d+)-(\d+)/(\d+)$')
-            .firstMatch(response.contentRange ?? '');
+        final match = RegExp(
+          r'^bytes (\d+)-(\d+)/(\d+)$',
+        ).firstMatch(response.contentRange ?? '');
         if (match == null ||
             int.parse(match[1]!) != start ||
             int.parse(match[2]!) != manifest.bytes - 1 ||
