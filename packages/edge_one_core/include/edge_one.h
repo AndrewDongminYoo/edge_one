@@ -29,8 +29,16 @@ enum eo_status {
   EO_STATUS_UNAVAILABLE = 503
 };
 
-/* model_path and manifest_json are NUL-terminated UTF-8. Native opening checks
- * pinned model/readout identity and verifies model bytes. On failure returns NULL;
+/* model_path and manifest_json are NUL-terminated UTF-8. The caller/store must
+ * keep the opened model backing object's bytes immutable and untruncated from
+ * the start of eo_open until every engine using that object has been closed.
+ * Publishers must stage replacements separately, never overwrite live backing
+ * objects. This precondition is not enforced against other writers.
+ * Native opening checks pinned model/readout identity, verifies and rewinds one
+ * open file, and loads/maps that same file without reopening model_path. Name
+ * replacement does not retarget that handle; same-inode writes/truncation are
+ * unsupported and are not made safe by read-only mappings.
+ * On failure returns NULL;
  * if err is non-NULL, *err is an owned error string (or NULL on allocation
  * failure). On success *err is NULL. Release error strings using eo_free. */
 EO_API eo_engine *eo_open(const char *model_path, const char *manifest_json,

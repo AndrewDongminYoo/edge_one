@@ -36,6 +36,16 @@ separate platform work.
   checks tokenizer slot IDs. Runtime limits may be reduced but not raised.
   Model/readout changes are rejected; changing download mirrors is permitted.
   Bindings still verify bundled manifest/legal assets and downloaded files.
+- The caller/store must keep the opened backing object's bytes immutable and
+  untruncated from the start of `eo_open` until all engines using it are closed.
+  Publish replacements from separate staging objects; never overwrite a live
+  backing object. The default `ModelStore` staging/rename flow supports this
+  usage, but callers, custom commit callbacks and other writers must honor it.
+  The core hashes, checks rewind and loads through the same owned `FILE*`, held
+  until after model/context destruction. Replacing a pathname does not retarget
+  that handle (platform sharing rules may restrict rename/unlink). Read-only
+  mmap does not prevent or detect same-inode writes/truncation. No snapshot,
+  copying, write-exclusion or store-lease framework is provided.
 - Pass NUL-terminated UTF-8 JSON. Requests over 4 MiB, nesting over 128, duplicate
   object keys, malformed JSON/UTF-8, schema violations and local limits return 422. Choice requires 1..26 options; Score requires 2..10 levels, bounded further
   by the manifest. Noul follows the shared wire schema.
@@ -89,13 +99,22 @@ counts. With the existing verified M0 model/runtime/build inputs already present
 cmake -S packages/edge_one_core -B /tmp/edge-one-core \
   -DCMAKE_BUILD_TYPE=Release -DEDGE_ONE_BUILD_PARITY_DRIVER=ON
 cmake --build /tmp/edge-one-core --parallel 2
+.cache/m0/.venv/bin/python tools/build_parity_reference.py build \
+  --profile linux-x86_64-avx2-v1 --jobs 2
 .cache/m0/.venv/bin/python tools/check_native_parity.py \
+  --reference-profile linux-x86_64-avx2-v1 \
+  --production-build /tmp/edge-one-core \
   --driver /tmp/edge-one-core/edge_one_score_driver \
   --output .cache/m0/production-parity.json --repetitions 1
 ```
 
+The independent reference build is a prerequisite; if it already exists, use
+`tools/build_parity_reference.py verify --profile linux-x86_64-avx2-v1` instead
+of rebuilding it. This fixed reference requires a supported Linux x86-64 AVX2
+host and preserves the default native M0 build and receipt separately.
+
 The harness never downloads inputs. Explicit missing inputs fail. It verifies
-M0 artifact hashes, compares all four fixtures' token IDs/option order/slots, and
+the isolated reference receipt and actual loaded artifact hashes, compares all four fixtures' token IDs/option order/slots, and
 requires probability differences strictly below `1e-3` against the unchanged
 upstream individual path and between production modes. It checks nonzero actual
 sharing for the 1024/1025-token prefixes, preserves fresh raw reports and records

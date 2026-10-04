@@ -56,3 +56,21 @@ The archived cross-profile failure `0.01687824909653951` remains a failure.
 The controlled 48 observations found portable differences <=2.22e-16 and AVX512
 differences 0.00467..0.01229; they do not repair or exactly reproduce the historical
 AMX-enabled result, prove cross-ISA parity, or establish device/performance claims.
+
+## Approved managed model-file lifetime (2026-10-04)
+
+Open the caller's model once as a binary `FILE*`, verify that same stream's
+size/SHA-256, perform a checked rewind, and pass it directly to the pinned
+`llama_model_load_from_file_ptr` API. Keep the stream owned until after model
+and context destruction, including construction failures. Never reopen the
+caller pathname after verification. Preserve mmap, CPU profile and C ABI.
+
+The caller/store MUST keep the opened backing object's bytes immutable and
+untruncated from the start of verification until every using engine is closed.
+All publishers write separate staging objects and publish replacements; they
+must not modify published backing objects in place. Custom store commit/cleanup
+code and other writers share this precondition. Atomic name replacement does
+not retarget the verified open handle, subject to platform file-sharing rules.
+Read-only/shared mappings do not protect against same-inode writes or truncation;
+this API does not claim to detect or resist a violation of that precondition.
+No per-engine snapshot, model copy, new store/lease machinery, or C ABI is added.

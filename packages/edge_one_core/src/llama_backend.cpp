@@ -1,5 +1,6 @@
 #include "engine.hpp"
 #include "integrity.hpp"
+#include "model_loader.hpp"
 #include "scorer.hpp"
 #include <llama.h>
 
@@ -20,19 +21,16 @@ public:
                ScoreDiagnostics *diagnostics, Json *profile)
       : manifest_(manifest), mode_(mode), diagnostics_(diagnostics) {
     validate_pinned_manifest(manifest);
-    verify_model_file(path, manifest.sha256, manifest.bytes);
     static BackendRuntime runtime;
     auto params = llama_model_default_params();
     params.load_mode = LLAMA_LOAD_MODE_MMAP;
     params.n_gpu_layers = 0; // Linux CPU baseline; platform tuning follows bindings.
-    model_.reset(llama_model_load_from_file(path, params));
-    if (!model_)
-      throw Error(503, "Unable to load local GGUF model");
-    vocab_ = llama_model_get_vocab(model_.get());
+    model_ = std::make_unique<VerifiedModel>(path, manifest.sha256, manifest.bytes, params);
+    vocab_ = llama_model_get_vocab(model_->get());
     if (!vocab_ || encode(" yes") != Tokens{manifest.yes} || encode(" no") != Tokens{manifest.no} ||
         encode(" ->") != Tokens{manifest.verdict})
       throw Error(503, "Model vocabulary does not match manifest readout tokens");
-    if (manifest.n_ctx > llama_model_n_ctx_train(model_.get()))
+    if (manifest.n_ctx > llama_model_n_ctx_train(model_->get()))
       throw Error(503, "Manifest context exceeds model context");
     auto context_params = llama_context_default_params();
     context_params.n_ctx = static_cast<uint32_t>(manifest.n_ctx);
@@ -47,7 +45,7 @@ public:
     context_params.no_perf = true;
     context_params.offload_kqv = false;
     context_params.op_offload = false;
-    context_.reset(llama_init_from_model(model_.get(), context_params));
+    context_.reset(llama_init_from_model(model_->get(), context_params));
     if (!context_)
       throw Error(503, "Unable to allocate model context");
     if (llama_n_batch(context_.get()) < static_cast<uint32_t>(manifest.n_ctx) ||
@@ -157,7 +155,7 @@ private:
   Manifest manifest_;
   ScoreMode mode_;
   ScoreDiagnostics *diagnostics_;
-  std::unique_ptr<llama_model, decltype(&llama_model_free)> model_{nullptr, llama_model_free};
+  std::unique_ptr<VerifiedModel> model_;
   std::unique_ptr<llama_context, decltype(&llama_free)> context_{nullptr, llama_free};
   const llama_vocab *vocab_ = nullptr;
 };

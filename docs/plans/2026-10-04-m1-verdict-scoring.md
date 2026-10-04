@@ -84,3 +84,29 @@ Continuation evidence: `docs/notes/2026-10-04-fixed-reference-parity.md` and
 `/tmp/edge-one-fixed-reference-implementation-report.json`. Full fixed-profile
 run passed 24 comparisons with maximum 5.551115123125783e-17; the historical
 cross-profile failure remains preserved.
+
+## One additional authorized grouped correction
+
+User approval `Sentinel_b93f2ac9297881919b1cfcd4e9e39aa6` authorizes the two final
+hosted P2 fixes in one bounded pass. Earlier review/fix counts remain consumed.
+
+- [x] Add production-loader-boundary regression: real verification/rewind, name
+      replacement inside the loader, original bytes loaded, model-before-file
+      cleanup, null-loader/exception cleanup, and unchanged mmap/CPU parameters.
+      Observe RED against the previous verify-path/reopen sequence.
+- [x] Add private `VerifiedModel` owner in `src/model_loader.{hpp,cpp}`. Integrity
+      helper returns a verified, rewound owned `FILE*`; production uses the pinned
+      FILE loader and holds the owner through context/model teardown. Compile
+      the same helper into a model-free test with link-time loader/free doubles.
+- [x] Document managed immutable backing bytes in C API, core/Flutter docs and
+      spec; correct package README reference-build prerequisite and required
+      harness flags. No snapshot, store framework or runtime-profile expansion.
+- [x] Run native/Python/static checks and rebuild production from exact sources
+      into a distinct build. Release CTest passed 8/8, focused sanitizers 3/3,
+      Python 99/99, and README argument/static checks passed.
+
+Final execution order approved by the parent: actual Trunk success, then local
+commit, then one four-fixture cached-model parity run on that immutable head,
+reusing the verified fixed reference. Preserve earlier evidence; parent owns
+publication. The post-commit result and exact head are recorded in
+`/tmp/edge-one-same-handle-implementation-report.json`.

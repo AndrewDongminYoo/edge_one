@@ -92,6 +92,10 @@ final class HttpModelTransport implements ModelTransport {
 /// [root] must be durable application storage. The platform layer supplies its
 /// free-space check and excludes this directory from backups where required.
 /// Use one store instance per destination; independent instances and isolates are not coordinated here.
+/// Published backing bytes must remain immutable and untruncated while a native
+/// engine is opening or using them. The default commit publishes a separately
+/// written staging file; custom commits, cleanup and other writers must preserve
+/// that ownership contract. This store does not enforce write exclusion or leases.
 final class ModelStore {
   ModelStore({
     required this.root,
@@ -218,9 +222,8 @@ final class ModelStore {
           start = 0;
         }
       } else if (response.statusCode == HttpStatus.partialContent) {
-        final match = RegExp(
-          r'^bytes (\d+)-(\d+)/(\d+)$',
-        ).firstMatch(response.contentRange ?? '');
+        final match = RegExp(r'^bytes (\d+)-(\d+)/(\d+)$')
+            .firstMatch(response.contentRange ?? '');
         if (match == null ||
             int.parse(match[1]!) != start ||
             int.parse(match[2]!) != manifest.bytes - 1 ||

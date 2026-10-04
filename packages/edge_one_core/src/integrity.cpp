@@ -2,7 +2,7 @@
 #include "pinned_manifest.hpp"
 
 #include <array>
-#include <fstream>
+#include <cstdio>
 
 extern "C" {
 #include <sha256/sha256.h>
@@ -22,25 +22,24 @@ void validate_pinned_manifest(const Manifest &manifest) {
     throw Error(503, "Runtime limits exceed the pinned model profile");
 }
 
-void verify_model_file(const char *path, const std::string &expected, uint64_t bytes) {
+ModelFile open_verified_model_file(const char *path, const std::string &expected, uint64_t bytes) {
   if (!path || !*path)
     throw Error(503, "Model path is empty");
-  std::ifstream input(path, std::ios::binary);
+  ModelFile input(std::fopen(path, "rb"));
   if (!input)
     throw Error(503, "Unable to read local GGUF model");
   sha256_t hash;
   sha256_init(&hash);
   std::array<unsigned char, 65536> buffer;
   uint64_t count = 0;
-  while (input) {
-    input.read(reinterpret_cast<char *>(buffer.data()), buffer.size());
-    const auto size = static_cast<uint64_t>(input.gcount());
+  size_t size;
+  while ((size = std::fread(buffer.data(), 1, buffer.size(), input.get())) > 0) {
     if (size > bytes - count)
       throw Error(503, "GGUF byte count differs from the pinned manifest");
     count += size;
     sha256_update(&hash, buffer.data(), static_cast<size_t>(size));
   }
-  if (!input.eof() || count != bytes)
+  if (std::ferror(input.get()) || count != bytes)
     throw Error(503, "GGUF byte count or read failed");
   std::array<unsigned char, SHA256_DIGEST_SIZE> digest;
   sha256_final(&hash, digest.data());
@@ -52,5 +51,12 @@ void verify_model_file(const char *path, const std::string &expected, uint64_t b
   }
   if (actual != expected)
     throw Error(503, "GGUF SHA-256 differs from the pinned manifest");
+  if (std::fseek(input.get(), 0, SEEK_SET) != 0)
+    throw Error(503, "Unable to rewind verified GGUF model");
+  return input;
+}
+
+void verify_model_file(const char *path, const std::string &expected, uint64_t bytes) {
+  auto input = open_verified_model_file(path, expected, bytes);
 }
 } // namespace edge_one

@@ -38,7 +38,7 @@ target_include_directories(edge_one_scoring PRIVATE "${CMAKE_CURRENT_BINARY_DIR}
 set_target_properties(edge_one_scoring PROPERTIES POSITION_INDEPENDENT_CODE ON
   CXX_VISIBILITY_PRESET hidden C_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN ON)
 
-add_library(edge_one_core SHARED src/api.cpp src/response.cpp src/llama_backend.cpp)
+add_library(edge_one_core SHARED src/api.cpp src/response.cpp src/llama_backend.cpp src/model_loader.cpp)
 target_compile_features(edge_one_core PUBLIC cxx_std_17)
 target_include_directories(edge_one_core PUBLIC include)
 target_compile_definitions(edge_one_core PRIVATE EDGE_ONE_BUILD)
@@ -56,7 +56,7 @@ endif()
 
 option(EDGE_ONE_BUILD_PARITY_DRIVER "Build the private real-model parity executable" OFF)
 if(EDGE_ONE_BUILD_PARITY_DRIVER)
-  add_executable(edge_one_score_driver tests/score_driver.cpp src/llama_backend.cpp src/response.cpp)
+  add_executable(edge_one_score_driver tests/score_driver.cpp src/llama_backend.cpp src/response.cpp src/model_loader.cpp)
   target_link_libraries(edge_one_score_driver PRIVATE edge_one_scoring llama Threads::Threads)
 endif()
 
@@ -64,6 +64,13 @@ if(BUILD_TESTING)
   add_executable(edge_one_scorer_test tests/scorer_test.cpp)
   target_link_libraries(edge_one_scorer_test PRIVATE edge_one_scoring Threads::Threads)
   add_test(NAME edge_one_scorer COMMAND edge_one_scorer_test "${EDGE_ONE_MANIFEST}")
+  # Same production loading boundary, with link-time llama doubles instead of a model.
+  add_executable(edge_one_model_loader_test tests/model_loader_test.cpp src/model_loader.cpp)
+  target_include_directories(edge_one_model_loader_test PRIVATE
+    "${llama_cpp_SOURCE_DIR}/include" "${llama_cpp_SOURCE_DIR}/ggml/include")
+  target_link_libraries(edge_one_model_loader_test PRIVATE edge_one_scoring)
+  add_test(NAME edge_one_model_loader COMMAND edge_one_model_loader_test
+    "${CMAKE_CURRENT_BINARY_DIR}")
   add_executable(edge_one_integrity_test tests/integrity_test.cpp)
   target_link_libraries(edge_one_integrity_test PRIVATE edge_one_scoring)
   add_test(NAME edge_one_integrity COMMAND edge_one_integrity_test
@@ -79,7 +86,7 @@ if(BUILD_TESTING)
   add_test(NAME edge_one_response COMMAND edge_one_response_test
     "${CMAKE_CURRENT_SOURCE_DIR}/../edge_one_flutter/assets/model_manifest.json")
   # Compile private seams into tests; they are not exported by the shared library.
-  add_executable(edge_one_api_test tests/api_test.cpp src/api.cpp src/response.cpp src/llama_backend.cpp)
+  add_executable(edge_one_api_test tests/api_test.cpp src/api.cpp src/response.cpp src/llama_backend.cpp src/model_loader.cpp)
   target_include_directories(edge_one_api_test PRIVATE include)
   target_compile_definitions(edge_one_api_test PRIVATE EDGE_ONE_BUILD)
   target_link_libraries(edge_one_api_test PRIVATE edge_one_scoring llama Threads::Threads)
