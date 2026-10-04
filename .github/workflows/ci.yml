@@ -133,10 +133,18 @@ jobs:
           cmake --build "$RUNNER_TEMP/edge-one-production" --parallel 2
           ctest --test-dir "$RUNNER_TEMP/edge-one-production" --output-on-failure
       - name: Compare production individual and exact scoring with pinned reference
+        id: production_parity
         run: |
           .cache/m0/.venv/bin/python tools/check_native_parity.py \
             --driver "$RUNNER_TEMP/edge-one-production/edge_one_score_driver" \
             --output .cache/m0/production-linux-ci.json --repetitions 1
+      - name: Diagnose failed production parity with isolated library swaps
+        if: failure() && steps.production_parity.outcome == 'failure'
+        run: |
+          .cache/m0/.venv/bin/python tools/diagnose_native_parity.py \
+            --driver "$RUNNER_TEMP/edge-one-production/edge_one_score_driver" \
+            --failed-gate .cache/m0/production-linux-ci.json.partial \
+            --output .cache/m0/production-library-diagnostic.json
       - name: Upload compact Linux evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -153,6 +161,8 @@ jobs:
             .cache/m0/production-linux-ci.json
             .cache/m0/production-linux-ci.json.partial
             .cache/m0/production-linux-ci.json.stderr
+            .cache/m0/production-library-diagnostic.json
+            .cache/m0/production-library-diagnostic.stderr
 
   apple-build:
     name: Unsigned iOS and simulator builds
