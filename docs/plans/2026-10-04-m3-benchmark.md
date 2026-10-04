@@ -76,3 +76,30 @@ temporary directory and retains the unchanged expected-report comparison.
 No commit or publication is authorized before root review. Root owns integration
 onto the latest calibration/router stack and the focused stacked PR. Native
 parity, actual data rights, model measurements and billing remain unclaimed.
+
+## Approved dependency integration: calibration identity sidecar
+
+Existing review and correction counts carry forward; this continuation does not
+start another whole-branch review loop. Root owns the reviewed dependency commit,
+the scoped delta review, publication, and readiness.
+
+- [x] Add one synthetic consumer-boundary test using actual recording, sidecar
+      serialization, recapture under a changed logical model, and v2 refitting.
+      Reports must compare with unchanged semantic identity/split and distinct
+      raw provenance, while the v1 physical-model-bound artifact still drives
+      benchmark gate metrics and actual hybrid routing (including hash rejection).
+- [x] Observe the expected missing-API failure against the current dependency.
+      At `33c590d`, the focused test fails to load only because the sidecar class,
+      comparison-digest function, and parser option are not yet available.
+- [x] Wait for the root-supplied reviewed calibration/router merge, then verify
+      the integration test and full applicable suites pass.
+- [x] Preserve the six-file v1 fixture bundle, existing legacy parsing defaults,
+      report bytes, and expected baseline SHA; add no benchmark wire fields.
+- [x] Run analysis, formatting, CLI exact comparison, and clean Trunk before any
+      authorized commit. Group valid scoped findings in one regression-first
+      correction wave; report further blockers without resetting the budget.
+
+Integration evidence: the unchanged test passed after merging reviewed calibration
+`d082cdf` through router `d2bfa0a`. Full suites passed: 60 benchmark, 69 calibration,
+287 core tests. Legacy benchmark/calibration and separate v2 report baselines
+compare byte for byte; no bundle or runtime artifact version changed.
