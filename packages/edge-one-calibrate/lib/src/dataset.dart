@@ -2,12 +2,23 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 import 'package:edge_one/edge_one.dart';
-import 'package:edge_one/testing.dart' show redactedState;
+import 'package:edge_one/testing.dart' show redactedState, RecordingBackend;
+
+import 'identity.dart';
 
 /// One labeled cached response. Its questions always share a split partition.
 final class CalibrationRecord {
-  CalibrationRecord._(this.requestSha256, this.samples, this._identity);
+  CalibrationRecord._(
+    this.requestSha256,
+    this.comparisonSha256,
+    this.samples,
+    this._identity,
+  );
   final String requestSha256;
+  final String? comparisonSha256;
+
+  /// Version-specific grouped split identity; raw provenance remains separate.
+  String get splitSha256 => comparisonSha256 ?? requestSha256;
   final Map<String, CalibrationSample> samples;
   final Map<String, Object?> _identity;
 }
@@ -29,7 +40,12 @@ final class CalibrationSample {
 
 /// Validated, model-bound cached responses; never invokes a backend.
 final class CalibrationDataset {
-  CalibrationDataset._(this.modelSha256, this.records, this.sha256);
+  CalibrationDataset._(
+    this.modelSha256,
+    this.records,
+    this.sha256,
+    this.identitySidecar,
+  );
 
   /// [redactedRequests] asserts that the whole input contains redacted requests
   /// with trustworthy original, pre-redaction digests. It skips deduplication of
@@ -39,12 +55,28 @@ final class CalibrationDataset {
   /// originals cannot be verified or canonically deduplicated here.
   ///
   /// Defaults to false; the built-in [redactedState] marker is always recognized.
+  ///
+  /// [identitySidecar] opts into report v2 and ordered model-independent identity.
+  /// Available unredacted bodies and [originalRequests] always verify both raw
+  /// and semantic digests. Supplied originals must cover the dataset exactly.
+  /// Only hidden originals may rely on [trustIdentitySidecar], an explicit
+  /// producer assertion that cannot authenticate their content.
   factory CalibrationDataset.parse(
     String jsonl, {
     required String modelSha256,
     bool redactedRequests = false,
+    CalibrationIdentitySidecar? identitySidecar,
+    Map<String, SystemOneRequest>? originalRequests,
+    bool trustIdentitySidecar = false,
   }) {
     checkHash(modelSha256, 'model_sha256');
+    if (identitySidecar == null &&
+        (originalRequests != null || trustIdentitySidecar)) {
+      throw const FormatException(
+        'originals and identity trust require a sidecar',
+      );
+    }
+    String? logicalModel;
     final records = <CalibrationRecord>[];
     final digests = <String>{};
     final requests = <String>{};
@@ -82,7 +114,50 @@ final class CalibrationDataset {
         if (request.model != response.model)
           throw const FormatException('request/response model mismatch');
         final requestJson = SystemOneJson.encodeRequest(request);
-        if (!redactedRequests &&
+        final hidden = redactedRequests || request.state == redactedState;
+        String? comparison;
+        SystemOneRequest? verifiedOriginal;
+        if (identitySidecar != null) {
+          logicalModel ??= request.model;
+          if (logicalModel != request.model) {
+            throw const FormatException('mixed logical models in dataset');
+          }
+          comparison = identitySidecar.associations[digest];
+          if (comparison == null) {
+            throw const FormatException('missing identity association');
+          }
+          final supplied = originalRequests?[digest];
+          if (originalRequests != null && supplied == null) {
+            throw const FormatException('missing original request');
+          }
+          // Trust is used only when original content is unavailable. Available
+          // originals and unredacted stored bodies always verify both hashes.
+          for (final original in [
+            if (!hidden) request,
+            if (supplied != null) supplied,
+          ]) {
+            if (RecordingBackend.requestSha256(original) != digest ||
+                comparisonRequestSha256(original) != comparison) {
+              throw const FormatException(
+                'original raw or comparison digest mismatch',
+              );
+            }
+            if (original.model != request.model) {
+              throw const FormatException(
+                'original/stored logical model mismatch',
+              );
+            }
+            SystemOneJson.checkAnswers(original.questions, response);
+            verifiedOriginal = original;
+          }
+          if (verifiedOriginal == null && !trustIdentitySidecar) {
+            throw const FormatException(
+              'hidden originals require explicit trusted identity sidecar',
+            );
+          }
+        }
+        if (identitySidecar == null &&
+            !redactedRequests &&
             request.state != redactedState &&
             !requests.add(canonicalJson(requestJson))) {
           throw const FormatException('duplicate canonical request');
@@ -95,25 +170,37 @@ final class CalibrationDataset {
             'labels must cover exactly the request questions',
           );
         }
+        final definitionRequest = verifiedOriginal == null
+            ? requestJson
+            : SystemOneJson.encodeRequest(verifiedOriginal);
         final samples = <String, CalibrationSample>{};
         final scoreLegends = <String, Object?>{};
         for (final key in request.questions.keys.toList()..sort()) {
           final answer = response.answers[key]!;
           if (answer is ScoreAnswer) scoreLegends[key] = answer.legend;
-          final definition = canonicalJson({
-            'question': (requestJson['questions'] as Map)[key],
-            if (answer is ScoreAnswer) 'score_legend': answer.legend,
-          });
+          final definition =
+              (identitySidecar == null ? canonicalJson : jsonEncode)({
+                'question': (definitionRequest['questions'] as Map)[key],
+                if (answer is ScoreAnswer) 'score_legend': answer.legend,
+              });
           final previous = definitions.putIfAbsent(key, () => definition);
           if (previous != definition)
             throw FormatException('question "$key" changes definition');
           samples[key] = _sample(answer, labels[key], key);
         }
         records.add(
-          CalibrationRecord._(digest, Map.unmodifiable(samples), {
-            'request_sha256': digest,
-            'request': requestJson,
-            'labels': labels,
+          CalibrationRecord._(digest, comparison, Map.unmodifiable(samples), {
+            if (comparison != null) 'comparison_sha256': comparison,
+            if (comparison == null) ...{
+              'request_sha256': digest,
+              'request': requestJson,
+            },
+            'labels': comparison == null
+                ? labels
+                : {
+                    for (final key in labels.keys.toList()..sort())
+                      key: labels[key],
+                  },
             'score_legends': scoreLegends,
           }),
         );
@@ -124,15 +211,29 @@ final class CalibrationDataset {
       }
     }
     if (records.isEmpty) throw const FormatException('dataset is empty');
-    records.sort((a, b) => a.requestSha256.compareTo(b.requestSha256));
+    if (identitySidecar != null &&
+        (identitySidecar.associations.length != digests.length ||
+            !identitySidecar.associations.keys.every(digests.contains))) {
+      throw const FormatException('sidecar must cover exactly the dataset');
+    }
+    if (originalRequests != null &&
+        (originalRequests.length != digests.length ||
+            !originalRequests.keys.every(digests.contains))) {
+      throw const FormatException('originals must cover exactly the dataset');
+    }
+    records.sort((a, b) => a.splitSha256.compareTo(b.splitSha256));
     return CalibrationDataset._(
       modelSha256,
       List.unmodifiable(records),
-      digestJson([for (final record in records) record._identity]),
+      identitySidecar == null
+          ? digestJson([for (final record in records) record._identity])
+          : _sha256Ordered([for (final record in records) record._identity]),
+      identitySidecar,
     );
   }
 
   final String modelSha256;
+  final CalibrationIdentitySidecar? identitySidecar;
   final List<CalibrationRecord> records;
 
   /// Data identity binds labels, question definitions and Score legend meanings,
@@ -218,3 +319,6 @@ Object? _canonical(Object? value) => switch (value) {
   List() => [for (final child in value) _canonical(child)],
   _ => value,
 };
+
+String _sha256Ordered(Object? value) =>
+    sha256.convert(utf8.encode(jsonEncode(value))).toString();

@@ -157,3 +157,94 @@ workflow does not fetch or evaluate a model automatically.
 Regenerate the deterministic synthetic input with
 `dart run tool/update_fixture.dart`. Update a baseline only after reviewing why
 its metrics changed; normal tests and CI never rewrite it.
+
+## Comparing changed logical model names (report v2)
+
+Opt in to a versioned **comparison identity sidecar** for model upgrades that
+change `request.model`. The producer computes it from validated original requests
+before redaction, alongside its existing RecordingBackend capture:
+
+```dart
+final sidecar = CalibrationIdentitySidecar.fromRequests(originalRequests);
+final sidecarJson = sidecar.toJson(); // Persist only these digest pairs.
+final dataset = CalibrationDataset.parse(
+  labeledJsonl,
+  modelSha256: physicalModelHash,
+  identitySidecar: CalibrationIdentitySidecar.parse(sidecarJson),
+);
+```
+
+The sidecar contains exactly `version: 1`,
+`identity_scheme: "system-one-request-excluding-model-v1"`, and `associations`:
+
+```json
+{
+  "version": 1,
+  "identity_scheme": "system-one-request-excluding-model-v1",
+  "associations": [
+    {
+      "request_sha256": "64 lowercase hexadecimal digits",
+      "comparison_sha256": "64 lowercase hexadecimal digits"
+    }
+  ]
+}
+```
+
+`comparisonRequestSha256(original)` hashes UTF-8 of
+`edge-one-calibrate:system-one-request-excluding-model-v1\n` followed by the
+ordered typed JSON encoding with **only top-level `model` removed**. Nested
+`model` fields, state, questions, instructions, criteria, typed scalars, Unicode,
+mapping order, Choice option order and arrays remain significant. No sorting,
+normalization, trimming or coercion occurs. Generate one association per original;
+duplicate raw or semantic digests, conflicts and missing/extra entries fail.
+A dataset must use one logical model name and one physical model hash.
+
+Unredacted input verifies both digests. For redacted input either supply
+`originalRequests: {rawDigest: originalRequest}` in memory (exact coverage,
+verifying both digests), or explicitly assert trusted producer provenance with
+`trustIdentitySidecar: true`. The latter cannot authenticate hidden originals.
+Custom redactors additionally require `redactedRequests: true`; default state
+redaction is detected automatically. Trust never skips verification of available
+originals or unredacted bodies. CLI equivalents are:
+
+```sh
+dart run bin/edge_one_calibrate.dart fit \
+  --input test/fixtures/comparison-labeled.jsonl \
+  --identity-sidecar test/fixtures/comparison-sidecar.json \
+  --model-sha256 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
+  --output /tmp/comparison-thresholds.json --report /tmp/comparison-report.json
+
+dart run bin/edge_one_calibrate.dart check \
+  --baseline test/fixtures/comparison-baseline-report.json \
+  --report /tmp/comparison-report.json \
+  --max-accuracy-drop 0 --max-coverage-drift 0 --max-error-increase 0
+```
+
+For hidden originals add `--trust-identity-sidecar`, or use
+`--original-requests /private/originals.json` to read an existing JSON array of
+original requests locally. No original content is written by the CLI or helper.
+Input, sidecar and originals paths must differ from both output paths, including
+resolved symlink aliases. Digests expose equality and can permit dictionary
+matching; neither recordings nor digest pairs are anonymization.
+
+V2 reports explicitly declare `identity_scheme` and
+`split_scheme: "sha256-seed-comparison-v1"`. They bind ordered comparison digests,
+labels and Score legends in dataset identity, rank semantic digests by
+SHA-256 of UTF-8 `seed:digest`, and put those digests in the split lists. Raw
+associations remain in `provenance` for inspection and are excluded from report
+comparison equality; any raw digest shared across compared reports must still
+map to the same semantic digest. Label keys alone are sorted when assembling v2
+dataset identity, so label insertion order does not change identity. Ordered
+request content and Score legends remain significant. Parsing checks exact
+provenance coverage and seeded split
+membership. The runtime thresholds artifact remains version 1 and strictly bound
+to the physical model hash. Thresholds and drift tolerances are unchanged.
+
+Without a sidecar, fitting still emits **legacy v1** reports: dataset identity
+includes raw hashes and stored request bodies (including logical model name),
+and split membership uses raw hashes. V1 can compare physical revisions only
+while those inputs stay identical. Redacted v1 cannot recover model-independent
+identity without originals or a trusted producer sidecar. V1/v2 comparisons and
+unknown schemes fail closed. The original fixture and baseline are unchanged;
+`tool/update_fixture.dart --comparison` regenerates only the separate 24-request
+synthetic comparison input and sidecar. Baselines still require manual review.

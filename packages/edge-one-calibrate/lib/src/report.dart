@@ -1,6 +1,7 @@
 import 'package:edge_one/edge_one.dart';
 
 import 'dataset.dart';
+import 'identity.dart';
 
 /// Compares held-out metrics on the same data and deterministic split.
 ///
@@ -23,9 +24,35 @@ List<String> checkRegression(
   }
   final before = _report(baseline);
   final after = _report(candidate);
-  for (final key in ['dataset_sha256', 'seed', 'split', 'target_error']) {
+  for (final key in [
+    'version',
+    'identity_scheme',
+    'split_scheme',
+    'dataset_sha256',
+    'seed',
+    'split',
+    'target_error',
+  ]) {
     if (canonicalJson(before[key]) != canonicalJson(after[key])) {
       throw FormatException('incompatible reports: $key differs');
+    }
+  }
+  if (before['version'] == 2) {
+    final associations = <String, Object?>{
+      for (final pair in before['provenance']! as List)
+        _map(pair)['request_sha256']! as String: _map(
+          pair,
+        )['comparison_sha256'],
+    };
+    for (final value in after['provenance']! as List) {
+      final pair = _map(value);
+      final raw = pair['request_sha256']! as String;
+      if (associations.containsKey(raw) &&
+          associations[raw] != pair['comparison_sha256']) {
+        throw const FormatException(
+          'incompatible reports: shared raw request has conflicting comparison identity',
+        );
+      }
     }
   }
   final beforeQuestions = _map(before['questions']);
@@ -86,6 +113,7 @@ List<String> checkRegression(
 }
 
 Map<String, Object?> _report(Object? json) {
+  final version = _map(json)['version'];
   final report = _map(json, {
     'version',
     'model_sha256',
@@ -94,8 +122,9 @@ Map<String, Object?> _report(Object? json) {
     'seed',
     'split',
     'questions',
+    if (version == 2) ...{'identity_scheme', 'split_scheme', 'provenance'},
   });
-  if (report['version'] != 1 || report['seed'] is! int)
+  if ((version != 1 && version != 2) || report['seed'] is! int)
     throw const FormatException('invalid report version or seed');
   checkHash(report['model_sha256'], 'model_sha256');
   checkHash(report['dataset_sha256'], 'dataset_sha256');
@@ -103,6 +132,41 @@ Map<String, Object?> _report(Object? json) {
   final split = _map(report['split'], {'fitting', 'validation'});
   final fitting = _digests(split['fitting']);
   final validation = _digests(split['validation']);
+  if (version == 2) {
+    if (report['identity_scheme'] != comparisonIdentityScheme ||
+        report['split_scheme'] != comparisonSplitScheme) {
+      throw const FormatException(
+        'unsupported report identity or split scheme',
+      );
+    }
+    final provenance = CalibrationIdentitySidecar.parse({
+      'version': 1,
+      'identity_scheme': report['identity_scheme'],
+      'associations': report['provenance'],
+    });
+    final members = {...fitting, ...validation};
+    if (members.length != provenance.associations.length ||
+        !provenance.associations.values.every(members.contains)) {
+      throw const FormatException('provenance must cover exactly the split');
+    }
+    final seed = report['seed']! as int;
+    final ranked = members.toList()
+      ..sort(
+        (a, b) => comparisonSplitRank(
+          seed,
+          a,
+        ).compareTo(comparisonSplitRank(seed, b)),
+      );
+    final middle = ranked.length ~/ 2;
+    if (canonicalJson(split['fitting']) !=
+            canonicalJson(ranked.take(middle).toList()) ||
+        canonicalJson(split['validation']) !=
+            canonicalJson(ranked.skip(middle).toList())) {
+      throw const FormatException(
+        'split disagrees with declared seed and comparison scheme',
+      );
+    }
+  }
   if (fitting.intersection(validation).isNotEmpty)
     throw const FormatException('report split overlaps');
   final questions = _map(report['questions']);

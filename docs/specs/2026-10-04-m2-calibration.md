@@ -102,3 +102,37 @@ After both outputs are published, cleanup failures produce warnings with paths
 and preserve the installed pair with exit 0. Never roll back after cleanup has
 started deleting backups. These guarantees require exclusive path ownership;
 crash atomicity and concurrent filesystem mutation are out of scope.
+
+## Approved comparison identity sidecar (report v2)
+
+Opt in with a calibration-only sidecar; RecordingBackend's four fields, labeled
+v1's six fields and physical-model-bound runtime artifact remain unchanged.
+`CalibrationIdentitySidecar.fromRequests` consumes validated original requests
+before redaction. `comparisonRequestSha256` hashes UTF-8 of the exact domain
+`edge-one-calibrate:system-one-request-excluding-model-v1\n` followed by
+`jsonEncode(SystemOneJson.encodeRequest(original))` with only top-level `model`
+removed. Preserve typed scalar values, Unicode, all mapping/question/Choice and
+array order; never sort, normalize or coerce this encoding.
+
+The strict sidecar has `version: 1`,
+`identity_scheme: "system-one-request-excluding-model-v1"`, and `associations`,
+a list of exact `{request_sha256, comparison_sha256}` objects. Both columns must
+be unique and cover the input exactly. Reject mixed logical or physical models.
+Verify both digests from stored unredacted requests or an exact-coverage in-memory
+`originalRequests` map. Hidden originals require explicit `trustIdentitySidecar`
+producer trust (CLI `--trust-identity-sidecar`); this cannot authenticate hidden
+content. `--original-requests` reads a local JSON array without persisting it.
+
+V2 reports declare `identity_scheme` and
+`split_scheme: "sha256-seed-comparison-v1"`; ordered dataset identity binds
+comparison digests, labels and Score legends, excluding predictions and model
+names. Rank and split on semantic digests. Keep raw-to-semantic associations in
+`provenance`, outside compared identity. Shared raw digests across two reports
+must retain the same comparison digest. Label mappings use sorted question keys
+in v2 dataset identity because label insertion order has no fitting meaning;
+request and Score legend order remain significant. V1 reports retain their existing raw
+request/stored-body identity and raw split semantics. Reject cross-version or
+cross-scheme comparisons. Redacted v1 without originals or a trusted sidecar
+cannot compare changed logical names. Thresholds and tolerances are unchanged.
+Local processing only: never persist original content. Digest pairs expose
+equality and may permit dictionary matching; they are not anonymization.

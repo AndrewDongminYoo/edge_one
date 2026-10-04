@@ -1,10 +1,9 @@
-import 'dart:convert';
 import 'dart:math' as math;
 
-import 'package:crypto/crypto.dart';
 import 'package:edge_one/edge_one.dart';
 
 import 'dataset.dart';
+import 'identity.dart';
 
 final class DatasetSplit {
   DatasetSplit._(this.fitting, this.validation);
@@ -19,10 +18,7 @@ DatasetSplit splitDataset(CalibrationDataset dataset, {int seed = 0}) {
     );
   final ranked = [
     for (final record in dataset.records)
-      (
-        sha256.convert(utf8.encode('$seed:${record.requestSha256}')).toString(),
-        record,
-      ),
+      (comparisonSplitRank(seed, record.splitSha256), record),
   ]..sort((a, b) => a.$1.compareTo(b.$1));
   final middle = ranked.length ~/ 2;
   return DatasetSplit._(
@@ -105,15 +101,20 @@ CalibrationRun fitCalibration(
       questions: gates,
     ),
     {
-      'version': 1,
+      'version': dataset.identitySidecar == null ? 1 : 2,
+      if (dataset.identitySidecar != null) ...{
+        'identity_scheme': comparisonIdentityScheme,
+        'split_scheme': comparisonSplitScheme,
+        'provenance': dataset.identitySidecar!.toJson()['associations'],
+      },
       'model_sha256': dataset.modelSha256,
       'target_error': targetError,
       'dataset_sha256': dataset.sha256,
       'seed': seed,
       'split': {
-        'fitting': [for (final record in split.fitting) record.requestSha256],
+        'fitting': [for (final record in split.fitting) record.splitSha256],
         'validation': [
-          for (final record in split.validation) record.requestSha256,
+          for (final record in split.validation) record.splitSha256,
         ],
       },
       'questions': questions,

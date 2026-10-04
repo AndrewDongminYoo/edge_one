@@ -1,0 +1,334 @@
+{
+  "version": 2,
+  "identity_scheme": "system-one-request-excluding-model-v1",
+  "split_scheme": "sha256-seed-comparison-v1",
+  "provenance": [
+    {
+      "request_sha256": "1de2e1d3330fef6b3b9980ae54d0c59d3567eb17444c8e5d4e942aa123e1b534",
+      "comparison_sha256": "2f49eb48e5788eef9a60053f34f8962bc06aff35320968a796f16bf978738200"
+    },
+    {
+      "request_sha256": "25c0f94cfab7d4b9b081bb329f22fb12386ccface98759345fe022b09f440381",
+      "comparison_sha256": "1b42889a925c0ede238ec310bd288c55bbcdcc06cf40469b88772a6e00145720"
+    },
+    {
+      "request_sha256": "27a6c6e3673def88628c4aee7dfc76f61e90512c7370a2baf1456d2a2adcf78b",
+      "comparison_sha256": "0801b21c76016e11c584b22f7a413d17c5ee8225e4245435fac3400b40f53552"
+    },
+    {
+      "request_sha256": "29c7c7ae6e090e87cf913a82cc5f2b204af4c8d7136409d20c55769abe973841",
+      "comparison_sha256": "cdca033bb405e628052c0b9b0b610420b274ac248f1c53f24cb7098fbc992403"
+    },
+    {
+      "request_sha256": "3106d2671a3b7efb183678c777488220244ec00b8109129ed9f50a3a564b7b8c",
+      "comparison_sha256": "8d421e5737272086433edfd597d0ffbc96b47a86d91b90235e68bbbe60a3881a"
+    },
+    {
+      "request_sha256": "332236b8667ef97dc8c8e6792a5d777e41486f4827fd7f86303e5b9d90cef21d",
+      "comparison_sha256": "44c4f05b4889d4388daa35aa57b65db061c29e579c799a491b38e4ada6e24147"
+    },
+    {
+      "request_sha256": "351bf5195c11bc313e89aa5dc37c08ce8d5d87b91124e8a21362f5403a1147ad",
+      "comparison_sha256": "1e50701d1da9f839d26aa07bdefb9f4e45c1c97d88473b87f041e32e61bfbb72"
+    },
+    {
+      "request_sha256": "3870892ba971c1b95acc07beb1142482f8bfe6779c2daf0b3cdf5e6df6f96f3a",
+      "comparison_sha256": "f89e0b1f8c0a2b3a7f710872214667ccae712856b80f312bf0cf7dc5dae422c4"
+    },
+    {
+      "request_sha256": "52c50eec8dd0d37a4110b5fee4e29c591454f68f9cb11c628f64b0843c08cb93",
+      "comparison_sha256": "dbf6bb4a31a799b5721aac073e37bcaec1449d9b767ee019cbf43de041ed56de"
+    },
+    {
+      "request_sha256": "595f63b469f188b8fb87230664fe074431f68f844da76007a0f4d1871dd5cfd1",
+      "comparison_sha256": "6af8396aba4bacc6a9703659e9fe9a9c79c116f734da1d8f376b5a7265e99439"
+    },
+    {
+      "request_sha256": "626d4557e15a163652d199c46ca1807432637dfced01dc6952bc8d8490df0d7a",
+      "comparison_sha256": "137c55576c8336f001dd9d456d2a57904c096542e0cc5cd3cf1bb3ef33e5af8e"
+    },
+    {
+      "request_sha256": "6308a13a0c3206847cb9356d361616ddcffd90acb44b3d1e8d8dfeb909ed9f7c",
+      "comparison_sha256": "323f0b696698a469e4a20693ea11d0c7d77574e12c7b6d74a80960c010f91b64"
+    },
+    {
+      "request_sha256": "64fb01c3a75b8b1ac95290cefde458605cbca61131291538783c2fc869dbdbd6",
+      "comparison_sha256": "60e906bc482df913e30682305906ba9cba210d51d09c4ac4fbb3090ca0964ef9"
+    },
+    {
+      "request_sha256": "79203f52b50042ea7b2a49effb6dea0fc7692d7e62436faab5a513820e6349cb",
+      "comparison_sha256": "66f46889bfdf2c7df0c5c7d0663f2d8881c1d632ac9937875881c9164692ba50"
+    },
+    {
+      "request_sha256": "86f17eb0c0ee96f54f885e52ade5b59b5ca01134635ea90b829765e987120ddd",
+      "comparison_sha256": "11df0c79e6f22494f7caf08c4d5968311255afb5290ef7686aa2b1cacc4394cd"
+    },
+    {
+      "request_sha256": "91e4683101f700e58671278451acd93277dd11469cc394896fdf8e08e0fe6b28",
+      "comparison_sha256": "8a43e9540e4a43d605a13d4c58853aef0a65f03a3eb0994864e18938a980eb99"
+    },
+    {
+      "request_sha256": "a3ff26352a4751266d332afa76ef4e34ff90386639a885f64e7385818da586b7",
+      "comparison_sha256": "1506b5b9272fc4cc738fb3ef1a5123ccc64c529ef98c661d9d43a8c3f3f6e8c8"
+    },
+    {
+      "request_sha256": "b187db28b8356f1635b37857a0d35e298d7d627e422a3bc6a071216a17cc798f",
+      "comparison_sha256": "eb417b19791b5b6a6467438360518c394d7d896a7b2607dd3b0373df6e108d9a"
+    },
+    {
+      "request_sha256": "cec6980417dc16f3bc7b9a1acf069541791dcbf95ed5827f014e09a1f9107b72",
+      "comparison_sha256": "b4ba9a3efd01a3d0392c0cea0f4c521e94e7a725cce7d3dffcb1b0cc013d87ad"
+    },
+    {
+      "request_sha256": "d01af154d52dfbf6573eeee3511ec570a17407a94d54941a688d832b28e7446d",
+      "comparison_sha256": "34eda22120bf843919e53e1b80cef7453f0bf618d4b0180fd54b44c2bb913c70"
+    },
+    {
+      "request_sha256": "d77fd3f6cc67f3acd76b568730435c641d0e5b724cbe47c80eb58f4d8d7f888c",
+      "comparison_sha256": "fee60f5955b5c0fca168fe50eefeab07ad6d92240ef89f632488051e5597a35c"
+    },
+    {
+      "request_sha256": "da1251e17da60302ed98fc406002397bdf2141201b9e6c3a408ee7ac247ca6af",
+      "comparison_sha256": "94cab7e63677764a7d500b18441889b93d63c28c9efbda67adc311cbb65584e7"
+    },
+    {
+      "request_sha256": "f9d21a10385ed90cd5494f10de17fb211876f8a1d602b39b8e207c740d7eaf5e",
+      "comparison_sha256": "7b2f28c7be0709f9055c255a708fbee68f25d332f4c022e6636f0885eb2963ad"
+    },
+    {
+      "request_sha256": "fd1083f7ca56c2ce8e160a60933ef7badf3dcbf945b2eb305ffea9e0dbbb6bbe",
+      "comparison_sha256": "b2f61a4309543e8e068c86d6c707301736dc444ae866c74757d7364ecf890eaa"
+    }
+  ],
+  "model_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "target_error": 0.05,
+  "dataset_sha256": "830738e3161a1f409ed9c54231da129aabb642d4f33841bfe7c16c0aeb197c51",
+  "seed": 0,
+  "split": {
+    "fitting": [
+      "7b2f28c7be0709f9055c255a708fbee68f25d332f4c022e6636f0885eb2963ad",
+      "8d421e5737272086433edfd597d0ffbc96b47a86d91b90235e68bbbe60a3881a",
+      "1506b5b9272fc4cc738fb3ef1a5123ccc64c529ef98c661d9d43a8c3f3f6e8c8",
+      "60e906bc482df913e30682305906ba9cba210d51d09c4ac4fbb3090ca0964ef9",
+      "cdca033bb405e628052c0b9b0b610420b274ac248f1c53f24cb7098fbc992403",
+      "34eda22120bf843919e53e1b80cef7453f0bf618d4b0180fd54b44c2bb913c70",
+      "323f0b696698a469e4a20693ea11d0c7d77574e12c7b6d74a80960c010f91b64",
+      "eb417b19791b5b6a6467438360518c394d7d896a7b2607dd3b0373df6e108d9a",
+      "66f46889bfdf2c7df0c5c7d0663f2d8881c1d632ac9937875881c9164692ba50",
+      "b2f61a4309543e8e068c86d6c707301736dc444ae866c74757d7364ecf890eaa",
+      "f89e0b1f8c0a2b3a7f710872214667ccae712856b80f312bf0cf7dc5dae422c4",
+      "11df0c79e6f22494f7caf08c4d5968311255afb5290ef7686aa2b1cacc4394cd"
+    ],
+    "validation": [
+      "2f49eb48e5788eef9a60053f34f8962bc06aff35320968a796f16bf978738200",
+      "8a43e9540e4a43d605a13d4c58853aef0a65f03a3eb0994864e18938a980eb99",
+      "fee60f5955b5c0fca168fe50eefeab07ad6d92240ef89f632488051e5597a35c",
+      "dbf6bb4a31a799b5721aac073e37bcaec1449d9b767ee019cbf43de041ed56de",
+      "6af8396aba4bacc6a9703659e9fe9a9c79c116f734da1d8f376b5a7265e99439",
+      "b4ba9a3efd01a3d0392c0cea0f4c521e94e7a725cce7d3dffcb1b0cc013d87ad",
+      "137c55576c8336f001dd9d456d2a57904c096542e0cc5cd3cf1bb3ef33e5af8e",
+      "1e50701d1da9f839d26aa07bdefb9f4e45c1c97d88473b87f041e32e61bfbb72",
+      "44c4f05b4889d4388daa35aa57b65db061c29e579c799a491b38e4ada6e24147",
+      "94cab7e63677764a7d500b18441889b93d63c28c9efbda67adc311cbb65584e7",
+      "1b42889a925c0ede238ec310bd288c55bbcdcc06cf40469b88772a6e00145720",
+      "0801b21c76016e11c584b22f7a413d17c5ee8225e4245435fac3400b40f53552"
+    ]
+  },
+  "questions": {
+    "flag": {
+      "type": "noul",
+      "temperature": 0.4308846190556667,
+      "fit_count": 12,
+      "validation_count": 12,
+      "validation_accuracy": 0.8333333333333334,
+      "fit_nll_before": 0.2775414884756347,
+      "fit_nll_after": 0.24443898179615844,
+      "targets": [
+        {
+          "target_error": 0.01,
+          "threshold": 0.9649233934614501,
+          "fitting": {
+            "count": 12,
+            "accepted": 8,
+            "errors": 0,
+            "coverage": 0.6666666666666666,
+            "error_rate": 0.0
+          },
+          "validation": {
+            "count": 12,
+            "accepted": 10,
+            "errors": 0,
+            "coverage": 0.8333333333333334,
+            "error_rate": 0.0
+          }
+        },
+        {
+          "target_error": 0.05,
+          "threshold": 0.9649233934614501,
+          "fitting": {
+            "count": 12,
+            "accepted": 8,
+            "errors": 0,
+            "coverage": 0.6666666666666666,
+            "error_rate": 0.0
+          },
+          "validation": {
+            "count": 12,
+            "accepted": 10,
+            "errors": 0,
+            "coverage": 0.8333333333333334,
+            "error_rate": 0.0
+          }
+        },
+        {
+          "target_error": 0.1,
+          "threshold": 0.9649233934614501,
+          "fitting": {
+            "count": 12,
+            "accepted": 8,
+            "errors": 0,
+            "coverage": 0.6666666666666666,
+            "error_rate": 0.0
+          },
+          "validation": {
+            "count": 12,
+            "accepted": 10,
+            "errors": 0,
+            "coverage": 0.8333333333333334,
+            "error_rate": 0.0
+          }
+        }
+      ]
+    },
+    "level": {
+      "type": "score",
+      "temperature": 0.4308846190556667,
+      "fit_count": 12,
+      "validation_count": 12,
+      "validation_accuracy": 0.8333333333333334,
+      "fit_nll_before": 0.2775414884756347,
+      "fit_nll_after": 0.24443898179615844,
+      "targets": [
+        {
+          "target_error": 0.01,
+          "threshold": 0.9649233934614501,
+          "fitting": {
+            "count": 12,
+            "accepted": 8,
+            "errors": 0,
+            "coverage": 0.6666666666666666,
+            "error_rate": 0.0
+          },
+          "validation": {
+            "count": 12,
+            "accepted": 10,
+            "errors": 0,
+            "coverage": 0.8333333333333334,
+            "error_rate": 0.0
+          }
+        },
+        {
+          "target_error": 0.05,
+          "threshold": 0.9649233934614501,
+          "fitting": {
+            "count": 12,
+            "accepted": 8,
+            "errors": 0,
+            "coverage": 0.6666666666666666,
+            "error_rate": 0.0
+          },
+          "validation": {
+            "count": 12,
+            "accepted": 10,
+            "errors": 0,
+            "coverage": 0.8333333333333334,
+            "error_rate": 0.0
+          }
+        },
+        {
+          "target_error": 0.1,
+          "threshold": 0.9649233934614501,
+          "fitting": {
+            "count": 12,
+            "accepted": 8,
+            "errors": 0,
+            "coverage": 0.6666666666666666,
+            "error_rate": 0.0
+          },
+          "validation": {
+            "count": 12,
+            "accepted": 10,
+            "errors": 0,
+            "coverage": 0.8333333333333334,
+            "error_rate": 0.0
+          }
+        }
+      ]
+    },
+    "topic": {
+      "type": "choice",
+      "temperature": 0.4308846190556667,
+      "fit_count": 12,
+      "validation_count": 12,
+      "validation_accuracy": 0.8333333333333334,
+      "fit_nll_before": 0.2775414884756347,
+      "fit_nll_after": 0.24443898179615844,
+      "targets": [
+        {
+          "target_error": 0.01,
+          "threshold": 0.9649233934614501,
+          "fitting": {
+            "count": 12,
+            "accepted": 8,
+            "errors": 0,
+            "coverage": 0.6666666666666666,
+            "error_rate": 0.0
+          },
+          "validation": {
+            "count": 12,
+            "accepted": 10,
+            "errors": 0,
+            "coverage": 0.8333333333333334,
+            "error_rate": 0.0
+          }
+        },
+        {
+          "target_error": 0.05,
+          "threshold": 0.9649233934614501,
+          "fitting": {
+            "count": 12,
+            "accepted": 8,
+            "errors": 0,
+            "coverage": 0.6666666666666666,
+            "error_rate": 0.0
+          },
+          "validation": {
+            "count": 12,
+            "accepted": 10,
+            "errors": 0,
+            "coverage": 0.8333333333333334,
+            "error_rate": 0.0
+          }
+        },
+        {
+          "target_error": 0.1,
+          "threshold": 0.9649233934614501,
+          "fitting": {
+            "count": 12,
+            "accepted": 8,
+            "errors": 0,
+            "coverage": 0.6666666666666666,
+            "error_rate": 0.0
+          },
+          "validation": {
+            "count": 12,
+            "accepted": 10,
+            "errors": 0,
+            "coverage": 0.8333333333333334,
+            "error_rate": 0.0
+          }
+        }
+      ]
+    }
+  }
+}

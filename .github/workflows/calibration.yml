@@ -57,3 +57,16 @@ jobs:
             --baseline test/fixtures/baseline-report.json \
             --report "$RUNNER_TEMP/calibration-report.json" \
             --max-accuracy-drop 0 --max-coverage-drift 0 --max-error-increase 0
+      - name: Gate versioned comparison identity fixture
+        working-directory: packages/edge-one-calibrate
+        run: |
+          dart run bin/edge_one_calibrate.dart fit \
+            --input test/fixtures/comparison-labeled.jsonl \
+            --identity-sidecar test/fixtures/comparison-sidecar.json \
+            --model-sha256 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
+            --output "$RUNNER_TEMP/comparison-thresholds.json" \
+            --report "$RUNNER_TEMP/comparison-report.json"
+          dart run bin/edge_one_calibrate.dart check \
+            --baseline test/fixtures/comparison-baseline-report.json \
+            --report "$RUNNER_TEMP/comparison-report.json" \
+            --max-accuracy-drop 0 --max-coverage-drift 0 --max-error-increase 0
