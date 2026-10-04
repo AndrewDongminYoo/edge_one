@@ -136,3 +136,19 @@ cross-scheme comparisons. Redacted v1 without originals or a trusted sidecar
 cannot compare changed logical names. Thresholds and tolerances are unchanged.
 Local processing only: never persist original content. Digest pairs expose
 equality and may permit dictionary matching; they are not anonymization.
+
+## Approved hosted-review integrity correction
+
+The sidecar producer validates stable ordered original definitions for every
+shared question key before emitting digest pairs. Explicit hidden-original trust
+also attests that the producer performed this check; third-party producers have
+the same duty. Digest pairs cannot independently prove hidden definitions. No
+sidecar schema, digest scheme or runtime artifact format changes.
+
+Every unhidden request verifies its raw RecordingBackend digest, with or without
+a sidecar. The previously committed 120-row legacy synthetic fixture used hashes
+of synthetic index labels rather than its visible request bodies. The approved
+migration replaces those invalid hashes and regenerates legacy split/report and
+threshold fixtures with unchanged input content, seed, targets, algorithms and
+tolerances. This is an explicit exception to the earlier byte-identical legacy
+fixture requirement; valid original v1 records retain their existing semantics.

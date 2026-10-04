@@ -173,3 +173,40 @@ Split, metrics, provenance and threshold artifact bytes remain identical. Legacy
 v1 CLI outputs still match their committed report and thresholds byte-for-byte.
 Both analyzers, format, lock and contract checks pass; no additional review round
 or changes to tolerances, runtime, or RecordingBackend are included.
+
+## Task 5: approved additional hosted-findings correction pass
+
+The user approved one additional bounded grouped pass, including migration of
+120 invalid legacy synthetic hashes. Earlier review/fix counts remain consumed.
+No additional subagents, reviewers or public actions belong to this task.
+
+Files: `lib/src/identity.dart`, `lib/src/dataset.dart`, CLI/API trust documentation,
+new `test/producer_validation_test.dart`, `test/support.dart`, affected request
+mutators, legacy fixtures, README and this specification/plan.
+
+- [x] Reproduce producer acceptance of hidden original instructions/criteria
+      drift and legacy acceptance of incorrect raw hashes in failing regressions.
+- [x] Validate ordered original question definitions per shared key in
+      `CalibrationIdentitySidecar.fromRequests`; explicitly document producer
+      trust obligations without adding fields or altering digest encoding.
+- [x] Verify raw digests for every unhidden request; generate genuine hashes in
+      test support and recompute them in tests targeting later invariants.
+- [x] Migrate legacy input/report/threshold fixtures using identical content and
+      seed; record old/new hashes, split and metric changes; verify v2 bytes fixed.
+- [x] Run full calibration/core tests, analysis/format/lock/contracts/CLI checks;
+      confirm Trunk exits 0 before a local Conventional Commit and evidence report.
+
+Task 5 execution evidence: five feature-specific failures were observed before
+production changes, covering hidden original instructions/criterion meanings,
+ordered definitions, legacy raw integrity and the real CLI. All six focused tests
+then passed, including stable hidden-original trust. The complete calibration
+suite passes 76 tests and the core suite passes 230. Both analyses, formatting,
+lock enforcement and all contract checks pass. Corrected legacy fixtures exactly
+match the approved candidate files; only the 120 raw hash fields changed in the
+input. The comparison-v2 input, sidecar, baseline and fitted artifact remain
+byte-identical. See the [migration evidence](../notes/2026-10-04-calibration-integrity-migration.md)
+for exact old/new hashes and numerical effects. The subset-consistency test now
+constructs an impossible error count from its actual partition, and unredacted
+request-mutator tests refresh raw digests to reach their intended later checks.
+This is the single separately authorized additional pass; earlier review and
+correction history remains consumed.
