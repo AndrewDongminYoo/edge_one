@@ -132,11 +132,15 @@ jobs:
             -DFETCHCONTENT_SOURCE_DIR_LLAMA_CPP="$source_dir"
           cmake --build "$RUNNER_TEMP/edge-one-production" --parallel 2
           ctest --test-dir "$RUNNER_TEMP/edge-one-production" --output-on-failure
+      - name: Build independent fixed AVX2 parity reference
+        run: .cache/m0/.venv/bin/python tools/build_parity_reference.py build --profile linux-x86_64-avx2-v1 --jobs 2
       - name: Compare production individual and exact scoring with pinned reference
         id: production_parity
         run: |
           .cache/m0/.venv/bin/python tools/check_native_parity.py \
             --driver "$RUNNER_TEMP/edge-one-production/edge_one_score_driver" \
+            --reference-profile linux-x86_64-avx2-v1 \
+            --production-build "$RUNNER_TEMP/edge-one-production" \
             --output .cache/m0/production-linux-ci.json --repetitions 1
       - name: Diagnose failed production parity with isolated library swaps
         if: failure() && steps.production_parity.outcome == 'failure'
@@ -153,6 +157,9 @@ jobs:
           retention-days: 3
           if-no-files-found: ignore
           path: |
+            .cache/m0/reference-linux-x86_64-avx2-v1/build-receipt.json
+            .cache/m0/reference-linux-x86_64-avx2-v1/bin/jev-score
+            .cache/m0/reference-linux-x86_64-avx2-v1/build/bin/*.so*
             .cache/m0/build-receipt.json
             .cache/m0/bin/jev-score
             .cache/m0/llama.cpp-*/build/bin/*.so*

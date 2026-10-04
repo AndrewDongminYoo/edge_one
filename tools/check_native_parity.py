@@ -7,6 +7,7 @@ import math
 import platform
 import subprocess
 import sys
+import threading
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -108,7 +109,7 @@ def sha256(path):
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
-def run(driver, output, repetitions):
+def run(driver, output, repetitions, reference_profile, production_build):
     if repetitions < 1:
         raise ValueError("repetitions must be positive")
     if output.exists() or output.with_suffix(output.suffix + ".partial").exists():
@@ -116,13 +117,22 @@ def run(driver, output, repetitions):
     if not driver.is_file():
         raise FileNotFoundError(f"build the production parity driver first: {driver}")
     sys.path.insert(0, str(ROOT / "spikes/m0"))
-    from run import load_runtime, make_fixtures
-    from setup import MODEL_DIR, PINS, verify_source
+    from build_parity_reference import (
+        loaded_artifacts,
+        production_artifacts,
+        verify_reference,
+    )
+    from run import make_fixtures
+    from setup import MODEL_DIR, PINS
 
     # These functions verify pinned model/runtime/tokenizer and build artifact
     # hashes. Missing input is an error, not an implicit download or test skip.
-    runtime, upstream_manifest, receipt = load_runtime()
-    verify_source()
+    runtime, upstream_manifest, receipt, reference_binary = verify_reference(
+        reference_profile
+    )
+    production_build_receipt, production_hashes = production_artifacts(
+        driver, production_build, receipt
+    )
     manifest = json.loads(MANIFEST.read_text())
     readout = json.loads((MODEL_DIR / "readout_config.json").read_text())
     upstream_model = upstream_manifest["files"][PINS["model"]]
@@ -160,6 +170,9 @@ def run(driver, output, repetitions):
             "fixture_sha256": sha256(fixture_file),
             "driver_sha256": sha256(driver),
             "reference_build": receipt,
+            "reference_profile": reference_profile,
+            "production_build": production_build_receipt,
+            "production_artifacts": production_hashes,
             "repetitions": repetitions,
             "gate": "max_abs_difference < 1e-3",
             "first_definition": "first request after fresh process; OS caches uncontrolled",
@@ -213,7 +226,7 @@ def run(driver, output, repetitions):
                 reference = runtime.JevStyleDecisionGGUF(
                     model_dir=MODEL_DIR,
                     quant="Q4_K_M",
-                    binary=ROOT / ".cache/m0/bin/jev-score",
+                    binary=reference_binary,
                     n_gpu_layers=0,
                     threads=2,
                     n_ubatch=1024,
@@ -221,7 +234,12 @@ def run(driver, output, repetitions):
                     stderr=log,
                 )
                 references = []
+                reference_watchdog = threading.Timer(600, reference.proc.kill)
+                reference_watchdog.start()
                 try:
+                    reference_mapping = loaded_artifacts(
+                        reference.proc.pid, receipt["artifacts"]
+                    )
                     for key, expected in {
                         "n_ctx": 32768,
                         "n_batch": 32768,
@@ -235,6 +253,7 @@ def run(driver, output, repetitions):
                         {
                             "fixture": fixture["id"],
                             "mode": "upstream_individual",
+                            "loaded": reference_mapping,
                             "ready": reference.info,
                             "n_gpu_layers": 0,
                             "threads": 2,
@@ -264,7 +283,9 @@ def run(driver, output, repetitions):
                                 "results": results,
                             }
                         )
+                    loaded_artifacts(reference.proc.pid, receipt["artifacts"])
                 finally:
+                    reference_watchdog.cancel()
                     reference.close()
                     if reference.proc.poll() is None:
                         reference.proc.kill()
@@ -273,24 +294,41 @@ def run(driver, output, repetitions):
                     reference.proc.stdout.close()
                 native = {}
                 for mode in ("individual", "exact"):
-                    process = subprocess.run(
+                    process = subprocess.Popen(
                         [
                             str(driver),
                             str(MODEL_DIR / PINS["model"]),
                             str(MANIFEST),
                             mode,
                         ],
-                        input=(json.dumps(request, ensure_ascii=False) + "\n")
-                        * (repetitions + 1),
+                        stdin=subprocess.PIPE,
                         stdout=subprocess.PIPE,
                         stderr=log,
                         text=True,
-                        timeout=600,
-                        check=False,
                     )
-                    messages = [
-                        json.loads(line) for line in process.stdout.splitlines()
-                    ]
+                    watchdog = threading.Timer(600, process.kill)
+                    watchdog.start()
+                    try:
+                        ready_line = process.stdout.readline()
+                        native_mapping = loaded_artifacts(
+                            process.pid, production_hashes
+                        )
+                        stdout, _ = process.communicate(
+                            input=(json.dumps(request, ensure_ascii=False) + "\n")
+                            * (repetitions + 1),
+                            timeout=600,
+                        )
+                        messages = [
+                            json.loads(line)
+                            for line in (ready_line + stdout).splitlines()
+                        ]
+                    finally:
+                        watchdog.cancel()
+                        if process.poll() is None:
+                            process.kill()
+                        process.wait(timeout=10)
+                        process.stdin.close()
+                        process.stdout.close()
                     if (
                         process.returncode
                         or len(messages) != repetitions + 2
@@ -299,7 +337,12 @@ def run(driver, output, repetitions):
                         raise ValueError(f"native driver failed ({mode}): {messages}")
                     ready, samples = messages[0], messages[1:]
                     report["engines"].append(
-                        {"fixture": fixture["id"], "mode": mode, "ready": ready}
+                        {
+                            "fixture": fixture["id"],
+                            "mode": mode,
+                            "ready": ready,
+                            "loaded": native_mapping,
+                        }
                     )
                     native[mode] = samples
                     for sample, result in enumerate(samples):
@@ -355,6 +398,13 @@ def run(driver, output, repetitions):
             for record in report["records"]
         ):
             raise ValueError("fixtures never exercised actual prefix sharing")
+        # Recheck receipts and on-disk artifacts after the full run.
+        verify_reference(reference_profile)
+        final_build, final_hashes = production_artifacts(
+            driver, production_build, receipt
+        )
+        if final_build != production_build_receipt or final_hashes != production_hashes:
+            raise ValueError("production build/artifact drift during run")
         report["summary"] = {
             "passes_gate": True,
             "compared_requests": len(report["comparisons"]),
@@ -379,8 +429,18 @@ def main():
     parser.add_argument("--driver", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--repetitions", type=int, default=1)
+    parser.add_argument(
+        "--reference-profile", required=True, choices=("linux-x86_64-avx2-v1",)
+    )
+    parser.add_argument("--production-build", required=True, type=Path)
     args = parser.parse_args()
-    run(args.driver.resolve(), args.output.resolve(), args.repetitions)
+    run(
+        args.driver.resolve(),
+        args.output.resolve(),
+        args.repetitions,
+        args.reference_profile,
+        args.production_build.resolve(),
+    )
 
 
 if __name__ == "__main__":

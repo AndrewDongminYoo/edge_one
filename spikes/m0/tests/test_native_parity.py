@@ -15,6 +15,22 @@ SPEC.loader.exec_module(parity)
 
 
 class NativeParityTests(unittest.TestCase):
+    def test_fixed_reference_selection_is_explicit(self):
+        import inspect
+
+        parameters = inspect.signature(parity.run).parameters
+        self.assertIn("reference_profile", parameters)
+        self.assertIn("production_build", parameters)
+        self.assertEqual(
+            parameters["reference_profile"].default, inspect.Parameter.empty
+        )
+
+    def test_historical_cross_profile_failure_remains_a_failure(self):
+        with self.assertRaisesRegex(ValueError, "strict probability parity failed"):
+            parity.require_parity(
+                [[0.5168782490965395, 0.4831217509034605]], [[0.5, 0.5]]
+            )
+
     def test_fixture_changes_cannot_silently_narrow_acceptance(self):
         specification = json.loads((ROOT / "spikes/m0/fixtures.json").read_text())
         parity.check_fixture_spec(specification)

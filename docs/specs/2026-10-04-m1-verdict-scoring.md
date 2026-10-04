@@ -32,3 +32,27 @@ inference. The exported C API and System One response mapping remain unchanged.
 Real-model Linux CI reuses the existing verified M0 fetch. Local real inference
 remains unrun unless the verified weights already exist. Archived M0 results do
 not validate the production context profile; batched remains experimental.
+
+## Approved Linux reference execution profile (2026-10-04)
+
+The strict production algorithm/sharing comparison uses an independently compiled
+pinned upstream scorer in `linux-x86_64-avx2-v1`, explicitly selected by the CLI.
+This is a Linux x86-64 AVX2 baseline, not universal CPU portability.
+`GGML_NATIVE=OFF`; AVX, AVX2, SSE42, BMI2, F16C and FMA are ON; AVX_VNNI,
+all AVX512 and AMX features and CPU_ALL_VARIANTS are OFF. Require supported host
+features, matching actual compiler flags/common backend settings and compiler
+identity, verified pinned source/model/scorer, and actual loaded artifact hashes.
+Reject drift and unsupported profiles without fallback.
+
+Build/cache/binary/receipt live separately under
+`.cache/m0/reference-linux-x86_64-avx2-v1/`; native M0 defaults, receipts and
+production code/profile remain unchanged. The harness requires
+`--reference-profile linux-x86_64-avx2-v1 --production-build PATH`.
+Keep all four pinned fixtures, token/slot/name equality, actual 1024-token sharing
+and sequence-copy observations, manifest integrity and strict max difference
+`<1e-3`. No tolerance, model, readout, fixture or scoring changes are authorized.
+
+The archived cross-profile failure `0.01687824909653951` remains a failure.
+The controlled 48 observations found portable differences <=2.22e-16 and AVX512
+differences 0.00467..0.01229; they do not repair or exactly reproduce the historical
+AMX-enabled result, prove cross-ISA parity, or establish device/performance claims.
