@@ -32,8 +32,6 @@ jobs:
           pnpm run schema:test
           pnpm run contracts:check
           pnpm run types:check
-      - name: Configure C++17 package scaffold
-        run: cmake -S packages/edge_one_core -B "$RUNNER_TEMP/edge-one-core"
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           flutter-version: 3.47.5
@@ -63,6 +61,21 @@ jobs:
         run: |
           flutter pub get --enforce-lockfile
           flutter test test/package_assets_test.dart
+
+  native-core:
+    name: Native C API and renderer (no model)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Configure pinned source and build the native library
+        run: |
+          cmake -S packages/edge_one_core -B "$RUNNER_TEMP/edge-one-core" -DCMAKE_BUILD_TYPE=Release
+          cmake --build "$RUNNER_TEMP/edge-one-core" --parallel 2
+      - name: Test validation, rendering, lifecycle, memory, and C ABI
+        run: ctest --test-dir "$RUNNER_TEMP/edge-one-core" --output-on-failure
 
   desktop-evidence:
     name: Unit tests and archived measurements
