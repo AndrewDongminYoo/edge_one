@@ -1,7 +1,15 @@
 name: edge_one_calibrate
-description: Planned threshold and temperature calibration CLI for edge_one.
+description: Offline temperature and threshold calibration for edge_one.
 version: 0.0.1
 publish_to: none
 environment:
   sdk: ^3.9.0
 resolution: workspace
+dependencies:
+  args: ^2.7.0
+  crypto: ^3.0.7
+  edge_one: ^0.0.1
+dev_dependencies:
+  test: ^1.32.0
+executables:
+  edge-one-calibrate: edge_one_calibrate
