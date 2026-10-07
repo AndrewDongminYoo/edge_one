@@ -1,0 +1,72 @@
+name: Offline calibration regression
+
+on:
+  pull_request:
+    paths:
+      - packages/edge-one-calibrate/**
+      - packages/edge_one/**
+      - pubspec.yaml
+      - pubspec.lock
+      - .github/workflows/calibration.yml
+  push:
+    branches: [main]
+    paths:
+      - packages/edge-one-calibrate/**
+      - packages/edge_one/**
+      - pubspec.yaml
+      - pubspec.lock
+      - .github/workflows/calibration.yml
+
+permissions:
+  contents: read
+
+jobs:
+  calibration:
+    name: Cached accuracy and automation drift
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: 3.47.5
+          channel: stable
+          cache: true
+      - name: Resolve, format and analyze
+        run: |
+          flutter pub get --enforce-lockfile
+          dart format --output=none --set-exit-if-changed packages/edge-one-calibrate packages/edge_one/lib/src/calibration.dart packages/edge_one/test/calibration_test.dart
+          dart analyze packages/edge-one-calibrate
+          dart analyze packages/edge_one
+      - name: Test artifact contract and offline calibration
+        run: |
+          dart test packages/edge_one/test/calibration_test.dart
+          cd packages/edge-one-calibrate
+          dart test
+      - name: Gate synthetic held-out accuracy and automation drift
+        working-directory: packages/edge-one-calibrate
+        run: |
+          dart run bin/edge_one_calibrate.dart fit \
+            --input test/fixtures/labeled.jsonl \
+            --model-sha256 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
+            --output "$RUNNER_TEMP/thresholds.json" \
+            --report "$RUNNER_TEMP/calibration-report.json"
+          dart run bin/edge_one_calibrate.dart check \
+            --baseline test/fixtures/baseline-report.json \
+            --report "$RUNNER_TEMP/calibration-report.json" \
+            --max-accuracy-drop 0 --max-coverage-drift 0 --max-error-increase 0
+      - name: Gate versioned comparison identity fixture
+        working-directory: packages/edge-one-calibrate
+        run: |
+          dart run bin/edge_one_calibrate.dart fit \
+            --input test/fixtures/comparison-labeled.jsonl \
+            --identity-sidecar test/fixtures/comparison-sidecar.json \
+            --model-sha256 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
+            --output "$RUNNER_TEMP/comparison-thresholds.json" \
+            --report "$RUNNER_TEMP/comparison-report.json"
+          dart run bin/edge_one_calibrate.dart check \
+            --baseline test/fixtures/comparison-baseline-report.json \
+            --report "$RUNNER_TEMP/comparison-report.json" \
+            --max-accuracy-drop 0 --max-coverage-drift 0 --max-error-increase 0

@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "model_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "target_error": 0.05,
+  "confidence": "normalized_max_probability",
+  "questions": {
+    "flag": {
+      "type": "noul",
+      "temperature": 0.485838174690041,
+      "threshold": 0.9452477839521018
+    },
+    "level": {
+      "type": "score",
+      "temperature": 0.4858381746900412,
+      "threshold": 0.9452477839521016
+    },
+    "topic": {
+      "type": "choice",
+      "temperature": 0.4858381746900412,
+      "threshold": 0.9452477839521016
+    }
+  }
+}
