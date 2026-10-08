@@ -10,7 +10,7 @@
       "selection": "all authored fixture rows; no external sampling",
       "requests": 1,
       "question_definition_sha256": {
-        "banking_intent": "8f2c8c32ed72faa9438bcc117eb2115b9dfe1fd46f136d3fdc13641c1f0ce619"
+        "banking_intent": "a4f9d77dc5c57bc2044fa39acb89142ce6b23a01ec28dd4a28ec809632313778"
       }
     },
     {
@@ -20,7 +20,7 @@
       "selection": "all authored fixture rows; no external sampling",
       "requests": 1,
       "question_definition_sha256": {
-        "nli_relation": "f1cedbe829af05bdccede46394d3f126638061201e5130c734fa3c5ef0440252"
+        "nli_relation": "7cce739b84531a3b632a7907c6eff052940c5e2ff15bb11c0dd929fd184c4107"
       }
     },
     {
@@ -30,7 +30,7 @@
       "selection": "all authored fixture rows; no external sampling",
       "requests": 1,
       "question_definition_sha256": {
-        "ynat_topic": "9aceb78b5d2c28c6b528cac80ce74d00d82f2ec99101979be4e21c9f0e4e1e0d"
+        "ynat_topic": "cda88f5e972ca25c5837864d395005879e237a3b4bcfd1d6b7572519528c6577"
       }
     },
     {
@@ -40,7 +40,7 @@
       "selection": "all authored fixture rows; no external sampling",
       "requests": 6,
       "question_definition_sha256": {
-        "positive": "9e068a00a5fee15306eeaa3d39b3f16b0cd9bf3eccd2b29b54e0427b241c81b1"
+        "positive": "a25d7d0d373ce5fc4f875dcf784a513c09d5bc5950a0b57988f2df9c87be8a5f"
       }
     },
     {
@@ -50,9 +50,9 @@
       "selection": "all authored fixture rows; no external sampling",
       "requests": 2,
       "question_definition_sha256": {
-        "ticket_topic": "7504c98ff706627325af6e60e5e9b02658b57fdf65fef6752874e6fd14c6a4f9",
-        "ticket_refund": "c694b36dc0958fad84971e24a10c631f36ba4a0fe1afb54d4ea46c49e1cd150e",
-        "ticket_urgency": "84355e2df05fcd7af6c36955da54da64cbb471af80cfcdbf6328aed2d2a1ef93"
+        "ticket_topic": "b5f5c71a0d2e27fd9ecfbdd388ce79e5d0d3ecbc662d0f7a3b2b41cc42e6ecf8",
+        "ticket_refund": "79d33836ab74c6bb292eb14a454e0312947bf0b564aed23449a6ec69a6ac354a",
+        "ticket_urgency": "29ebd7d221ed3d17d37023fbec64b25f21970a3146e9ddc7da532c85fc6e0e37"
       }
     }
   ],

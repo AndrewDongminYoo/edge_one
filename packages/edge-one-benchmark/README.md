@@ -56,6 +56,12 @@ They are not canonical JSON hashes. Canonical comparison additionally rejects
 reordered duplicate evaluation requests and overlap with calibration requests.
 Question definitions and Score legend meanings must remain stable.
 
+Reported question-definition hashes use the loader's canonical JSON: object keys
+are sorted recursively, while array order is preserved. Choice option insertion
+order therefore does not change a definition's hash; ordered Score criteria,
+instructions and option meanings still do. Recording request digests retain the
+byte-order-sensitive encoding described above.
+
 The parser deterministically refits the tiny calibration-only records to verify
 all three supplied profiles. This verifies provenance and binding; it does not
 fit on evaluation rows. #17's internal fitting/validation halves both remain

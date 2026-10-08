@@ -1,5 +1,5 @@
-import 'dart:convert';
 import 'package:edge_one/edge_one.dart';
+import 'package:edge_one_calibrate/edge_one_calibrate.dart' show canonicalJson;
 import 'case.dart';
 import 'fixture.dart';
 import 'metrics.dart';
@@ -230,7 +230,7 @@ Map<String, Object?> benchmarkReport(
                   in (SystemOneJson.encodeRequest(source.request)['questions']
                           as Map<String, Object?>)
                       .entries)
-                entry.key: textSha256(jsonEncode(entry.value)),
+                entry.key: textSha256(canonicalJson(entry.value)),
           },
         },
     ],
