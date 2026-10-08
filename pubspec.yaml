@@ -6,6 +6,7 @@ workspace:
   - packages/edge_one
   - packages/edge_one_flutter
   - packages/edge-one-calibrate
+  - packages/edge-one-benchmark
 dev_dependencies:
   melos: ^8.0.0
 melos:
