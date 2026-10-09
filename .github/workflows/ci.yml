@@ -65,6 +65,8 @@ jobs:
         run: |
           dart test test/model_manifest_test.dart
           flutter test test/pinned_model_flutter_test.dart
+      - name: Test blocking native FFI lifecycle and bundled bindings
+        run: bash tools/test_ffi_lifecycle.sh
       - name: Verify package assets from a Flutter host
         working-directory: packages/edge_one_flutter/example/asset_host
         run: |

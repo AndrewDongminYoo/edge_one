@@ -83,15 +83,18 @@ Both reviewers reported no remaining concrete defects on the follow-up review.
 
 ## Integration boundaries and remaining acceptance
 
-PR #42's CMake, scorer, engine, public header, CI, and `model_store` files were not changed or copied.
+PR #42's CMake, scorer, engine, public header, and `model_store` files were not changed or copied.
+The PR-loop follow-up adds one helper invocation to the existing CI contracts job; this is the only workflow integration conflict to reconcile with PR #42.
 The only existing native test file changed is `tests/api_test.cpp`, which extracts its test backend into a shared test header.
 Recheck the hook, generated bindings, manifest dependency tracking, and full regression suite after the scorer lands.
 Current main still has the staged unavailable scorer; this work does not demonstrate successful model open or normal inference.
 
 Hosted macOS iOS arm64 build, hosted app smoke, physical-device execution, macOS x64, and Linux hook validation were not run.
 Android/Windows hooks and Metal integration remain outside this slice.
-The existing CI workflow was left intact; this local helper's native lifecycle suite still needs a hosted job integration decision.
+The existing CI contracts job now invokes the native lifecycle helper, including the blocking test double and bundled ABI tests.
+Its exact-HEAD hosted result is required for this slice. The M0 unsigned iOS job does not validate this Flutter hook.
 Standalone pub packaging of the sibling core is also deferred.
 Issue #11 must remain open until its Apple build/runtime acceptance and dependency work have evidence.
 
-No remote push, PR publication, issue closure, merge, deployment, hosted request, or model/user-data download was performed.
+The original implementation was local-only; user authorization subsequently published PR #46 and resumed bounded review.
+No issue closure, merge, deployment, or model/user-data download was performed.
