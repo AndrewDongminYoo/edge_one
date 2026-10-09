@@ -1,0 +1,24 @@
+name: EdgeOneBindings
+description: Generated bindings for the existing edge_one C ABI.
+output: lib/src/generated/edge_one_bindings.dart
+headers:
+  entry-points:
+    - ../edge_one_core/include/edge_one.h
+functions:
+  include:
+    - eo_.*
+structs:
+  include:
+    - eo_engine
+enums:
+  include:
+    - eo_status
+macros:
+  exclude:
+    - .*
+typedefs:
+  exclude:
+    - .*
+unions:
+  exclude:
+    - .*
