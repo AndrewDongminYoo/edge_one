@@ -56,4 +56,4 @@ dart run ffigen --config ffigen_native.yaml
 
 The generated lookup bindings support the isolated native test library; production uses the generated native asset bindings.
 Generation currently emits ffigen's YAML deprecation warning and the expected warning for the opaque `eo_engine` declaration.
-See the lifecycle verification note for local evidence and outstanding issue #11 acceptance.
+See the [lifecycle verification note](../../docs/notes/2026-10-09-ffi-lifecycle.md) for local evidence and outstanding issue #11 acceptance.
