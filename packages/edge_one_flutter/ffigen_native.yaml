@@ -1,0 +1,25 @@
+description: Generated native asset bindings for the existing edge_one C ABI.
+output: lib/src/generated/edge_one_native.dart
+headers:
+  entry-points:
+    - ../edge_one_core/include/edge_one.h
+functions:
+  include:
+    - eo_.*
+structs:
+  include:
+    - eo_engine
+enums:
+  include:
+    - eo_status
+ffi-native:
+  asset-id: package:edge_one_flutter/src/generated/edge_one_native.dart
+macros:
+  exclude:
+    - .*
+typedefs:
+  exclude:
+    - .*
+unions:
+  exclude:
+    - .*
