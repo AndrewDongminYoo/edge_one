@@ -1,0 +1,20 @@
+cmake_minimum_required(VERSION 3.24)
+project(edge_one_ffi_test LANGUAGES CXX)
+find_package(Threads REQUIRED)
+set(CORE "${CMAKE_CURRENT_SOURCE_DIR}/../../../edge_one_core")
+if(NOT EXISTS "${LLAMA_SOURCE}/vendor/nlohmann/json.hpp")
+  message(FATAL_ERROR "Set LLAMA_SOURCE to the verified pinned llama.cpp source (no weights needed)")
+endif()
+add_library(ffi_api OBJECT "${CORE}/src/api.cpp")
+target_compile_definitions(ffi_api PRIVATE EDGE_ONE_BUILD
+  eo_open=eo_real_open eo_evaluate=eo_real_evaluate eo_cancel=eo_real_cancel
+  eo_close=eo_real_close eo_free=eo_real_free)
+add_library(edge_one_ffi_test SHARED probe.cpp $<TARGET_OBJECTS:ffi_api>
+  "${CORE}/src/request.cpp" "${CORE}/src/renderer.cpp" "${CORE}/src/response.cpp")
+foreach(target ffi_api edge_one_ffi_test)
+  target_compile_features(${target} PRIVATE cxx_std_17)
+  target_include_directories(${target} PRIVATE "${CORE}/include" "${CORE}/src" "${CORE}/tests")
+  target_include_directories(${target} SYSTEM PRIVATE "${LLAMA_SOURCE}/vendor")
+  set_target_properties(${target} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endforeach()
+target_link_libraries(edge_one_ffi_test PRIVATE Threads::Threads)

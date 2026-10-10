@@ -1,0 +1,16 @@
+name: edge_one_benchmark
+description: Offline synthetic benchmark replay and metrics for edge_one.
+version: 0.0.1
+publish_to: none
+environment:
+  sdk: ^3.9.0
+resolution: workspace
+dependencies:
+  args: ^2.7.0
+  crypto: ^3.0.7
+  edge_one: ^0.0.1
+  edge_one_calibrate: ^0.0.1
+dev_dependencies:
+  test: ^1.32.0
+executables:
+  edge-one-benchmark: edge_one_benchmark

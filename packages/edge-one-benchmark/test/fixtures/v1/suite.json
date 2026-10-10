@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "origin": "synthetic represented dataset shapes; not Banking77/KLUE/NSMC/model measurements",
+  "rights": "invented fixtures only; no external dataset rights claimed",
+  "provenance": {
+    "repository_revision": "f3e01e3505e79997d3e1599be8b4be1990fa9624",
+    "dirty": true,
+    "platform": "synthetic-linux-fixture",
+    "architecture": "unmeasured",
+    "toolchain": "Dart fixture authoring; no native execution",
+    "local_model_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "manifest_sha256": null,
+    "core_revision": "58526f3",
+    "llama_revision": null,
+    "render_version": null,
+    "readout_version": null,
+    "temperature": null,
+    "remote_model_revision": null
+  },
+  "runs": [
+    {
+      "id": "local",
+      "mode": "local",
+      "condition": "fixture",
+      "trial_count": 1,
+      "quality_trial": 0,
+      "consent": true,
+      "network_available": true,
+      "budget_microcredits": 1000
+    },
+    {
+      "id": "remote",
+      "mode": "remote",
+      "condition": "fixture",
+      "trial_count": 1,
+      "quality_trial": 0,
+      "consent": true,
+      "network_available": true,
+      "budget_microcredits": 1000
+    },
+    {
+      "id": "hybrid",
+      "mode": "hybrid",
+      "condition": "fixture",
+      "trial_count": 1,
+      "quality_trial": 0,
+      "consent": true,
+      "network_available": true,
+      "budget_microcredits": 1000
+    },
+    {
+      "id": "hybrid-denied",
+      "mode": "hybrid",
+      "condition": "fixture",
+      "trial_count": 1,
+      "quality_trial": 0,
+      "consent": false,
+      "network_available": true,
+      "budget_microcredits": 1000
+    }
+  ],
+  "files": {
+    "requests.jsonl": "6a4ea2c79e35220a98a3f471dcc5b22e5d95354532c13ef92c44763aeeb135fc",
+    "cases.jsonl": "12e7f6ede80f5fb5ca8ebbc4b9f16de62996a906c52f013795548a35c0c11e7a",
+    "backend_fixtures.jsonl": "bb1c88e438221717a23387d9165eb445af6328b3266c2dc6b376c64b4dadfb46",
+    "calibration.jsonl": "2d0b48696aaee11f86ca61159b91e1311a0b253307837f5d068056503924c465",
+    "gates.json": "55318dbdb23dec1be7b6d66fe57f64d6b44a2ad08f1fef20a728000753fe6aab"
+  }
+}
