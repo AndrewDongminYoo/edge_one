@@ -1,0 +1,6 @@
+#pragma once
+
+namespace edge_one {
+// Generated from the bundled asset, never from caller-supplied runtime JSON.
+inline constexpr char pinned_manifest_json[] = R"EO_MANIFEST(@EDGE_ONE_PINNED_MANIFEST@)EO_MANIFEST";
+} // namespace edge_one

@@ -38,9 +38,9 @@ The pnpm workspace contains the planned React Native package; the Melos/Pub work
 `edge_one_flutter` ships an app-pinned model manifest and a Dart model store that verifies resumed downloads before returning a path.
 The host app must supply durable storage and a free-space check; platform background transfers and storage policy are separate integration work.
 `packages/edge_one_core/` implements the C++17 C ABI, request validation, escaped
-renderer, model loading, cancellation and owned response memory. Production
-scoring is staged: a valid request returns status **503** until issue #9 adds the
-verified verdict scorer; no synthetic probabilities are returned in production.
+renderer, model integrity checks, verdict scoring, cancellation and owned response
+memory. It uses per-request exact prefix sharing and the pinned global readout
+temperature. Real-model parity is checked separately from model-free unit tests.
 See the [native core README](packages/edge_one_core/README.md) for the ABI contract
 and model-free Linux build/test commands.
 GitHub's Linux contract job validates schema fixtures, generated drift, TypeScript, and the Dart workspace, then runs the Dart and Flutter package tests with their respective runners.
@@ -218,3 +218,35 @@ CPU-only, modified and missing backend settings are rejected by that CLI gate ev
 Physical-device acceptance additionally requires an observed approved run and export from the connected iPhone, comparison with its local build receipt, and review of the first, warm and sustained conditions.
 Omit `--require-device-metadata` when validating a host or simulator smoke test.
 The [iOS spec](docs/specs/2026-09-27-m0-ios-spike.md) and [plan](docs/plans/2026-09-27-m0-ios-spike.md) define the remaining build and device checks.
+
+### Fixed Linux production parity reference
+
+The production scorer gate explicitly uses `linux-x86_64-avx2-v1`: Linux x86-64
+with AVX2/SSE4.2/BMI2/F16C/FMA support, GGML_NATIVE disabled and AVX512, AVX_VNNI,
+AMX and CPU_ALL_VARIANTS disabled. It independently compiles the unchanged pinned
+upstream scorer/source using the existing verified M0 inputs; it never downloads.
+The native M0 build, defaults and receipts remain separate.
+
+```sh
+.cache/m0/.venv/bin/python tools/build_parity_reference.py build --profile linux-x86_64-avx2-v1 --jobs 2
+.cache/m0/.venv/bin/python tools/build_parity_reference.py verify --profile linux-x86_64-avx2-v1
+.cache/m0/.venv/bin/python tools/check_native_parity.py \
+  --reference-profile linux-x86_64-avx2-v1 \
+  --production-build /tmp/edge-one-production \
+  --driver /tmp/edge-one-production/edge_one_score_driver \
+  --output .cache/m0/production-fixed-reference.json --repetitions 1
+```
+
+Use a Release Unix Makefiles production build. The isolated reference lives in
+`.cache/m0/reference-linux-x86_64-avx2-v1/`; build refuses to overwrite it.
+Compiler identity, effective compiler flags, common backend settings, pinned
+inputs and receipt hashes must match. Missing/unsupported/drifted profiles fail
+without fallback. Reports include actual Linux process mappings and hashes for
+the loaded executables and shared libraries. All four fixtures, token/slot/name
+checks, 1024-token sharing/copy evidence and strict max difference `<1e-3` remain.
+
+The historical native cross-profile failure `0.01687824909653951` remains a
+failure; fixed-profile success does not establish cross-ISA equality or repair
+that archived result. The diagnostic library-swap workflow remains a separate
+cross-profile investigation using native M0 inputs. These checks make no mobile,
+physical-device, GPU, thermal or performance claims.

@@ -29,8 +29,16 @@ enum eo_status {
   EO_STATUS_UNAVAILABLE = 503
 };
 
-/* model_path and manifest_json are NUL-terminated UTF-8. The caller must verify
- * model bytes and manifest integrity before opening. On failure returns NULL;
+/* model_path and manifest_json are NUL-terminated UTF-8. The caller/store must
+ * keep the opened model backing object's bytes immutable and untruncated from
+ * the start of eo_open until every engine using that object has been closed.
+ * Publishers must stage replacements separately, never overwrite live backing
+ * objects. This precondition is not enforced against other writers.
+ * Native opening checks pinned model/readout identity, verifies and rewinds one
+ * open file, and loads/maps that same file without reopening model_path. Name
+ * replacement does not retarget that handle; same-inode writes/truncation are
+ * unsupported and are not made safe by read-only mappings.
+ * On failure returns NULL;
  * if err is non-NULL, *err is an owned error string (or NULL on allocation
  * failure). On success *err is NULL. Release error strings using eo_free. */
 EO_API eo_engine *eo_open(const char *model_path, const char *manifest_json,
@@ -39,8 +47,9 @@ EO_API eo_engine *eo_open(const char *model_path, const char *manifest_json,
 /* Blocking; run off the UI thread. Returns owned JSON, released with eo_free.
  * On failure returns an error object; allocation failure can return NULL.
  * status is optional. One evaluation per engine; competing calls return BUSY.
- * In this staged #8 implementation valid production requests return UNAVAILABLE
- * until #9 supplies the scorer. Validation and token budgets are still checked. */
+ * Valid requests use pinned verdict scoring with exact sharing within the request.
+ * Invalid requests or token budgets return INVALID_REQUEST; unavailable models return UNAVAILABLE.
+ */
 EO_API char *eo_evaluate(eo_engine *engine, const char *request_json, int32_t *status) EO_NOEXCEPT;
 
 /* Thread-safe against an active evaluation. Idle cancellation has no effect on

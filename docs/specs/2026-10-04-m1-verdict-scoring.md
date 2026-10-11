@@ -1,0 +1,76 @@
+# M1 Native Verdict Scoring
+
+Issue #9 replaces the native scorer's unavailable result with pinned Jev verdict
+inference. The exported C API and System One response mapping remain unchanged.
+
+- Validate runtime model identity, revision, file hash/size and readout against
+  build-time constants from the bundled manifest. Runtime limits may be reduced,
+  never raised. Verify actual GGUF bytes before llama.cpp loads them. Transport
+  URLs and mirrors do not affect native model identity.
+- Use the manifest context budget (2048 by default), matching logical batch,
+  1024 maximum physical microbatch, two sequences, unified KV, 26 output rows,
+  two CPU threads and no GPU layers. Record actual context values in diagnostics.
+- Default to exact sharing within each request. Share only complete physical
+  microbatch blocks of the state, then evaluate each branch sequentially on a
+  copied prefix. A single question uses independent fused prefill. Clear memory
+  before and after every request, including decode failure and cancellation.
+- Read only verdict-slot logits at yes/no token IDs, divide their difference by
+  manifest global temperature, and apply stable double-precision softmax.
+  Reject invalid/nonfinite readouts. Existing response code owns confidence.
+- Keep individual scoring available through a private diagnostic interface.
+  Do not enable batched scoring, persistent prefix caching, category temperature,
+  remote inference, model downloads or public configuration switches.
+- Model-free tests prove integrity, readout arithmetic, slot mapping, decode
+  scheduling, branch isolation and cleanup. They do not prove model parity.
+- An optional native JSONL driver and Python harness consume the existing pinned
+  M0 model/runtime/fixtures. Compare production token IDs and slot order against
+  upstream, and production individual/exact probabilities against the unchanged
+  upstream individual reference with strict differences below 1e-3. Require
+  actual shared decode/copy evidence at the 1024-token boundary. Preserve fresh
+  results, actual profiles and identities. Explicit missing inputs fail.
+
+Real-model Linux CI reuses the existing verified M0 fetch. Local real inference
+remains unrun unless the verified weights already exist. Archived M0 results do
+not validate the production context profile; batched remains experimental.
+
+## Approved Linux reference execution profile (2026-10-04)
+
+The strict production algorithm/sharing comparison uses an independently compiled
+pinned upstream scorer in `linux-x86_64-avx2-v1`, explicitly selected by the CLI.
+This is a Linux x86-64 AVX2 baseline, not universal CPU portability.
+`GGML_NATIVE=OFF`; AVX, AVX2, SSE42, BMI2, F16C and FMA are ON; AVX_VNNI,
+all AVX512 and AMX features and CPU_ALL_VARIANTS are OFF. Require supported host
+features, matching actual compiler flags/common backend settings and compiler
+identity, verified pinned source/model/scorer, and actual loaded artifact hashes.
+Reject drift and unsupported profiles without fallback.
+
+Build/cache/binary/receipt live separately under
+`.cache/m0/reference-linux-x86_64-avx2-v1/`; native M0 defaults, receipts and
+production code/profile remain unchanged. The harness requires
+`--reference-profile linux-x86_64-avx2-v1 --production-build PATH`.
+Keep all four pinned fixtures, token/slot/name equality, actual 1024-token sharing
+and sequence-copy observations, manifest integrity and strict max difference
+`<1e-3`. No tolerance, model, readout, fixture or scoring changes are authorized.
+
+The archived cross-profile failure `0.01687824909653951` remains a failure.
+The controlled 48 observations found portable differences <=2.22e-16 and AVX512
+differences 0.00467..0.01229; they do not repair or exactly reproduce the historical
+AMX-enabled result, prove cross-ISA parity, or establish device/performance claims.
+
+## Approved managed model-file lifetime (2026-10-04)
+
+Open the caller's model once as a binary `FILE*`, verify that same stream's
+size/SHA-256, perform a checked rewind, and pass it directly to the pinned
+`llama_model_load_from_file_ptr` API. Keep the stream owned until after model
+and context destruction, including construction failures. Never reopen the
+caller pathname after verification. Preserve mmap, CPU profile and C ABI.
+
+The caller/store MUST keep the opened backing object's bytes immutable and
+untruncated from the start of verification until every using engine is closed.
+All publishers write separate staging objects and publish replacements; they
+must not modify published backing objects in place. Custom store commit/cleanup
+code and other writers share this precondition. Atomic name replacement does
+not retarget the verified open handle, subject to platform file-sharing rules.
+Read-only/shared mappings do not protect against same-inode writes or truncation;
+this API does not claim to detect or resist a violation of that precondition.
+No per-engine snapshot, model copy, new store/lease machinery, or C ABI is added.
