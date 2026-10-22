@@ -10,6 +10,6 @@ dependencies:
   crypto: ^3.0.7
   edge_one: ^0.0.1
 dev_dependencies:
-  test: ^1.32.0
+  test: ^1.33.0
 executables:
   edge-one-calibrate: edge_one_calibrate
