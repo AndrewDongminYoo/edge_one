@@ -11,6 +11,6 @@ dependencies:
   edge_one: ^0.0.1
   edge_one_calibrate: ^0.0.1
 dev_dependencies:
-  test: ^1.32.0
+  test: ^1.33.0
 executables:
   edge-one-benchmark: edge_one_benchmark
