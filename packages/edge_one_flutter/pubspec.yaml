@@ -15,7 +15,7 @@ dependencies:
   hooks: ^2.2.0
 dev_dependencies:
   ffigen: ^23.0.0
-  test: ^1.32.0
+  test: ^1.33.0
 flutter:
   assets:
     - assets/LICENSE
