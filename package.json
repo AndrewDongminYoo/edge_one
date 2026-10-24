@@ -9,7 +9,7 @@
     "types:check": "tsc --project packages/react-native-edge-one/tsconfig.json --noEmit"
   },
   "devDependencies": {
-    "ajv": "8.17.1",
+    "ajv": "8.20.0",
     "typescript": "5.9.3"
   }
 }
