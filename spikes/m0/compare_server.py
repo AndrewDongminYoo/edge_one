@@ -8,7 +8,6 @@ from pathlib import Path
 
 from harness import compare
 
-
 HASH_FIELDS = ("request_sha256", "token_ids_sha256")
 METADATA_HASH_FIELDS = (
     "model_sha256",
@@ -146,7 +145,9 @@ def compare_exports(local, server):
         "summary": {
             "compared_questions": len(questions),
             "max_abs_difference": max(q["max_abs_difference"] for q in questions),
-            "top_choice_agreement_count": sum(q["top_choice_agrees"] for q in questions),
+            "top_choice_agreement_count": sum(
+                q["top_choice_agrees"] for q in questions
+            ),
             "passes_gate": all(q["passes_gate"] for q in questions),
         },
     }
