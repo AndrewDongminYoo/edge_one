@@ -83,12 +83,12 @@ class ServerComparisonTests(unittest.TestCase):
         server["model_sha256"] = server["model_sha256"].upper()
         server["template_sha256"] = server["template_sha256"].upper()
         server["readout_config_sha256"] = server["readout_config_sha256"].upper()
-        server["requests"][0]["request_sha256"] = (
-            server["requests"][0]["request_sha256"].upper()
-        )
-        server["requests"][0]["token_ids_sha256"] = (
-            server["requests"][0]["token_ids_sha256"].upper()
-        )
+        server["requests"][0]["request_sha256"] = server["requests"][0][
+            "request_sha256"
+        ].upper()
+        server["requests"][0]["token_ids_sha256"] = server["requests"][0][
+            "token_ids_sha256"
+        ].upper()
 
         report = compare_server.compare_exports(export("local"), server)
 
@@ -113,9 +113,7 @@ class ServerComparisonTests(unittest.TestCase):
                 "token_ids_sha256",
             ):
                 for malformed in ("", "not-a-sha", "g" * 64, "a" * 63, "a" * 65):
-                    with self.subTest(
-                        source=source, field=field, malformed=malformed
-                    ):
+                    with self.subTest(source=source, field=field, malformed=malformed):
                         local = export("local")
                         server = export("server")
                         invalid = local if source == "local" else server
