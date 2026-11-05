@@ -30,6 +30,6 @@ The iPhoneOS build passed before the diagnostic option was added.
 Rebuild the device app from the latest source, then obtain approval for personal-account signing and physical installation/launch before measuring its Metal path.
 No physical-device writes occurred.
 At the end of testing, one-minute load reached 15.25 on 10 cores, so further native work stopped.
-An operator retry still measured 10.23, above the builder's 10-core limit.
+A retry still measured 10.23, above the builder's 10-core limit.
 Source inspection confirmed the Metal build uses a simulator target suffix; disabling upstream fusion is a future diagnostic candidate, not a confirmed fix.
 Oracle precedent `wiki/concepts/mac-mini-resource-limits.md` confirmed sequential heavy jobs and reuse of the existing simulator; no project-specific scorer precedent was found.

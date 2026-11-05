@@ -174,7 +174,7 @@ contract references. Its synthetic model digest (`aaaa…`) does not identify
 model bytes; nullable native fields and remote revision are unmeasured. The
 producer base is `f3e01e3` with `dirty: true`, when these fixtures were authored.
 This field never claims to identify the checkout currently replaying them. Record
-the actual execution commit/dirty state in the CI run or operator log separately;
+the actual execution commit/dirty state in the CI run or the user's log separately;
 the complete deterministic baseline compares all fixture provenance and hashes.
 
 The native contract reference is [#42](https://github.com/AndrewDongminYoo/edge_one/pull/42)

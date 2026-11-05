@@ -2,7 +2,7 @@
 
 ## Status and Scope
 
-Approved by the operator on 2026-09-27: validate the blueprint's desktop inference assumptions before implementing mobile bindings.
+Approved on 2026-09-27: validate the blueprint's desktop inference assumptions before implementing mobile bindings.
 Use the existing workspace and complete one native build at a time.
 This stage ends with a reproducible desktop report; iOS latency remains a separate M0 requirement.
 Do not interpret desktop timings as mobile results.

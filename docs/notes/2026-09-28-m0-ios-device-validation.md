@@ -2,9 +2,9 @@
 
 ## Origin and Integrity
 
-After the operator reported the installed app running, `devicectl` listed its process under the installation path and a report in its app `Documents` directory.
+After the installed app was reported running, `devicectl` listed its process under the installation path and a report in its app `Documents` directory.
 The first report was copied directly from that app data container.
-The operator later supplied a second export; its SHA-256 exactly matched a separate readback of the same file from the app data container.
+A second export was supplied later; its SHA-256 exactly matched a separate readback of the same file from the app data container.
 The compressed [first](2026-09-28-m0-ios-device-report.json.gz) and [second](2026-09-28-m0-ios-device-report-repeat.json.gz) archives decompress to the exact device JSON bytes, with respective SHA-256 values `1c4349a63b2c0c4e7cdfd9ca8cd34f2e3a8b9fad07a6b97dd1aa1f3271dc09e1` and `d8727cdc85920b5a34b7d1c0583f89ec3cb082a7b1f477998aa4bc6c6146b8c1`.
 Both declare iPhone17,1, iOS 27.0, Release arm64 and the pinned fixture/model.
 The signed app passed `codesign --verify`; its embedded development profile includes this iPhone, and its bundled fixture and model hashes match the pinned inputs.
@@ -32,4 +32,4 @@ Both reports pass the specified physical-device format, profile and numerical ga
 They record the default requested Metal settings (`n_gpu_layers=999`, operation/KV offload enabled, both diagnostic switches off), while their system-info strings only establish Metal availability; actual GPU layer placement was not independently observed.
 The higher final-window latency coincides with the elevated thermal state, but two runs do not establish thermal equilibrium or causality.
 The earlier simulator Metal failure remains reproducible and unexplained.
-The operator reported normal operation and requested PR review; these measurements do not by themselves complete M0 or authorize merge.
+Normal operation was reported and PR review was requested; these measurements do not by themselves complete M0 or authorize merge.

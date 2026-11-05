@@ -81,4 +81,4 @@ stdout only. There is no CLI output-path writer; `--output` is rejected. Shell
 redirection and destination protection belong to the caller. Linux CI redirects
 to its temporary directory and compares the complete result to the reviewed
 expected JSON. Runtime checkout identity belongs
-in CI/operator execution logs, not a self-referential committed baseline.
+in CI/user execution logs, not a self-referential committed baseline.
