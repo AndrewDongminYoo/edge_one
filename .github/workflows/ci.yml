@@ -70,7 +70,7 @@ jobs:
       - name: Verify package assets from a Flutter host
         working-directory: packages/edge_one_flutter/example/asset_host
         run: |
-          flutter pub get --enforce-lockfile
+          flutter pub get
           flutter test test/package_assets_test.dart
 
   native-core:

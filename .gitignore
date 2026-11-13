@@ -9,3 +9,4 @@ __pycache__/
 /.cache/flutter/
 /packages/edge_one_flutter/build/
 /packages/edge_one_flutter/example/asset_host/build/
+/packages/edge_one_flutter/example/asset_host/pubspec.lock
