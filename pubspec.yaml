@@ -8,7 +8,7 @@ workspace:
   - packages/edge-one-calibrate
   - packages/edge-one-benchmark
 dev_dependencies:
-  melos: ^8.10.0
+  melos: ^8.10.1
 melos:
   scripts:
     analyze:

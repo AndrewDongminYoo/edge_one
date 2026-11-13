@@ -44,11 +44,11 @@ void main(List<String> args) async {
         flags.addAll([
           '-DCMAKE_SYSTEM_NAME=iOS',
           '-DCMAKE_OSX_SYSROOT=${code.iOS.targetSdk == IOSSdk.iPhoneOS ? 'iphoneos' : 'iphonesimulator'}',
-          '-DCMAKE_OSX_DEPLOYMENT_TARGET=${code.iOS.targetVersion}.0',
+          '-DCMAKE_OSX_DEPLOYMENT_TARGET=${code.iOS.deploymentVersion.major}.0',
         ]);
       } else {
         flags.add(
-          '-DCMAKE_OSX_DEPLOYMENT_TARGET=${code.macOS.targetVersion}.0',
+          '-DCMAKE_OSX_DEPLOYMENT_TARGET=${code.macOS.deploymentVersion.major}.0',
         );
       }
     } else {
