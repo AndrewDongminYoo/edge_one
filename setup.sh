@@ -79,9 +79,9 @@ fi
 "${venv_python}" -m pip check
 
 # Keep this pin equal to the Linux contract job's Flutter version.
-flutter_version=3.47.5
+flutter_version=3.50.0
 flutter_archive=flutter_linux_${flutter_version}-stable.tar.xz
-flutter_sha256=2132e990f236f8d22e7c6314b29a191a95b10d7cbcfec9b4e2e303d996652cbb
+flutter_sha256=6ea2d806fd57269ae783e6788e2a81fc26eaad782f1e0d0ff38623bb765ff9f5
 flutter_home=.cache/flutter/${flutter_version}
 
 install_flutter_sdk() {
