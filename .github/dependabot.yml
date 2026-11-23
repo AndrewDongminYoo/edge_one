@@ -4,7 +4,7 @@ updates:
     directory: /
     schedule:
       interval: weekly
-      day: monday
+      day: thursday
       timezone: Asia/Seoul
     open-pull-requests-limit: 3
     groups:
@@ -42,7 +42,7 @@ updates:
       - /packages/edge_one_flutter/example/asset_host
     schedule:
       interval: weekly
-      day: monday
+      day: tuesday
       timezone: Asia/Seoul
     open-pull-requests-limit: 2
     groups:
