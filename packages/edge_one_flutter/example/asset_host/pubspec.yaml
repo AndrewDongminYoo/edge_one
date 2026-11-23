@@ -14,4 +14,4 @@ dependency_overrides:
   edge_one:
     path: ../../../edge_one
 dev_dependencies:
-  test: ^1.32.0
+  test: ^1.33.0
